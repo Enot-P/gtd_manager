@@ -27,6 +27,22 @@ class CalendarRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [DetailsNoteScreen]
+class DetailsNoteRoute extends PageRouteInfo<void> {
+  const DetailsNoteRoute({List<PageRouteInfo>? children})
+    : super(DetailsNoteRoute.name, initialChildren: children);
+
+  static const String name = 'DetailsNoteRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const DetailsNoteScreen();
+    },
+  );
+}
+
+/// generated route for
 /// [HomeScreen]
 class HomeRoute extends PageRouteInfo<void> {
   const HomeRoute({List<PageRouteInfo>? children})
@@ -43,33 +59,17 @@ class HomeRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [InboxScreen]
-class InboxRoute extends PageRouteInfo<void> {
-  const InboxRoute({List<PageRouteInfo>? children})
-    : super(InboxRoute.name, initialChildren: children);
+/// [ListNotesScreen]
+class ListNotesRoute extends PageRouteInfo<void> {
+  const ListNotesRoute({List<PageRouteInfo>? children})
+    : super(ListNotesRoute.name, initialChildren: children);
 
-  static const String name = 'InboxRoute';
-
-  static PageInfo page = PageInfo(
-    name,
-    builder: (data) {
-      return const InboxScreen();
-    },
-  );
-}
-
-/// generated route for
-/// [NextScreen]
-class NextRoute extends PageRouteInfo<void> {
-  const NextRoute({List<PageRouteInfo>? children})
-    : super(NextRoute.name, initialChildren: children);
-
-  static const String name = 'NextRoute';
+  static const String name = 'ListNotesRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const NextScreen();
+      return const ListNotesScreen();
     },
   );
 }
@@ -91,22 +91,6 @@ class ProjectsRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [SomedayScreen]
-class SomedayRoute extends PageRouteInfo<void> {
-  const SomedayRoute({List<PageRouteInfo>? children})
-    : super(SomedayRoute.name, initialChildren: children);
-
-  static const String name = 'SomedayRoute';
-
-  static PageInfo page = PageInfo(
-    name,
-    builder: (data) {
-      return const SomedayScreen();
-    },
-  );
-}
-
-/// generated route for
 /// [TagsScreen]
 class TagsRoute extends PageRouteInfo<void> {
   const TagsRoute({List<PageRouteInfo>? children})
@@ -118,22 +102,6 @@ class TagsRoute extends PageRouteInfo<void> {
     name,
     builder: (data) {
       return const TagsScreen();
-    },
-  );
-}
-
-/// generated route for
-/// [WaitingScreen]
-class WaitingRoute extends PageRouteInfo<void> {
-  const WaitingRoute({List<PageRouteInfo>? children})
-    : super(WaitingRoute.name, initialChildren: children);
-
-  static const String name = 'WaitingRoute';
-
-  static PageInfo page = PageInfo(
-    name,
-    builder: (data) {
-      return const WaitingScreen();
     },
   );
 }
