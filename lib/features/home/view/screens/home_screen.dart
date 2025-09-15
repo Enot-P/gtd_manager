@@ -15,7 +15,7 @@ class HomeScreen extends StatelessWidget {
         ListNotesRoute(),
         CalendarRoute(),
         ListNotesRoute(),
-        ListNotesRoute(),
+        ProjectsRoute(),
         TagsRoute(),
       ],
       appBarBuilder: (_, tabsRouter) => AppBar(

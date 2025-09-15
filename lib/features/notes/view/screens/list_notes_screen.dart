@@ -4,9 +4,7 @@ import 'package:gtd_manager/features/notes/view/widgets/widgets.dart';
 
 @RoutePage()
 class ListNotesScreen extends StatefulWidget {
-  const ListNotesScreen({
-    super.key,
-  });
+  const ListNotesScreen({super.key});
 
   @override
   State<ListNotesScreen> createState() => _ListNotesScreenState();
@@ -54,6 +52,10 @@ class _ListNotesScreenState extends State<ListNotesScreen> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add),
       ),
     );
   }
