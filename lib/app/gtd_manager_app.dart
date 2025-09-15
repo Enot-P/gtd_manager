@@ -15,7 +15,7 @@ class _GtdManagerState extends State<GtdManager> {
     return MaterialApp.router(
       title: 'GTD Manager',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.yellow),
       ),
       routerConfig: _appRouter.config(),
     );

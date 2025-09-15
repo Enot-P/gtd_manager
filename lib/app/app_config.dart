@@ -1,5 +1,8 @@
-import 'package:gtd_manager/routing/app_router.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 class AppConfig {
-  // AppConfig({required this.appRouter});
+  AppConfig({
+    required this.talker,
+  });
+  final Talker talker;
 }
