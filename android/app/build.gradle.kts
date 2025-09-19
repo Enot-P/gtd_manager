@@ -6,9 +6,9 @@ plugins {
 }
 
 android {
-    namespace = "com.example.gtd_manager"
+    namespace  = "com.example.gtd_manager"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.3.13750724" 
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
