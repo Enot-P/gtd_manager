@@ -1,0 +1,45 @@
+import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
+import 'package:gtd_manager/app/database/database.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
+import 'dart:io';
+
+part 'database_configure.g.dart';
+
+@DriftDatabase(tables: [Note, Project, Tag, TagLinks])
+class AppDatabase extends _$AppDatabase {
+  AppDatabase() : super(_openConnection());
+
+  @override
+  int get schemaVersion => 2;
+}
+
+QueryExecutor _openConnection() {
+  return LazyDatabase(() async {
+    // Для разных платформ получаем разные директории
+    final dbFolder = await _getDatabasePath();
+    final file = File(p.join(dbFolder.path, 'gtd_database.sqlite'));
+
+    return NativeDatabase(
+      file,
+      setup: (db) {
+        db.execute('PRAGMA foreign_keys = ON');
+        db.execute('PRAGMA cache_size = 10000');
+      },
+    );
+  });
+}
+
+Future<Directory> _getDatabasePath() async {
+  if (Platform.isAndroid || Platform.isIOS) {
+    // Для мобильных устройств
+    return getApplicationDocumentsDirectory();
+  } else if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    // Для desktop
+    return getApplicationSupportDirectory();
+  } else {
+    // Fallback
+    return getApplicationDocumentsDirectory();
+  }
+}
