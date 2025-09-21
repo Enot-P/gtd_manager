@@ -68,6 +68,15 @@ class $ProjectTable extends Project with TableInfo<$ProjectTable, ProjectData> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  @override
+  late final GeneratedColumnWithTypeConverter<ProjectStatus, String> status =
+      GeneratedColumn<String>(
+        'status',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<ProjectStatus>($ProjectTable.$converterstatus);
   static const VerificationMeta _parentProjectIdMeta = const VerificationMeta(
     'parentProjectId',
   );
@@ -89,6 +98,7 @@ class $ProjectTable extends Project with TableInfo<$ProjectTable, ProjectData> {
     id,
     title,
     description,
+    status,
     parentProjectId,
   ];
   @override
@@ -173,6 +183,12 @@ class $ProjectTable extends Project with TableInfo<$ProjectTable, ProjectData> {
         DriftSqlType.string,
         data['${effectivePrefix}description'],
       ),
+      status: $ProjectTable.$converterstatus.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}status'],
+        )!,
+      ),
       parentProjectId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}parent_project_id'],
@@ -184,6 +200,9 @@ class $ProjectTable extends Project with TableInfo<$ProjectTable, ProjectData> {
   $ProjectTable createAlias(String alias) {
     return $ProjectTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<ProjectStatus, String, String> $converterstatus =
+      const EnumNameConverter<ProjectStatus>(ProjectStatus.values);
 }
 
 class ProjectData extends DataClass implements Insertable<ProjectData> {
@@ -192,6 +211,7 @@ class ProjectData extends DataClass implements Insertable<ProjectData> {
   final int id;
   final String title;
   final String? description;
+  final ProjectStatus status;
   final int? parentProjectId;
   const ProjectData({
     required this.createdAt,
@@ -199,6 +219,7 @@ class ProjectData extends DataClass implements Insertable<ProjectData> {
     required this.id,
     required this.title,
     this.description,
+    required this.status,
     this.parentProjectId,
   });
   @override
@@ -212,6 +233,11 @@ class ProjectData extends DataClass implements Insertable<ProjectData> {
     map['title'] = Variable<String>(title);
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
+    }
+    {
+      map['status'] = Variable<String>(
+        $ProjectTable.$converterstatus.toSql(status),
+      );
     }
     if (!nullToAbsent || parentProjectId != null) {
       map['parent_project_id'] = Variable<int>(parentProjectId);
@@ -230,6 +256,7 @@ class ProjectData extends DataClass implements Insertable<ProjectData> {
       description: description == null && nullToAbsent
           ? const Value.absent()
           : Value(description),
+      status: Value(status),
       parentProjectId: parentProjectId == null && nullToAbsent
           ? const Value.absent()
           : Value(parentProjectId),
@@ -247,6 +274,9 @@ class ProjectData extends DataClass implements Insertable<ProjectData> {
       id: serializer.fromJson<int>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String?>(json['description']),
+      status: $ProjectTable.$converterstatus.fromJson(
+        serializer.fromJson<String>(json['status']),
+      ),
       parentProjectId: serializer.fromJson<int?>(json['parentProjectId']),
     );
   }
@@ -259,6 +289,9 @@ class ProjectData extends DataClass implements Insertable<ProjectData> {
       'id': serializer.toJson<int>(id),
       'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String?>(description),
+      'status': serializer.toJson<String>(
+        $ProjectTable.$converterstatus.toJson(status),
+      ),
       'parentProjectId': serializer.toJson<int?>(parentProjectId),
     };
   }
@@ -269,6 +302,7 @@ class ProjectData extends DataClass implements Insertable<ProjectData> {
     int? id,
     String? title,
     Value<String?> description = const Value.absent(),
+    ProjectStatus? status,
     Value<int?> parentProjectId = const Value.absent(),
   }) => ProjectData(
     createdAt: createdAt ?? this.createdAt,
@@ -276,6 +310,7 @@ class ProjectData extends DataClass implements Insertable<ProjectData> {
     id: id ?? this.id,
     title: title ?? this.title,
     description: description.present ? description.value : this.description,
+    status: status ?? this.status,
     parentProjectId: parentProjectId.present
         ? parentProjectId.value
         : this.parentProjectId,
@@ -289,6 +324,7 @@ class ProjectData extends DataClass implements Insertable<ProjectData> {
       description: data.description.present
           ? data.description.value
           : this.description,
+      status: data.status.present ? data.status.value : this.status,
       parentProjectId: data.parentProjectId.present
           ? data.parentProjectId.value
           : this.parentProjectId,
@@ -303,6 +339,7 @@ class ProjectData extends DataClass implements Insertable<ProjectData> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
+          ..write('status: $status, ')
           ..write('parentProjectId: $parentProjectId')
           ..write(')'))
         .toString();
@@ -315,6 +352,7 @@ class ProjectData extends DataClass implements Insertable<ProjectData> {
     id,
     title,
     description,
+    status,
     parentProjectId,
   );
   @override
@@ -326,6 +364,7 @@ class ProjectData extends DataClass implements Insertable<ProjectData> {
           other.id == this.id &&
           other.title == this.title &&
           other.description == this.description &&
+          other.status == this.status &&
           other.parentProjectId == this.parentProjectId);
 }
 
@@ -335,6 +374,7 @@ class ProjectCompanion extends UpdateCompanion<ProjectData> {
   final Value<int> id;
   final Value<String> title;
   final Value<String?> description;
+  final Value<ProjectStatus> status;
   final Value<int?> parentProjectId;
   const ProjectCompanion({
     this.createdAt = const Value.absent(),
@@ -342,6 +382,7 @@ class ProjectCompanion extends UpdateCompanion<ProjectData> {
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.description = const Value.absent(),
+    this.status = const Value.absent(),
     this.parentProjectId = const Value.absent(),
   });
   ProjectCompanion.insert({
@@ -350,14 +391,17 @@ class ProjectCompanion extends UpdateCompanion<ProjectData> {
     this.id = const Value.absent(),
     required String title,
     this.description = const Value.absent(),
+    required ProjectStatus status,
     this.parentProjectId = const Value.absent(),
-  }) : title = Value(title);
+  }) : title = Value(title),
+       status = Value(status);
   static Insertable<ProjectData> custom({
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? id,
     Expression<String>? title,
     Expression<String>? description,
+    Expression<String>? status,
     Expression<int>? parentProjectId,
   }) {
     return RawValuesInsertable({
@@ -366,6 +410,7 @@ class ProjectCompanion extends UpdateCompanion<ProjectData> {
       if (id != null) 'id': id,
       if (title != null) 'title': title,
       if (description != null) 'description': description,
+      if (status != null) 'status': status,
       if (parentProjectId != null) 'parent_project_id': parentProjectId,
     });
   }
@@ -376,6 +421,7 @@ class ProjectCompanion extends UpdateCompanion<ProjectData> {
     Value<int>? id,
     Value<String>? title,
     Value<String?>? description,
+    Value<ProjectStatus>? status,
     Value<int?>? parentProjectId,
   }) {
     return ProjectCompanion(
@@ -384,6 +430,7 @@ class ProjectCompanion extends UpdateCompanion<ProjectData> {
       id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,
+      status: status ?? this.status,
       parentProjectId: parentProjectId ?? this.parentProjectId,
     );
   }
@@ -406,6 +453,11 @@ class ProjectCompanion extends UpdateCompanion<ProjectData> {
     if (description.present) {
       map['description'] = Variable<String>(description.value);
     }
+    if (status.present) {
+      map['status'] = Variable<String>(
+        $ProjectTable.$converterstatus.toSql(status.value),
+      );
+    }
     if (parentProjectId.present) {
       map['parent_project_id'] = Variable<int>(parentProjectId.value);
     }
@@ -420,6 +472,7 @@ class ProjectCompanion extends UpdateCompanion<ProjectData> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
+          ..write('status: $status, ')
           ..write('parentProjectId: $parentProjectId')
           ..write(')'))
         .toString();
@@ -481,14 +534,14 @@ class $NoteTable extends Note with TableInfo<$NoteTable, NoteData> {
     requiredDuringInsert: true,
   );
   @override
-  late final GeneratedColumnWithTypeConverter<Category, String> category =
+  late final GeneratedColumnWithTypeConverter<NoteCategory, String> category =
       GeneratedColumn<String>(
         'category',
         aliasedName,
         false,
         type: DriftSqlType.string,
         requiredDuringInsert: true,
-      ).withConverter<Category>($NoteTable.$convertercategory);
+      ).withConverter<NoteCategory>($NoteTable.$convertercategory);
   static const VerificationMeta _descriptionMeta = const VerificationMeta(
     'description',
   );
@@ -621,8 +674,8 @@ class $NoteTable extends Note with TableInfo<$NoteTable, NoteData> {
     return $NoteTable(attachedDatabase, alias);
   }
 
-  static JsonTypeConverter2<Category, String, String> $convertercategory =
-      const EnumNameConverter<Category>(Category.values);
+  static JsonTypeConverter2<NoteCategory, String, String> $convertercategory =
+      const EnumNameConverter<NoteCategory>(NoteCategory.values);
 }
 
 class NoteData extends DataClass implements Insertable<NoteData> {
@@ -630,7 +683,7 @@ class NoteData extends DataClass implements Insertable<NoteData> {
   final DateTime? updatedAt;
   final int id;
   final String title;
-  final Category category;
+  final NoteCategory category;
   final String? description;
   final int? projectId;
   const NoteData({
@@ -721,7 +774,7 @@ class NoteData extends DataClass implements Insertable<NoteData> {
     Value<DateTime?> updatedAt = const Value.absent(),
     int? id,
     String? title,
-    Category? category,
+    NoteCategory? category,
     Value<String?> description = const Value.absent(),
     Value<int?> projectId = const Value.absent(),
   }) => NoteData(
@@ -789,7 +842,7 @@ class NoteCompanion extends UpdateCompanion<NoteData> {
   final Value<DateTime?> updatedAt;
   final Value<int> id;
   final Value<String> title;
-  final Value<Category> category;
+  final Value<NoteCategory> category;
   final Value<String?> description;
   final Value<int?> projectId;
   const NoteCompanion({
@@ -806,7 +859,7 @@ class NoteCompanion extends UpdateCompanion<NoteData> {
     this.updatedAt = const Value.absent(),
     this.id = const Value.absent(),
     required String title,
-    required Category category,
+    required NoteCategory category,
     this.description = const Value.absent(),
     this.projectId = const Value.absent(),
   }) : title = Value(title),
@@ -836,7 +889,7 @@ class NoteCompanion extends UpdateCompanion<NoteData> {
     Value<DateTime?>? updatedAt,
     Value<int>? id,
     Value<String>? title,
-    Value<Category>? category,
+    Value<NoteCategory>? category,
     Value<String?>? description,
     Value<int?>? projectId,
   }) {
@@ -1084,11 +1137,263 @@ class TagCompanion extends UpdateCompanion<TagData> {
   }
 }
 
-class $TagLinksTable extends TagLinks with TableInfo<$TagLinksTable, TagLink> {
+class $NoteTagTable extends NoteTag with TableInfo<$NoteTagTable, NoteTagData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TagLinksTable(this.attachedDatabase, [this._alias]);
+  $NoteTagTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _noteIdMeta = const VerificationMeta('noteId');
+  @override
+  late final GeneratedColumn<int> noteId = GeneratedColumn<int>(
+    'note_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES note (id)',
+    ),
+  );
+  static const VerificationMeta _tagIdMeta = const VerificationMeta('tagId');
+  @override
+  late final GeneratedColumn<int> tagId = GeneratedColumn<int>(
+    'tag_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES tag (id)',
+    ),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, noteId, tagId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'note_tag';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<NoteTagData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('note_id')) {
+      context.handle(
+        _noteIdMeta,
+        noteId.isAcceptableOrUnknown(data['note_id']!, _noteIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_noteIdMeta);
+    }
+    if (data.containsKey('tag_id')) {
+      context.handle(
+        _tagIdMeta,
+        tagId.isAcceptableOrUnknown(data['tag_id']!, _tagIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_tagIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  NoteTagData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return NoteTagData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      noteId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}note_id'],
+      )!,
+      tagId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}tag_id'],
+      )!,
+    );
+  }
+
+  @override
+  $NoteTagTable createAlias(String alias) {
+    return $NoteTagTable(attachedDatabase, alias);
+  }
+}
+
+class NoteTagData extends DataClass implements Insertable<NoteTagData> {
+  final int id;
+  final int noteId;
+  final int tagId;
+  const NoteTagData({
+    required this.id,
+    required this.noteId,
+    required this.tagId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['note_id'] = Variable<int>(noteId);
+    map['tag_id'] = Variable<int>(tagId);
+    return map;
+  }
+
+  NoteTagCompanion toCompanion(bool nullToAbsent) {
+    return NoteTagCompanion(
+      id: Value(id),
+      noteId: Value(noteId),
+      tagId: Value(tagId),
+    );
+  }
+
+  factory NoteTagData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return NoteTagData(
+      id: serializer.fromJson<int>(json['id']),
+      noteId: serializer.fromJson<int>(json['noteId']),
+      tagId: serializer.fromJson<int>(json['tagId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'noteId': serializer.toJson<int>(noteId),
+      'tagId': serializer.toJson<int>(tagId),
+    };
+  }
+
+  NoteTagData copyWith({int? id, int? noteId, int? tagId}) => NoteTagData(
+    id: id ?? this.id,
+    noteId: noteId ?? this.noteId,
+    tagId: tagId ?? this.tagId,
+  );
+  NoteTagData copyWithCompanion(NoteTagCompanion data) {
+    return NoteTagData(
+      id: data.id.present ? data.id.value : this.id,
+      noteId: data.noteId.present ? data.noteId.value : this.noteId,
+      tagId: data.tagId.present ? data.tagId.value : this.tagId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NoteTagData(')
+          ..write('id: $id, ')
+          ..write('noteId: $noteId, ')
+          ..write('tagId: $tagId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, noteId, tagId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is NoteTagData &&
+          other.id == this.id &&
+          other.noteId == this.noteId &&
+          other.tagId == this.tagId);
+}
+
+class NoteTagCompanion extends UpdateCompanion<NoteTagData> {
+  final Value<int> id;
+  final Value<int> noteId;
+  final Value<int> tagId;
+  const NoteTagCompanion({
+    this.id = const Value.absent(),
+    this.noteId = const Value.absent(),
+    this.tagId = const Value.absent(),
+  });
+  NoteTagCompanion.insert({
+    this.id = const Value.absent(),
+    required int noteId,
+    required int tagId,
+  }) : noteId = Value(noteId),
+       tagId = Value(tagId);
+  static Insertable<NoteTagData> custom({
+    Expression<int>? id,
+    Expression<int>? noteId,
+    Expression<int>? tagId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (noteId != null) 'note_id': noteId,
+      if (tagId != null) 'tag_id': tagId,
+    });
+  }
+
+  NoteTagCompanion copyWith({
+    Value<int>? id,
+    Value<int>? noteId,
+    Value<int>? tagId,
+  }) {
+    return NoteTagCompanion(
+      id: id ?? this.id,
+      noteId: noteId ?? this.noteId,
+      tagId: tagId ?? this.tagId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (noteId.present) {
+      map['note_id'] = Variable<int>(noteId.value);
+    }
+    if (tagId.present) {
+      map['tag_id'] = Variable<int>(tagId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NoteTagCompanion(')
+          ..write('id: $id, ')
+          ..write('noteId: $noteId, ')
+          ..write('tagId: $tagId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ProjectTagTable extends ProjectTag
+    with TableInfo<$ProjectTagTable, ProjectTagData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ProjectTagTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -1109,23 +1414,11 @@ class $TagLinksTable extends TagLinks with TableInfo<$TagLinksTable, TagLink> {
   late final GeneratedColumn<int> projectId = GeneratedColumn<int>(
     'project_id',
     aliasedName,
-    true,
+    false,
     type: DriftSqlType.int,
-    requiredDuringInsert: false,
+    requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'REFERENCES project (id)',
-    ),
-  );
-  static const VerificationMeta _noteIdMeta = const VerificationMeta('noteId');
-  @override
-  late final GeneratedColumn<int> noteId = GeneratedColumn<int>(
-    'note_id',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES note (id)',
     ),
   );
   static const VerificationMeta _tagIdMeta = const VerificationMeta('tagId');
@@ -1141,15 +1434,15 @@ class $TagLinksTable extends TagLinks with TableInfo<$TagLinksTable, TagLink> {
     ),
   );
   @override
-  List<GeneratedColumn> get $columns => [id, projectId, noteId, tagId];
+  List<GeneratedColumn> get $columns => [id, projectId, tagId];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'tag_links';
+  static const String $name = 'project_tag';
   @override
   VerificationContext validateIntegrity(
-    Insertable<TagLink> instance, {
+    Insertable<ProjectTagData> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -1162,12 +1455,8 @@ class $TagLinksTable extends TagLinks with TableInfo<$TagLinksTable, TagLink> {
         _projectIdMeta,
         projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
       );
-    }
-    if (data.containsKey('note_id')) {
-      context.handle(
-        _noteIdMeta,
-        noteId.isAcceptableOrUnknown(data['note_id']!, _noteIdMeta),
-      );
+    } else if (isInserting) {
+      context.missing(_projectIdMeta);
     }
     if (data.containsKey('tag_id')) {
       context.handle(
@@ -1183,14 +1472,9 @@ class $TagLinksTable extends TagLinks with TableInfo<$TagLinksTable, TagLink> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  List<Set<GeneratedColumn>> get uniqueKeys => [
-    {projectId, tagId},
-    {noteId, tagId},
-  ];
-  @override
-  TagLink map(Map<String, dynamic> data, {String? tablePrefix}) {
+  ProjectTagData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return TagLink(
+    return ProjectTagData(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -1198,11 +1482,7 @@ class $TagLinksTable extends TagLinks with TableInfo<$TagLinksTable, TagLink> {
       projectId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}project_id'],
-      ),
-      noteId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}note_id'],
-      ),
+      )!,
       tagId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}tag_id'],
@@ -1211,58 +1491,45 @@ class $TagLinksTable extends TagLinks with TableInfo<$TagLinksTable, TagLink> {
   }
 
   @override
-  $TagLinksTable createAlias(String alias) {
-    return $TagLinksTable(attachedDatabase, alias);
+  $ProjectTagTable createAlias(String alias) {
+    return $ProjectTagTable(attachedDatabase, alias);
   }
 }
 
-class TagLink extends DataClass implements Insertable<TagLink> {
+class ProjectTagData extends DataClass implements Insertable<ProjectTagData> {
   final int id;
-  final int? projectId;
-  final int? noteId;
+  final int projectId;
   final int tagId;
-  const TagLink({
+  const ProjectTagData({
     required this.id,
-    this.projectId,
-    this.noteId,
+    required this.projectId,
     required this.tagId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    if (!nullToAbsent || projectId != null) {
-      map['project_id'] = Variable<int>(projectId);
-    }
-    if (!nullToAbsent || noteId != null) {
-      map['note_id'] = Variable<int>(noteId);
-    }
+    map['project_id'] = Variable<int>(projectId);
     map['tag_id'] = Variable<int>(tagId);
     return map;
   }
 
-  TagLinksCompanion toCompanion(bool nullToAbsent) {
-    return TagLinksCompanion(
+  ProjectTagCompanion toCompanion(bool nullToAbsent) {
+    return ProjectTagCompanion(
       id: Value(id),
-      projectId: projectId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(projectId),
-      noteId: noteId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(noteId),
+      projectId: Value(projectId),
       tagId: Value(tagId),
     );
   }
 
-  factory TagLink.fromJson(
+  factory ProjectTagData.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return TagLink(
+    return ProjectTagData(
       id: serializer.fromJson<int>(json['id']),
-      projectId: serializer.fromJson<int?>(json['projectId']),
-      noteId: serializer.fromJson<int?>(json['noteId']),
+      projectId: serializer.fromJson<int>(json['projectId']),
       tagId: serializer.fromJson<int>(json['tagId']),
     );
   }
@@ -1271,96 +1538,81 @@ class TagLink extends DataClass implements Insertable<TagLink> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'projectId': serializer.toJson<int?>(projectId),
-      'noteId': serializer.toJson<int?>(noteId),
+      'projectId': serializer.toJson<int>(projectId),
       'tagId': serializer.toJson<int>(tagId),
     };
   }
 
-  TagLink copyWith({
-    int? id,
-    Value<int?> projectId = const Value.absent(),
-    Value<int?> noteId = const Value.absent(),
-    int? tagId,
-  }) => TagLink(
-    id: id ?? this.id,
-    projectId: projectId.present ? projectId.value : this.projectId,
-    noteId: noteId.present ? noteId.value : this.noteId,
-    tagId: tagId ?? this.tagId,
-  );
-  TagLink copyWithCompanion(TagLinksCompanion data) {
-    return TagLink(
+  ProjectTagData copyWith({int? id, int? projectId, int? tagId}) =>
+      ProjectTagData(
+        id: id ?? this.id,
+        projectId: projectId ?? this.projectId,
+        tagId: tagId ?? this.tagId,
+      );
+  ProjectTagData copyWithCompanion(ProjectTagCompanion data) {
+    return ProjectTagData(
       id: data.id.present ? data.id.value : this.id,
       projectId: data.projectId.present ? data.projectId.value : this.projectId,
-      noteId: data.noteId.present ? data.noteId.value : this.noteId,
       tagId: data.tagId.present ? data.tagId.value : this.tagId,
     );
   }
 
   @override
   String toString() {
-    return (StringBuffer('TagLink(')
+    return (StringBuffer('ProjectTagData(')
           ..write('id: $id, ')
           ..write('projectId: $projectId, ')
-          ..write('noteId: $noteId, ')
           ..write('tagId: $tagId')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, projectId, noteId, tagId);
+  int get hashCode => Object.hash(id, projectId, tagId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is TagLink &&
+      (other is ProjectTagData &&
           other.id == this.id &&
           other.projectId == this.projectId &&
-          other.noteId == this.noteId &&
           other.tagId == this.tagId);
 }
 
-class TagLinksCompanion extends UpdateCompanion<TagLink> {
+class ProjectTagCompanion extends UpdateCompanion<ProjectTagData> {
   final Value<int> id;
-  final Value<int?> projectId;
-  final Value<int?> noteId;
+  final Value<int> projectId;
   final Value<int> tagId;
-  const TagLinksCompanion({
+  const ProjectTagCompanion({
     this.id = const Value.absent(),
     this.projectId = const Value.absent(),
-    this.noteId = const Value.absent(),
     this.tagId = const Value.absent(),
   });
-  TagLinksCompanion.insert({
+  ProjectTagCompanion.insert({
     this.id = const Value.absent(),
-    this.projectId = const Value.absent(),
-    this.noteId = const Value.absent(),
+    required int projectId,
     required int tagId,
-  }) : tagId = Value(tagId);
-  static Insertable<TagLink> custom({
+  }) : projectId = Value(projectId),
+       tagId = Value(tagId);
+  static Insertable<ProjectTagData> custom({
     Expression<int>? id,
     Expression<int>? projectId,
-    Expression<int>? noteId,
     Expression<int>? tagId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (projectId != null) 'project_id': projectId,
-      if (noteId != null) 'note_id': noteId,
       if (tagId != null) 'tag_id': tagId,
     });
   }
 
-  TagLinksCompanion copyWith({
+  ProjectTagCompanion copyWith({
     Value<int>? id,
-    Value<int?>? projectId,
-    Value<int?>? noteId,
+    Value<int>? projectId,
     Value<int>? tagId,
   }) {
-    return TagLinksCompanion(
+    return ProjectTagCompanion(
       id: id ?? this.id,
       projectId: projectId ?? this.projectId,
-      noteId: noteId ?? this.noteId,
       tagId: tagId ?? this.tagId,
     );
   }
@@ -1374,9 +1626,6 @@ class TagLinksCompanion extends UpdateCompanion<TagLink> {
     if (projectId.present) {
       map['project_id'] = Variable<int>(projectId.value);
     }
-    if (noteId.present) {
-      map['note_id'] = Variable<int>(noteId.value);
-    }
     if (tagId.present) {
       map['tag_id'] = Variable<int>(tagId.value);
     }
@@ -1385,10 +1634,9 @@ class TagLinksCompanion extends UpdateCompanion<TagLink> {
 
   @override
   String toString() {
-    return (StringBuffer('TagLinksCompanion(')
+    return (StringBuffer('ProjectTagCompanion(')
           ..write('id: $id, ')
           ..write('projectId: $projectId, ')
-          ..write('noteId: $noteId, ')
           ..write('tagId: $tagId')
           ..write(')'))
         .toString();
@@ -1401,7 +1649,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $ProjectTable project = $ProjectTable(this);
   late final $NoteTable note = $NoteTable(this);
   late final $TagTable tag = $TagTable(this);
-  late final $TagLinksTable tagLinks = $TagLinksTable(this);
+  late final $NoteTagTable noteTag = $NoteTagTable(this);
+  late final $ProjectTagTable projectTag = $ProjectTagTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1410,7 +1659,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     project,
     note,
     tag,
-    tagLinks,
+    noteTag,
+    projectTag,
   ];
 }
 
@@ -1421,6 +1671,7 @@ typedef $$ProjectTableCreateCompanionBuilder =
       Value<int> id,
       required String title,
       Value<String?> description,
+      required ProjectStatus status,
       Value<int?> parentProjectId,
     });
 typedef $$ProjectTableUpdateCompanionBuilder =
@@ -1430,6 +1681,7 @@ typedef $$ProjectTableUpdateCompanionBuilder =
       Value<int> id,
       Value<String> title,
       Value<String?> description,
+      Value<ProjectStatus> status,
       Value<int?> parentProjectId,
     });
 
@@ -1475,20 +1727,19 @@ final class $$ProjectTableReferences
     );
   }
 
-  static MultiTypedResultKey<$TagLinksTable, List<TagLink>> _tagLinksRefsTable(
-    _$AppDatabase db,
-  ) => MultiTypedResultKey.fromTable(
-    db.tagLinks,
-    aliasName: $_aliasNameGenerator(db.project.id, db.tagLinks.projectId),
+  static MultiTypedResultKey<$ProjectTagTable, List<ProjectTagData>>
+  _projectTagRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.projectTag,
+    aliasName: $_aliasNameGenerator(db.project.id, db.projectTag.projectId),
   );
 
-  $$TagLinksTableProcessedTableManager get tagLinksRefs {
-    final manager = $$TagLinksTableTableManager(
+  $$ProjectTagTableProcessedTableManager get projectTagRefs {
+    final manager = $$ProjectTagTableTableManager(
       $_db,
-      $_db.tagLinks,
+      $_db.projectTag,
     ).filter((f) => f.projectId.id.sqlEquals($_itemColumn<int>('id')!));
 
-    final cache = $_typedResult.readTableOrNull(_tagLinksRefsTable($_db));
+    final cache = $_typedResult.readTableOrNull(_projectTagRefsTable($_db));
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -1527,6 +1778,12 @@ class $$ProjectTableFilterComposer
   ColumnFilters<String> get description => $composableBuilder(
     column: $table.description,
     builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<ProjectStatus, ProjectStatus, String>
+  get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
   $$ProjectTableFilterComposer get parentProjectId {
@@ -1577,22 +1834,22 @@ class $$ProjectTableFilterComposer
     return f(composer);
   }
 
-  Expression<bool> tagLinksRefs(
-    Expression<bool> Function($$TagLinksTableFilterComposer f) f,
+  Expression<bool> projectTagRefs(
+    Expression<bool> Function($$ProjectTagTableFilterComposer f) f,
   ) {
-    final $$TagLinksTableFilterComposer composer = $composerBuilder(
+    final $$ProjectTagTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.tagLinks,
+      referencedTable: $db.projectTag,
       getReferencedColumn: (t) => t.projectId,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$TagLinksTableFilterComposer(
+          }) => $$ProjectTagTableFilterComposer(
             $db: $db,
-            $table: $db.tagLinks,
+            $table: $db.projectTag,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -1634,6 +1891,11 @@ class $$ProjectTableOrderingComposer
 
   ColumnOrderings<String> get description => $composableBuilder(
     column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -1687,6 +1949,9 @@ class $$ProjectTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumnWithTypeConverter<ProjectStatus, String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
   $$ProjectTableAnnotationComposer get parentProjectId {
     final $$ProjectTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -1735,22 +2000,22 @@ class $$ProjectTableAnnotationComposer
     return f(composer);
   }
 
-  Expression<T> tagLinksRefs<T extends Object>(
-    Expression<T> Function($$TagLinksTableAnnotationComposer a) f,
+  Expression<T> projectTagRefs<T extends Object>(
+    Expression<T> Function($$ProjectTagTableAnnotationComposer a) f,
   ) {
-    final $$TagLinksTableAnnotationComposer composer = $composerBuilder(
+    final $$ProjectTagTableAnnotationComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.tagLinks,
+      referencedTable: $db.projectTag,
       getReferencedColumn: (t) => t.projectId,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$TagLinksTableAnnotationComposer(
+          }) => $$ProjectTagTableAnnotationComposer(
             $db: $db,
-            $table: $db.tagLinks,
+            $table: $db.projectTag,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -1777,7 +2042,7 @@ class $$ProjectTableTableManager
           PrefetchHooks Function({
             bool parentProjectId,
             bool noteRefs,
-            bool tagLinksRefs,
+            bool projectTagRefs,
           })
         > {
   $$ProjectTableTableManager(_$AppDatabase db, $ProjectTable table)
@@ -1798,6 +2063,7 @@ class $$ProjectTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String?> description = const Value.absent(),
+                Value<ProjectStatus> status = const Value.absent(),
                 Value<int?> parentProjectId = const Value.absent(),
               }) => ProjectCompanion(
                 createdAt: createdAt,
@@ -1805,6 +2071,7 @@ class $$ProjectTableTableManager
                 id: id,
                 title: title,
                 description: description,
+                status: status,
                 parentProjectId: parentProjectId,
               ),
           createCompanionCallback:
@@ -1814,6 +2081,7 @@ class $$ProjectTableTableManager
                 Value<int> id = const Value.absent(),
                 required String title,
                 Value<String?> description = const Value.absent(),
+                required ProjectStatus status,
                 Value<int?> parentProjectId = const Value.absent(),
               }) => ProjectCompanion.insert(
                 createdAt: createdAt,
@@ -1821,6 +2089,7 @@ class $$ProjectTableTableManager
                 id: id,
                 title: title,
                 description: description,
+                status: status,
                 parentProjectId: parentProjectId,
               ),
           withReferenceMapper: (p0) => p0
@@ -1835,13 +2104,13 @@ class $$ProjectTableTableManager
               ({
                 parentProjectId = false,
                 noteRefs = false,
-                tagLinksRefs = false,
+                projectTagRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (noteRefs) db.note,
-                    if (tagLinksRefs) db.tagLinks,
+                    if (projectTagRefs) db.projectTag,
                   ],
                   addJoins:
                       <
@@ -1894,21 +2163,21 @@ class $$ProjectTableTableManager
                               ),
                           typedResults: items,
                         ),
-                      if (tagLinksRefs)
+                      if (projectTagRefs)
                         await $_getPrefetchedData<
                           ProjectData,
                           $ProjectTable,
-                          TagLink
+                          ProjectTagData
                         >(
                           currentTable: table,
                           referencedTable: $$ProjectTableReferences
-                              ._tagLinksRefsTable(db),
+                              ._projectTagRefsTable(db),
                           managerFromTypedResult: (p0) =>
                               $$ProjectTableReferences(
                                 db,
                                 table,
                                 p0,
-                              ).tagLinksRefs,
+                              ).projectTagRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
                                 (e) => e.projectId == item.id,
@@ -1938,7 +2207,7 @@ typedef $$ProjectTableProcessedTableManager =
       PrefetchHooks Function({
         bool parentProjectId,
         bool noteRefs,
-        bool tagLinksRefs,
+        bool projectTagRefs,
       })
     >;
 typedef $$NoteTableCreateCompanionBuilder =
@@ -1947,7 +2216,7 @@ typedef $$NoteTableCreateCompanionBuilder =
       Value<DateTime?> updatedAt,
       Value<int> id,
       required String title,
-      required Category category,
+      required NoteCategory category,
       Value<String?> description,
       Value<int?> projectId,
     });
@@ -1957,7 +2226,7 @@ typedef $$NoteTableUpdateCompanionBuilder =
       Value<DateTime?> updatedAt,
       Value<int> id,
       Value<String> title,
-      Value<Category> category,
+      Value<NoteCategory> category,
       Value<String?> description,
       Value<int?> projectId,
     });
@@ -1983,20 +2252,19 @@ final class $$NoteTableReferences
     );
   }
 
-  static MultiTypedResultKey<$TagLinksTable, List<TagLink>> _tagLinksRefsTable(
-    _$AppDatabase db,
-  ) => MultiTypedResultKey.fromTable(
-    db.tagLinks,
-    aliasName: $_aliasNameGenerator(db.note.id, db.tagLinks.noteId),
+  static MultiTypedResultKey<$NoteTagTable, List<NoteTagData>>
+  _noteTagRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.noteTag,
+    aliasName: $_aliasNameGenerator(db.note.id, db.noteTag.noteId),
   );
 
-  $$TagLinksTableProcessedTableManager get tagLinksRefs {
-    final manager = $$TagLinksTableTableManager(
+  $$NoteTagTableProcessedTableManager get noteTagRefs {
+    final manager = $$NoteTagTableTableManager(
       $_db,
-      $_db.tagLinks,
+      $_db.noteTag,
     ).filter((f) => f.noteId.id.sqlEquals($_itemColumn<int>('id')!));
 
-    final cache = $_typedResult.readTableOrNull(_tagLinksRefsTable($_db));
+    final cache = $_typedResult.readTableOrNull(_noteTagRefsTable($_db));
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -2031,11 +2299,11 @@ class $$NoteTableFilterComposer extends Composer<_$AppDatabase, $NoteTable> {
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnWithTypeConverterFilters<Category, Category, String> get category =>
-      $composableBuilder(
-        column: $table.category,
-        builder: (column) => ColumnWithTypeConverterFilters(column),
-      );
+  ColumnWithTypeConverterFilters<NoteCategory, NoteCategory, String>
+  get category => $composableBuilder(
+    column: $table.category,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
 
   ColumnFilters<String> get description => $composableBuilder(
     column: $table.description,
@@ -2065,22 +2333,22 @@ class $$NoteTableFilterComposer extends Composer<_$AppDatabase, $NoteTable> {
     return composer;
   }
 
-  Expression<bool> tagLinksRefs(
-    Expression<bool> Function($$TagLinksTableFilterComposer f) f,
+  Expression<bool> noteTagRefs(
+    Expression<bool> Function($$NoteTagTableFilterComposer f) f,
   ) {
-    final $$TagLinksTableFilterComposer composer = $composerBuilder(
+    final $$NoteTagTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.tagLinks,
+      referencedTable: $db.noteTag,
       getReferencedColumn: (t) => t.noteId,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$TagLinksTableFilterComposer(
+          }) => $$NoteTagTableFilterComposer(
             $db: $db,
-            $table: $db.tagLinks,
+            $table: $db.noteTag,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -2174,7 +2442,7 @@ class $$NoteTableAnnotationComposer
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
-  GeneratedColumnWithTypeConverter<Category, String> get category =>
+  GeneratedColumnWithTypeConverter<NoteCategory, String> get category =>
       $composableBuilder(column: $table.category, builder: (column) => column);
 
   GeneratedColumn<String> get description => $composableBuilder(
@@ -2205,22 +2473,22 @@ class $$NoteTableAnnotationComposer
     return composer;
   }
 
-  Expression<T> tagLinksRefs<T extends Object>(
-    Expression<T> Function($$TagLinksTableAnnotationComposer a) f,
+  Expression<T> noteTagRefs<T extends Object>(
+    Expression<T> Function($$NoteTagTableAnnotationComposer a) f,
   ) {
-    final $$TagLinksTableAnnotationComposer composer = $composerBuilder(
+    final $$NoteTagTableAnnotationComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.tagLinks,
+      referencedTable: $db.noteTag,
       getReferencedColumn: (t) => t.noteId,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$TagLinksTableAnnotationComposer(
+          }) => $$NoteTagTableAnnotationComposer(
             $db: $db,
-            $table: $db.tagLinks,
+            $table: $db.noteTag,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -2244,7 +2512,7 @@ class $$NoteTableTableManager
           $$NoteTableUpdateCompanionBuilder,
           (NoteData, $$NoteTableReferences),
           NoteData,
-          PrefetchHooks Function({bool projectId, bool tagLinksRefs})
+          PrefetchHooks Function({bool projectId, bool noteTagRefs})
         > {
   $$NoteTableTableManager(_$AppDatabase db, $NoteTable table)
     : super(
@@ -2263,7 +2531,7 @@ class $$NoteTableTableManager
                 Value<DateTime?> updatedAt = const Value.absent(),
                 Value<int> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
-                Value<Category> category = const Value.absent(),
+                Value<NoteCategory> category = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<int?> projectId = const Value.absent(),
               }) => NoteCompanion(
@@ -2281,7 +2549,7 @@ class $$NoteTableTableManager
                 Value<DateTime?> updatedAt = const Value.absent(),
                 Value<int> id = const Value.absent(),
                 required String title,
-                required Category category,
+                required NoteCategory category,
                 Value<String?> description = const Value.absent(),
                 Value<int?> projectId = const Value.absent(),
               }) => NoteCompanion.insert(
@@ -2299,10 +2567,10 @@ class $$NoteTableTableManager
                     (e.readTable(table), $$NoteTableReferences(db, table, e)),
               )
               .toList(),
-          prefetchHooksCallback: ({projectId = false, tagLinksRefs = false}) {
+          prefetchHooksCallback: ({projectId = false, noteTagRefs = false}) {
             return PrefetchHooks(
               db: db,
-              explicitlyWatchedTables: [if (tagLinksRefs) db.tagLinks],
+              explicitlyWatchedTables: [if (noteTagRefs) db.noteTag],
               addJoins:
                   <
                     T extends TableManagerState<
@@ -2337,14 +2605,18 @@ class $$NoteTableTableManager
                   },
               getPrefetchedDataCallback: (items) async {
                 return [
-                  if (tagLinksRefs)
-                    await $_getPrefetchedData<NoteData, $NoteTable, TagLink>(
+                  if (noteTagRefs)
+                    await $_getPrefetchedData<
+                      NoteData,
+                      $NoteTable,
+                      NoteTagData
+                    >(
                       currentTable: table,
-                      referencedTable: $$NoteTableReferences._tagLinksRefsTable(
+                      referencedTable: $$NoteTableReferences._noteTagRefsTable(
                         db,
                       ),
                       managerFromTypedResult: (p0) =>
-                          $$NoteTableReferences(db, table, p0).tagLinksRefs,
+                          $$NoteTableReferences(db, table, p0).noteTagRefs,
                       referencedItemsForCurrentItem: (item, referencedItems) =>
                           referencedItems.where((e) => e.noteId == item.id),
                       typedResults: items,
@@ -2369,7 +2641,7 @@ typedef $$NoteTableProcessedTableManager =
       $$NoteTableUpdateCompanionBuilder,
       (NoteData, $$NoteTableReferences),
       NoteData,
-      PrefetchHooks Function({bool projectId, bool tagLinksRefs})
+      PrefetchHooks Function({bool projectId, bool noteTagRefs})
     >;
 typedef $$TagTableCreateCompanionBuilder =
     TagCompanion Function({Value<int> id, required String title});
@@ -2380,20 +2652,37 @@ final class $$TagTableReferences
     extends BaseReferences<_$AppDatabase, $TagTable, TagData> {
   $$TagTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static MultiTypedResultKey<$TagLinksTable, List<TagLink>> _tagLinksRefsTable(
-    _$AppDatabase db,
-  ) => MultiTypedResultKey.fromTable(
-    db.tagLinks,
-    aliasName: $_aliasNameGenerator(db.tag.id, db.tagLinks.tagId),
+  static MultiTypedResultKey<$NoteTagTable, List<NoteTagData>>
+  _noteTagRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.noteTag,
+    aliasName: $_aliasNameGenerator(db.tag.id, db.noteTag.tagId),
   );
 
-  $$TagLinksTableProcessedTableManager get tagLinksRefs {
-    final manager = $$TagLinksTableTableManager(
+  $$NoteTagTableProcessedTableManager get noteTagRefs {
+    final manager = $$NoteTagTableTableManager(
       $_db,
-      $_db.tagLinks,
+      $_db.noteTag,
     ).filter((f) => f.tagId.id.sqlEquals($_itemColumn<int>('id')!));
 
-    final cache = $_typedResult.readTableOrNull(_tagLinksRefsTable($_db));
+    final cache = $_typedResult.readTableOrNull(_noteTagRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$ProjectTagTable, List<ProjectTagData>>
+  _projectTagRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.projectTag,
+    aliasName: $_aliasNameGenerator(db.tag.id, db.projectTag.tagId),
+  );
+
+  $$ProjectTagTableProcessedTableManager get projectTagRefs {
+    final manager = $$ProjectTagTableTableManager(
+      $_db,
+      $_db.projectTag,
+    ).filter((f) => f.tagId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_projectTagRefsTable($_db));
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -2418,22 +2707,47 @@ class $$TagTableFilterComposer extends Composer<_$AppDatabase, $TagTable> {
     builder: (column) => ColumnFilters(column),
   );
 
-  Expression<bool> tagLinksRefs(
-    Expression<bool> Function($$TagLinksTableFilterComposer f) f,
+  Expression<bool> noteTagRefs(
+    Expression<bool> Function($$NoteTagTableFilterComposer f) f,
   ) {
-    final $$TagLinksTableFilterComposer composer = $composerBuilder(
+    final $$NoteTagTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.tagLinks,
+      referencedTable: $db.noteTag,
       getReferencedColumn: (t) => t.tagId,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$TagLinksTableFilterComposer(
+          }) => $$NoteTagTableFilterComposer(
             $db: $db,
-            $table: $db.tagLinks,
+            $table: $db.noteTag,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> projectTagRefs(
+    Expression<bool> Function($$ProjectTagTableFilterComposer f) f,
+  ) {
+    final $$ProjectTagTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.projectTag,
+      getReferencedColumn: (t) => t.tagId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectTagTableFilterComposer(
+            $db: $db,
+            $table: $db.projectTag,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -2477,22 +2791,47 @@ class $$TagTableAnnotationComposer extends Composer<_$AppDatabase, $TagTable> {
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
-  Expression<T> tagLinksRefs<T extends Object>(
-    Expression<T> Function($$TagLinksTableAnnotationComposer a) f,
+  Expression<T> noteTagRefs<T extends Object>(
+    Expression<T> Function($$NoteTagTableAnnotationComposer a) f,
   ) {
-    final $$TagLinksTableAnnotationComposer composer = $composerBuilder(
+    final $$NoteTagTableAnnotationComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.tagLinks,
+      referencedTable: $db.noteTag,
       getReferencedColumn: (t) => t.tagId,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$TagLinksTableAnnotationComposer(
+          }) => $$NoteTagTableAnnotationComposer(
             $db: $db,
-            $table: $db.tagLinks,
+            $table: $db.noteTag,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> projectTagRefs<T extends Object>(
+    Expression<T> Function($$ProjectTagTableAnnotationComposer a) f,
+  ) {
+    final $$ProjectTagTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.projectTag,
+      getReferencedColumn: (t) => t.tagId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectTagTableAnnotationComposer(
+            $db: $db,
+            $table: $db.projectTag,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -2516,7 +2855,7 @@ class $$TagTableTableManager
           $$TagTableUpdateCompanionBuilder,
           (TagData, $$TagTableReferences),
           TagData,
-          PrefetchHooks Function({bool tagLinksRefs})
+          PrefetchHooks Function({bool noteTagRefs, bool projectTagRefs})
         > {
   $$TagTableTableManager(_$AppDatabase db, $TagTable table)
     : super(
@@ -2542,29 +2881,58 @@ class $$TagTableTableManager
                 (e) => (e.readTable(table), $$TagTableReferences(db, table, e)),
               )
               .toList(),
-          prefetchHooksCallback: ({tagLinksRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [if (tagLinksRefs) db.tagLinks],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (tagLinksRefs)
-                    await $_getPrefetchedData<TagData, $TagTable, TagLink>(
-                      currentTable: table,
-                      referencedTable: $$TagTableReferences._tagLinksRefsTable(
-                        db,
-                      ),
-                      managerFromTypedResult: (p0) =>
-                          $$TagTableReferences(db, table, p0).tagLinksRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.tagId == item.id),
-                      typedResults: items,
-                    ),
-                ];
+          prefetchHooksCallback:
+              ({noteTagRefs = false, projectTagRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (noteTagRefs) db.noteTag,
+                    if (projectTagRefs) db.projectTag,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (noteTagRefs)
+                        await $_getPrefetchedData<
+                          TagData,
+                          $TagTable,
+                          NoteTagData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$TagTableReferences
+                              ._noteTagRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$TagTableReferences(db, table, p0).noteTagRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.tagId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (projectTagRefs)
+                        await $_getPrefetchedData<
+                          TagData,
+                          $TagTable,
+                          ProjectTagData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$TagTableReferences
+                              ._projectTagRefsTable(db),
+                          managerFromTypedResult: (p0) => $$TagTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).projectTagRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.tagId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -2581,50 +2949,31 @@ typedef $$TagTableProcessedTableManager =
       $$TagTableUpdateCompanionBuilder,
       (TagData, $$TagTableReferences),
       TagData,
-      PrefetchHooks Function({bool tagLinksRefs})
+      PrefetchHooks Function({bool noteTagRefs, bool projectTagRefs})
     >;
-typedef $$TagLinksTableCreateCompanionBuilder =
-    TagLinksCompanion Function({
+typedef $$NoteTagTableCreateCompanionBuilder =
+    NoteTagCompanion Function({
       Value<int> id,
-      Value<int?> projectId,
-      Value<int?> noteId,
+      required int noteId,
       required int tagId,
     });
-typedef $$TagLinksTableUpdateCompanionBuilder =
-    TagLinksCompanion Function({
+typedef $$NoteTagTableUpdateCompanionBuilder =
+    NoteTagCompanion Function({
       Value<int> id,
-      Value<int?> projectId,
-      Value<int?> noteId,
+      Value<int> noteId,
       Value<int> tagId,
     });
 
-final class $$TagLinksTableReferences
-    extends BaseReferences<_$AppDatabase, $TagLinksTable, TagLink> {
-  $$TagLinksTableReferences(super.$_db, super.$_table, super.$_typedResult);
-
-  static $ProjectTable _projectIdTable(_$AppDatabase db) => db.project
-      .createAlias($_aliasNameGenerator(db.tagLinks.projectId, db.project.id));
-
-  $$ProjectTableProcessedTableManager? get projectId {
-    final $_column = $_itemColumn<int>('project_id');
-    if ($_column == null) return null;
-    final manager = $$ProjectTableTableManager(
-      $_db,
-      $_db.project,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_projectIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
+final class $$NoteTagTableReferences
+    extends BaseReferences<_$AppDatabase, $NoteTagTable, NoteTagData> {
+  $$NoteTagTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static $NoteTable _noteIdTable(_$AppDatabase db) =>
-      db.note.createAlias($_aliasNameGenerator(db.tagLinks.noteId, db.note.id));
+      db.note.createAlias($_aliasNameGenerator(db.noteTag.noteId, db.note.id));
 
-  $$NoteTableProcessedTableManager? get noteId {
-    final $_column = $_itemColumn<int>('note_id');
-    if ($_column == null) return null;
+  $$NoteTableProcessedTableManager get noteId {
+    final $_column = $_itemColumn<int>('note_id')!;
+
     final manager = $$NoteTableTableManager(
       $_db,
       $_db.note,
@@ -2637,7 +2986,7 @@ final class $$TagLinksTableReferences
   }
 
   static $TagTable _tagIdTable(_$AppDatabase db) =>
-      db.tag.createAlias($_aliasNameGenerator(db.tagLinks.tagId, db.tag.id));
+      db.tag.createAlias($_aliasNameGenerator(db.noteTag.tagId, db.tag.id));
 
   $$TagTableProcessedTableManager get tagId {
     final $_column = $_itemColumn<int>('tag_id')!;
@@ -2654,9 +3003,9 @@ final class $$TagLinksTableReferences
   }
 }
 
-class $$TagLinksTableFilterComposer
-    extends Composer<_$AppDatabase, $TagLinksTable> {
-  $$TagLinksTableFilterComposer({
+class $$NoteTagTableFilterComposer
+    extends Composer<_$AppDatabase, $NoteTagTable> {
+  $$NoteTagTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -2667,29 +3016,6 @@ class $$TagLinksTableFilterComposer
     column: $table.id,
     builder: (column) => ColumnFilters(column),
   );
-
-  $$ProjectTableFilterComposer get projectId {
-    final $$ProjectTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.projectId,
-      referencedTable: $db.project,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$ProjectTableFilterComposer(
-            $db: $db,
-            $table: $db.project,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
 
   $$NoteTableFilterComposer get noteId {
     final $$NoteTableFilterComposer composer = $composerBuilder(
@@ -2738,9 +3064,9 @@ class $$TagLinksTableFilterComposer
   }
 }
 
-class $$TagLinksTableOrderingComposer
-    extends Composer<_$AppDatabase, $TagLinksTable> {
-  $$TagLinksTableOrderingComposer({
+class $$NoteTagTableOrderingComposer
+    extends Composer<_$AppDatabase, $NoteTagTable> {
+  $$NoteTagTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -2751,29 +3077,6 @@ class $$TagLinksTableOrderingComposer
     column: $table.id,
     builder: (column) => ColumnOrderings(column),
   );
-
-  $$ProjectTableOrderingComposer get projectId {
-    final $$ProjectTableOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.projectId,
-      referencedTable: $db.project,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$ProjectTableOrderingComposer(
-            $db: $db,
-            $table: $db.project,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
 
   $$NoteTableOrderingComposer get noteId {
     final $$NoteTableOrderingComposer composer = $composerBuilder(
@@ -2822,9 +3125,9 @@ class $$TagLinksTableOrderingComposer
   }
 }
 
-class $$TagLinksTableAnnotationComposer
-    extends Composer<_$AppDatabase, $TagLinksTable> {
-  $$TagLinksTableAnnotationComposer({
+class $$NoteTagTableAnnotationComposer
+    extends Composer<_$AppDatabase, $NoteTagTable> {
+  $$NoteTagTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -2833,29 +3136,6 @@ class $$TagLinksTableAnnotationComposer
   });
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
-
-  $$ProjectTableAnnotationComposer get projectId {
-    final $$ProjectTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.projectId,
-      referencedTable: $db.project,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$ProjectTableAnnotationComposer(
-            $db: $db,
-            $table: $db.project,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
 
   $$NoteTableAnnotationComposer get noteId {
     final $$NoteTableAnnotationComposer composer = $composerBuilder(
@@ -2904,149 +3184,485 @@ class $$TagLinksTableAnnotationComposer
   }
 }
 
-class $$TagLinksTableTableManager
+class $$NoteTagTableTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $TagLinksTable,
-          TagLink,
-          $$TagLinksTableFilterComposer,
-          $$TagLinksTableOrderingComposer,
-          $$TagLinksTableAnnotationComposer,
-          $$TagLinksTableCreateCompanionBuilder,
-          $$TagLinksTableUpdateCompanionBuilder,
-          (TagLink, $$TagLinksTableReferences),
-          TagLink,
-          PrefetchHooks Function({bool projectId, bool noteId, bool tagId})
+          $NoteTagTable,
+          NoteTagData,
+          $$NoteTagTableFilterComposer,
+          $$NoteTagTableOrderingComposer,
+          $$NoteTagTableAnnotationComposer,
+          $$NoteTagTableCreateCompanionBuilder,
+          $$NoteTagTableUpdateCompanionBuilder,
+          (NoteTagData, $$NoteTagTableReferences),
+          NoteTagData,
+          PrefetchHooks Function({bool noteId, bool tagId})
         > {
-  $$TagLinksTableTableManager(_$AppDatabase db, $TagLinksTable table)
+  $$NoteTagTableTableManager(_$AppDatabase db, $NoteTagTable table)
     : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$TagLinksTableFilterComposer($db: db, $table: table),
+              $$NoteTagTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$TagLinksTableOrderingComposer($db: db, $table: table),
+              $$NoteTagTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$TagLinksTableAnnotationComposer($db: db, $table: table),
+              $$NoteTagTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int?> projectId = const Value.absent(),
-                Value<int?> noteId = const Value.absent(),
+                Value<int> noteId = const Value.absent(),
                 Value<int> tagId = const Value.absent(),
-              }) => TagLinksCompanion(
+              }) => NoteTagCompanion(id: id, noteId: noteId, tagId: tagId),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int noteId,
+                required int tagId,
+              }) =>
+                  NoteTagCompanion.insert(id: id, noteId: noteId, tagId: tagId),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$NoteTagTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({noteId = false, tagId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (noteId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.noteId,
+                                referencedTable: $$NoteTagTableReferences
+                                    ._noteIdTable(db),
+                                referencedColumn: $$NoteTagTableReferences
+                                    ._noteIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+                    if (tagId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.tagId,
+                                referencedTable: $$NoteTagTableReferences
+                                    ._tagIdTable(db),
+                                referencedColumn: $$NoteTagTableReferences
+                                    ._tagIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$NoteTagTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $NoteTagTable,
+      NoteTagData,
+      $$NoteTagTableFilterComposer,
+      $$NoteTagTableOrderingComposer,
+      $$NoteTagTableAnnotationComposer,
+      $$NoteTagTableCreateCompanionBuilder,
+      $$NoteTagTableUpdateCompanionBuilder,
+      (NoteTagData, $$NoteTagTableReferences),
+      NoteTagData,
+      PrefetchHooks Function({bool noteId, bool tagId})
+    >;
+typedef $$ProjectTagTableCreateCompanionBuilder =
+    ProjectTagCompanion Function({
+      Value<int> id,
+      required int projectId,
+      required int tagId,
+    });
+typedef $$ProjectTagTableUpdateCompanionBuilder =
+    ProjectTagCompanion Function({
+      Value<int> id,
+      Value<int> projectId,
+      Value<int> tagId,
+    });
+
+final class $$ProjectTagTableReferences
+    extends BaseReferences<_$AppDatabase, $ProjectTagTable, ProjectTagData> {
+  $$ProjectTagTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $ProjectTable _projectIdTable(_$AppDatabase db) =>
+      db.project.createAlias(
+        $_aliasNameGenerator(db.projectTag.projectId, db.project.id),
+      );
+
+  $$ProjectTableProcessedTableManager get projectId {
+    final $_column = $_itemColumn<int>('project_id')!;
+
+    final manager = $$ProjectTableTableManager(
+      $_db,
+      $_db.project,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_projectIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $TagTable _tagIdTable(_$AppDatabase db) =>
+      db.tag.createAlias($_aliasNameGenerator(db.projectTag.tagId, db.tag.id));
+
+  $$TagTableProcessedTableManager get tagId {
+    final $_column = $_itemColumn<int>('tag_id')!;
+
+    final manager = $$TagTableTableManager(
+      $_db,
+      $_db.tag,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_tagIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$ProjectTagTableFilterComposer
+    extends Composer<_$AppDatabase, $ProjectTagTable> {
+  $$ProjectTagTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$ProjectTableFilterComposer get projectId {
+    final $$ProjectTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.project,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectTableFilterComposer(
+            $db: $db,
+            $table: $db.project,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$TagTableFilterComposer get tagId {
+    final $$TagTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.tagId,
+      referencedTable: $db.tag,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TagTableFilterComposer(
+            $db: $db,
+            $table: $db.tag,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ProjectTagTableOrderingComposer
+    extends Composer<_$AppDatabase, $ProjectTagTable> {
+  $$ProjectTagTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$ProjectTableOrderingComposer get projectId {
+    final $$ProjectTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.project,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectTableOrderingComposer(
+            $db: $db,
+            $table: $db.project,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$TagTableOrderingComposer get tagId {
+    final $$TagTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.tagId,
+      referencedTable: $db.tag,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TagTableOrderingComposer(
+            $db: $db,
+            $table: $db.tag,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ProjectTagTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ProjectTagTable> {
+  $$ProjectTagTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  $$ProjectTableAnnotationComposer get projectId {
+    final $$ProjectTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.projectId,
+      referencedTable: $db.project,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectTableAnnotationComposer(
+            $db: $db,
+            $table: $db.project,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$TagTableAnnotationComposer get tagId {
+    final $$TagTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.tagId,
+      referencedTable: $db.tag,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TagTableAnnotationComposer(
+            $db: $db,
+            $table: $db.tag,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ProjectTagTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ProjectTagTable,
+          ProjectTagData,
+          $$ProjectTagTableFilterComposer,
+          $$ProjectTagTableOrderingComposer,
+          $$ProjectTagTableAnnotationComposer,
+          $$ProjectTagTableCreateCompanionBuilder,
+          $$ProjectTagTableUpdateCompanionBuilder,
+          (ProjectTagData, $$ProjectTagTableReferences),
+          ProjectTagData,
+          PrefetchHooks Function({bool projectId, bool tagId})
+        > {
+  $$ProjectTagTableTableManager(_$AppDatabase db, $ProjectTagTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ProjectTagTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ProjectTagTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ProjectTagTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> projectId = const Value.absent(),
+                Value<int> tagId = const Value.absent(),
+              }) => ProjectTagCompanion(
                 id: id,
                 projectId: projectId,
-                noteId: noteId,
                 tagId: tagId,
               ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int?> projectId = const Value.absent(),
-                Value<int?> noteId = const Value.absent(),
+                required int projectId,
                 required int tagId,
-              }) => TagLinksCompanion.insert(
+              }) => ProjectTagCompanion.insert(
                 id: id,
                 projectId: projectId,
-                noteId: noteId,
                 tagId: tagId,
               ),
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
                   e.readTable(table),
-                  $$TagLinksTableReferences(db, table, e),
+                  $$ProjectTagTableReferences(db, table, e),
                 ),
               )
               .toList(),
-          prefetchHooksCallback:
-              ({projectId = false, noteId = false, tagId = false}) {
-                return PrefetchHooks(
-                  db: db,
-                  explicitlyWatchedTables: [],
-                  addJoins:
-                      <
-                        T extends TableManagerState<
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic,
-                          dynamic
-                        >
-                      >(state) {
-                        if (projectId) {
-                          state =
-                              state.withJoin(
-                                    currentTable: table,
-                                    currentColumn: table.projectId,
-                                    referencedTable: $$TagLinksTableReferences
-                                        ._projectIdTable(db),
-                                    referencedColumn: $$TagLinksTableReferences
-                                        ._projectIdTable(db)
-                                        .id,
-                                  )
-                                  as T;
-                        }
-                        if (noteId) {
-                          state =
-                              state.withJoin(
-                                    currentTable: table,
-                                    currentColumn: table.noteId,
-                                    referencedTable: $$TagLinksTableReferences
-                                        ._noteIdTable(db),
-                                    referencedColumn: $$TagLinksTableReferences
-                                        ._noteIdTable(db)
-                                        .id,
-                                  )
-                                  as T;
-                        }
-                        if (tagId) {
-                          state =
-                              state.withJoin(
-                                    currentTable: table,
-                                    currentColumn: table.tagId,
-                                    referencedTable: $$TagLinksTableReferences
-                                        ._tagIdTable(db),
-                                    referencedColumn: $$TagLinksTableReferences
-                                        ._tagIdTable(db)
-                                        .id,
-                                  )
-                                  as T;
-                        }
+          prefetchHooksCallback: ({projectId = false, tagId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (projectId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.projectId,
+                                referencedTable: $$ProjectTagTableReferences
+                                    ._projectIdTable(db),
+                                referencedColumn: $$ProjectTagTableReferences
+                                    ._projectIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+                    if (tagId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.tagId,
+                                referencedTable: $$ProjectTagTableReferences
+                                    ._tagIdTable(db),
+                                referencedColumn: $$ProjectTagTableReferences
+                                    ._tagIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
 
-                        return state;
-                      },
-                  getPrefetchedDataCallback: (items) async {
-                    return [];
+                    return state;
                   },
-                );
+              getPrefetchedDataCallback: (items) async {
+                return [];
               },
+            );
+          },
         ),
       );
 }
 
-typedef $$TagLinksTableProcessedTableManager =
+typedef $$ProjectTagTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $TagLinksTable,
-      TagLink,
-      $$TagLinksTableFilterComposer,
-      $$TagLinksTableOrderingComposer,
-      $$TagLinksTableAnnotationComposer,
-      $$TagLinksTableCreateCompanionBuilder,
-      $$TagLinksTableUpdateCompanionBuilder,
-      (TagLink, $$TagLinksTableReferences),
-      TagLink,
-      PrefetchHooks Function({bool projectId, bool noteId, bool tagId})
+      $ProjectTagTable,
+      ProjectTagData,
+      $$ProjectTagTableFilterComposer,
+      $$ProjectTagTableOrderingComposer,
+      $$ProjectTagTableAnnotationComposer,
+      $$ProjectTagTableCreateCompanionBuilder,
+      $$ProjectTagTableUpdateCompanionBuilder,
+      (ProjectTagData, $$ProjectTagTableReferences),
+      ProjectTagData,
+      PrefetchHooks Function({bool projectId, bool tagId})
     >;
 
 class $AppDatabaseManager {
@@ -3056,6 +3672,8 @@ class $AppDatabaseManager {
       $$ProjectTableTableManager(_db, _db.project);
   $$NoteTableTableManager get note => $$NoteTableTableManager(_db, _db.note);
   $$TagTableTableManager get tag => $$TagTableTableManager(_db, _db.tag);
-  $$TagLinksTableTableManager get tagLinks =>
-      $$TagLinksTableTableManager(_db, _db.tagLinks);
+  $$NoteTagTableTableManager get noteTag =>
+      $$NoteTagTableTableManager(_db, _db.noteTag);
+  $$ProjectTagTableTableManager get projectTag =>
+      $$ProjectTagTableTableManager(_db, _db.projectTag);
 }
