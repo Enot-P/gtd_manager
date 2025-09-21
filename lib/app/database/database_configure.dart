@@ -7,7 +7,15 @@ import 'dart:io';
 
 part 'database_configure.g.dart';
 
-@DriftDatabase(tables: [Note, Project, Tag, TagLinks])
+@DriftDatabase(
+  tables: [
+    Note,
+    Project,
+    Tag,
+    NoteTag,
+    ProjectTag,
+  ],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
