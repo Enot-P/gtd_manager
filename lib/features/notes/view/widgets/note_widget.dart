@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 class NoteWidget extends StatelessWidget {
   const NoteWidget({
     super.key,
-    required this.name,
+    required this.title,
   });
-  final String name;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class NoteWidget extends StatelessWidget {
           value: false,
           onChanged: (_) {},
         ),
-        Text(name),
+        Text(title),
       ],
     );
   }

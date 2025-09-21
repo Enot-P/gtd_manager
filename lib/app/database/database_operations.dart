@@ -2,9 +2,9 @@ import 'package:drift/drift.dart';
 import 'package:gtd_manager/app/database/database.dart';
 
 class DatabaseOperations {
-  final AppDatabase _db;
+  final AppDatabase _db = AppDatabase();
 
-  DatabaseOperations(this._db);
+  DatabaseOperations();
 
   Future<void> createNote({
     required String title,

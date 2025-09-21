@@ -1,5 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gtd_manager/features/notes/bloc/note_bloc.dart';
 import 'package:gtd_manager/features/notes/view/widgets/widgets.dart';
 
 @RoutePage()
@@ -13,15 +15,22 @@ class ListNotesScreen extends StatefulWidget {
 class _ListNotesScreenState extends State<ListNotesScreen> {
   final String name = 'Корзина дел';
   final String description = 'Здесь размещено все что приходит в голову';
-  final List<NoteWidget> notesWidget = List.generate(
-    100,
-    (index) => NoteWidget(
-      key: Key(
-        '$index',
-      ),
-      name: 'Карточка $index',
-    ),
-  );
+  final noteBloc = NoteBloc();
+  // final List<NoteWidget> notesWidget = List.generate(
+  //   100,
+  //   (index) => NoteWidget(
+  //     key: Key(
+  //       '$index',
+  //     ),
+  //     name: 'Карточка $index',
+  //   ),
+  // );a
+
+  @override
+  void initState() {
+    super.initState();
+    noteBloc.add(LoadNotes());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,18 +46,40 @@ class _ListNotesScreenState extends State<ListNotesScreen> {
             ),
           ),
           Expanded(
-            child: ReorderableListView(
-              // TODO: Здесь надо будет через БД еще реализовать смену индексов
-              onReorder: (oldIndex, newIndex) {
-                setState(() {
-                  if (oldIndex < newIndex) {
-                    newIndex -= 1;
-                  }
-                  final item = notesWidget.removeAt(oldIndex);
-                  notesWidget.insert(newIndex, item);
-                });
+            child: BlocBuilder<NoteBloc, NoteState>(
+              bloc: noteBloc,
+              builder: (context, state) {
+                if (state is NoteLoaded) {
+                  return ReorderableListView(
+                    // TODO: Здесь надо будет через БД еще реализовать смену индексов
+                    //* INFO: Этот виджет загружает все элементы сразу, надо исправить
+                    onReorder: (oldIndex, newIndex) {
+                      setState(() {
+                        // if (oldIndex < newIndex) {
+                        //   newIndex -= 1;
+                        // }
+                        // final item = notesWidget.removeAt(oldIndex);
+                        // notesWidget.insert(newIndex, item);
+                      });
+                    },
+                    children: state.notes,
+                  );
+                }
+                if (state is ListNotesIsEmpty) {
+                  return const Center(
+                    child: Text('Список пуст'),
+                  );
+                }
+
+                if (state is NoteFailure) {
+                  return Center(
+                    child: Text('${state.error}'),
+                  );
+                }
+                return const Center(
+                  child: Text('Чето пошло не так'),
+                );
               },
-              children: notesWidget,
             ),
           ),
         ],

@@ -9,11 +9,13 @@ void main() {
   late DatabaseOperations dbOperations;
 
   setUp(() {
-    database = AppDatabase(DatabaseConnection(
-      NativeDatabase.memory(),
-      closeStreamsSynchronously: true,
-    ));
-    dbOperations = DatabaseOperations(database);
+    database = AppDatabase(
+      DatabaseConnection(
+        NativeDatabase.memory(),
+        closeStreamsSynchronously: true,
+      ),
+    );
+    dbOperations = DatabaseOperations();
   });
 
   tearDown(() async {
@@ -49,15 +51,17 @@ void main() {
       const title = 'Заметка с проектом';
       const category = NoteCategory.next;
       const description = 'Описание';
-      
+
       // Сначала создаем проект
-      final projectId = await database.into(database.project).insert(
-        ProjectCompanion.insert(
-          title: 'Тестовый проект',
-          description: const Value('Описание проекта'),
-          status: ProjectStatus.inProgress,
-        ),
-      );
+      final projectId = await database
+          .into(database.project)
+          .insert(
+            ProjectCompanion.insert(
+              title: 'Тестовый проект',
+              description: const Value('Описание проекта'),
+              status: ProjectStatus.inProgress,
+            ),
+          );
 
       // Act
       await dbOperations.createNote(
@@ -184,13 +188,15 @@ void main() {
       final noteId = notes.first.id;
 
       // Создаем проект
-      final projectId = await database.into(database.project).insert(
-        ProjectCompanion.insert(
-          title: 'Новый проект',
-          description: const Value('Описание'),
-          status: ProjectStatus.inProgress,
-        ),
-      );
+      final projectId = await database
+          .into(database.project)
+          .insert(
+            ProjectCompanion.insert(
+              title: 'Новый проект',
+              description: const Value('Описание'),
+              status: ProjectStatus.inProgress,
+            ),
+          );
 
       // Act
       await dbOperations.updateNote(
@@ -230,7 +236,7 @@ void main() {
     test('deleteNoteById - удаление несуществующей заметки', () async {
       // Act & Assert - не должно вызывать исключение
       await dbOperations.deleteNoteById(999);
-      
+
       // Проверяем, что заметок нет
       final notes = await dbOperations.getAllNotes();
       expect(notes.length, 0);
