@@ -23,7 +23,12 @@ class NoteWidget extends StatelessWidget {
         Text(note.title),
         const Expanded(child: SizedBox()),
         IconButton(
-          onPressed: () => bloc.add(DeleteNote(noteId: note.id!)),
+          onPressed: () => bloc.add(
+            DeleteNote(
+              noteId: note.id!,
+              noteCategory: note.noteCategory,
+            ),
+          ),
           icon: const Icon(Icons.delete_outline),
         ),
       ],

@@ -21,15 +21,17 @@ class ListNotesScreen extends StatefulWidget {
 }
 
 class _ListNotesScreenState extends State<ListNotesScreen> {
+  late final NoteBloc noteBloc;
+
   @override
   void initState() {
     super.initState();
-    // noteBloc.add(LoadNotes());
+    noteBloc = context.read<NoteBloc>();
+    noteBloc.add(LoadNotes(widget.noteCategory));
   }
 
   @override
   Widget build(BuildContext context) {
-    final noteBloc = context.watch<NoteBloc>();
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,11 +74,19 @@ class _ListNotesScreenState extends State<ListNotesScreen> {
 
                 if (state is ListNotesFailure) {
                   return Center(
-                    child: _FailureWidget(noteBloc: noteBloc, error: state.error),
+                    child: _FailureWidget(
+                      noteCategory: widget.noteCategory,
+                      noteBloc: noteBloc,
+                      error: state.error,
+                    ),
                   );
                 }
                 return Center(
-                  child: _FailureWidget(noteBloc: noteBloc, error: 'Что-то сломалось'),
+                  child: _FailureWidget(
+                    noteCategory: widget.noteCategory,
+                    noteBloc: noteBloc,
+                    error: 'Что-то сломалось',
+                  ),
                 );
               },
             ),
@@ -86,7 +96,7 @@ class _ListNotesScreenState extends State<ListNotesScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => noteBloc.add(
           CreateNote(
-            const NoteEntity(title: 'TestName', noteCategory: NoteCategory.inbox),
+            NoteEntity(title: 'TestName', noteCategory: widget.noteCategory),
           ),
         ),
         child: const Icon(Icons.add),
@@ -99,10 +109,12 @@ class _FailureWidget extends StatelessWidget {
   const _FailureWidget({
     required this.noteBloc,
     required this.error,
+    required this.noteCategory,
   });
 
   final NoteBloc noteBloc;
   final Object? error;
+  final NoteCategory noteCategory;
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +123,7 @@ class _FailureWidget extends StatelessWidget {
       children: [
         Text('$error'),
         TextButton(
-          onPressed: () => noteBloc.add(LoadNotes()),
+          onPressed: () => noteBloc.add(LoadNotes(noteCategory)),
           child: const Text('Попробовать снова'),
         ),
       ],

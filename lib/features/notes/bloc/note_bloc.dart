@@ -26,7 +26,7 @@ class NoteBloc extends Bloc<NoteEvent, ListNotesState> {
         await Future.delayed(const Duration(seconds: 2));
       }
 
-      final notes = await noteRepository.getAllNotes();
+      final notes = await noteRepository.getNotesByCategory(event.noteCategory);
       final List<Widget> listNotes = List.generate(
         notes.length,
         (int index) => NoteWidget(
@@ -43,7 +43,7 @@ class NoteBloc extends Bloc<NoteEvent, ListNotesState> {
   FutureOr<void> _createNote(CreateNote event, Emitter<ListNotesState> emit) async {
     try {
       await noteRepository.createNote(event.noteEntity);
-      add(LoadNotes());
+      add(LoadNotes(event.noteEntity.noteCategory));
     } catch (e) {
       emit(ListNotesFailure(e));
     }
@@ -52,7 +52,7 @@ class NoteBloc extends Bloc<NoteEvent, ListNotesState> {
   FutureOr<void> _deleteNote(DeleteNote event, Emitter<ListNotesState> emit) async {
     try {
       await noteRepository.deleteNote(event.noteId);
-      add(LoadNotes());
+      add(LoadNotes(event.noteCategory));
     } catch (e) {
       emit(ListNotesFailure(e));
     }

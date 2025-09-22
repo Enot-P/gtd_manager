@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gtd_manager/domain/entities/entities.dart';
+import 'package:gtd_manager/features/notes/bloc/note_bloc.dart';
 import 'package:gtd_manager/routing/app_router.dart';
 
 @RoutePage()
@@ -46,60 +48,46 @@ class HomeScreen extends StatelessWidget {
       drawer: Builder(
         builder: (context) {
           final tabsRouter = AutoTabsRouter.of(context);
+          final noteBloc = context.read<NoteBloc>();
+          void onTap({required int index, NoteCategory? noteCategory}) {
+            tabsRouter.setActiveIndex(index);
+            if (noteCategory != null) noteBloc.add(LoadNotes(noteCategory));
+            Navigator.of(context).pop();
+          }
+
           return Drawer(
             child: ListView(
               children: [
                 ListTile(
                   title: const Text("Корзина дел"),
-                  onTap: () {
-                    tabsRouter.setActiveIndex(0);
-                    Navigator.of(context).pop();
-                  },
+                  onTap: () => onTap(index: 0, noteCategory: NoteCategory.inbox),
                 ),
                 ListTile(
                   title: const Text("Текущие действия"),
-                  onTap: () {
-                    tabsRouter.setActiveIndex(1);
-                    Navigator.of(context).pop();
-                  },
+                  onTap: () => onTap(index: 1, noteCategory: NoteCategory.next),
                 ),
 
                 ListTile(
                   title: const Text("Ожидание"),
-                  onTap: () {
-                    tabsRouter.setActiveIndex(2);
-                    Navigator.of(context).pop();
-                  },
+                  onTap: () => onTap(index: 2, noteCategory: NoteCategory.waiting),
                 ),
 
                 ListTile(
                   title: const Text("Календарь"),
-                  onTap: () {
-                    tabsRouter.setActiveIndex(3);
-                    Navigator.of(context).pop();
-                  },
+                  onTap: () => onTap(index: 3, noteCategory: NoteCategory.scheduled),
                 ),
 
                 ListTile(
                   title: const Text("Когда-нибудь"),
-                  onTap: () {
-                    tabsRouter.setActiveIndex(4);
-                    Navigator.of(context).pop();
-                  },
+                  onTap: () => onTap(index: 4, noteCategory: NoteCategory.waiting),
                 ),
                 ListTile(
                   title: const Text("Проекты"),
-                  onTap: () {
-                    tabsRouter.setActiveIndex(5);
-                    Navigator.of(context).pop();
-                  },
+                  onTap: () => onTap(index: 5),
                 ),
                 ListTile(
                   title: const Text("Теги"),
-                  onTap: () {
-                    tabsRouter.setActiveIndex(6);
-                    Navigator.of(context).pop();
-                  },
+                  onTap: () => onTap(index: 6),
                 ),
               ],
             ),
