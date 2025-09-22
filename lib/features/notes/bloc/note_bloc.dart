@@ -1,34 +1,50 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gtd_manager/features/features.dart';
+import 'package:gtd_manager/features/notes/data/entyties/note_entity.dart';
+import 'package:gtd_manager/features/notes/data/repositories/list_notes_repositories.dart';
 
 part 'note_event.dart';
 part 'note_state.dart';
 
 class NoteBloc extends Bloc<NoteEvent, ListNotesState> {
-  final noteRepository;
+  final ListNotesRepository noteRepository;
 
   NoteBloc(this.noteRepository) : super(ListNotesInitial()) {
-    on<LoadNotes>((event, emit) async {
-      try {
-        if (state is! ListNotesLoaded) emit(ListNotesLoading());
+    on<LoadNotes>(_load);
+    on<CreateNote>(_createNote);
+  }
 
-        // TODO: Убрать задержку надо в релизе
-        await Future.delayed(const Duration(seconds: 2));
+  Future<void> _load(LoadNotes event, Emitter<ListNotesState> emit) async {
+    try {
+      if (state is! ListNotesLoaded) emit(ListNotesLoading());
 
-        final notes = await noteRepository.getAllNotes();
-        final List<Widget> listNotes = List.generate(
-          notes.length,
-          (int index) => NoteWidget(
-            title: notes[index].title,
-          ),
-          growable: true,
-        );
-        listNotes.isEmpty ? emit(ListNotesIsEmpty()) : emit(ListNotesLoaded(listNotes));
-      } catch (e) {
-        emit(ListNotesFailure(e));
-      }
-    });
+      // TODO: Убрать задержку надо в релизе
+      await Future.delayed(const Duration(seconds: 2));
+
+      final notes = await noteRepository.getAllNotes();
+      final List<Widget> listNotes = List.generate(
+        notes.length,
+        (int index) => NoteWidget(
+          key: Key('$index'),
+          title: notes[index].title,
+        ),
+      );
+      listNotes.isEmpty ? emit(ListNotesIsEmpty()) : emit(ListNotesLoaded(listNotes));
+    } catch (e) {
+      emit(ListNotesFailure(e));
+    }
+  }
+
+  FutureOr<void> _createNote(CreateNote event, Emitter<ListNotesState> emit) async {
+    try {
+      await noteRepository.createNote(event.noteEntity);
+      add(LoadNotes());
+    } catch (e) {
+      emit(ListNotesFailure(e));
+    }
   }
 }

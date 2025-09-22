@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gtd_manager/app/database/database.dart';
 import 'package:gtd_manager/features/notes/bloc/note_bloc.dart';
+import 'package:gtd_manager/features/notes/data/entyties/note_entity.dart';
 
 @RoutePage()
 class ListNotesScreen extends StatefulWidget {
@@ -79,7 +80,12 @@ class _ListNotesScreenState extends State<ListNotesScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () => noteBloc.add(
+          CreateNote(
+            // TODO: Надо придумать что делать с этим id
+            NoteEntity(id: -999, title: 'TestName', category: NoteCategory.inbox),
+          ),
+        ),
         child: const Icon(Icons.add),
       ),
     );
