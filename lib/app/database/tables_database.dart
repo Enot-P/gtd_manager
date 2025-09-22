@@ -7,7 +7,7 @@ enum ProjectStatus { waiting, inProgress, done }
 class Note extends Table with DataControl {
   late final id = integer().autoIncrement()();
   late final title = text().withLength(min: 1, max: 100)();
-  late final category = textEnum<NoteCategory>()();
+  late final noteCategory = intEnum<NoteCategory>()();
   late final description = text().nullable()();
   late final projectId = integer().nullable().references(Project, #id)();
 }
@@ -16,7 +16,7 @@ class Project extends Table with DataControl {
   late final id = integer().autoIncrement()();
   late final title = text().withLength(min: 1, max: 100)();
   late final description = text().nullable()();
-  late final status = textEnum<ProjectStatus>()();
+  late final status = intEnum<ProjectStatus>()();
   late final parentProjectId = integer().nullable().references(Project, #id)();
 
   @override

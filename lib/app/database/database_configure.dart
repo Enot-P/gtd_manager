@@ -8,27 +8,25 @@ import 'dart:io';
 part 'database_configure.g.dart';
 
 @DriftDatabase(
-  tables: [
-    Note,
-    Project,
-    Tag,
-    NoteTag,
-    ProjectTag,
-  ],
+  tables: [Note, Project, Tag, NoteTag, ProjectTag],
 )
-class AppDatabase extends _$AppDatabase {
-  //AppDatabase() : super(_openConnection());
-  AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
+class DatabaseConfigure extends _$DatabaseConfigure {
+  DatabaseConfigure([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 1;
 }
 
 QueryExecutor _openConnection() {
   return LazyDatabase(() async {
-    // Для разных платформ получаем разные директории
     final dbFolder = await _getDatabasePath();
     final file = File(p.join(dbFolder.path, 'gtd_database.sqlite'));
+
+    // Удаляем базу данных во время разработки
+    const bool inDevelopment = true; // или используйте kDebugMode
+    if (inDevelopment && await file.exists()) {
+      await file.delete();
+    }
 
     return NativeDatabase(
       file,

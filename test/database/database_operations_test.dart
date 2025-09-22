@@ -1,21 +1,23 @@
 import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:drift/native.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:gtd_manager/app/database/database.dart';
-import 'package:gtd_manager/app/database/tables_database.dart';
 
 void main() {
-  late AppDatabase database;
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  late DatabaseConfigure database;
   late DatabaseOperations dbOperations;
 
-  setUp(() {
-    database = AppDatabase(
-      DatabaseConnection(
-        NativeDatabase.memory(),
-        closeStreamsSynchronously: true,
-      ),
-    );
-    dbOperations = DatabaseOperations();
+  setUp(() async {
+    // Создаем базу данных в памяти для тестов
+    database = DatabaseConfigure(NativeDatabase.memory());
+
+    // Передаем тестовую базу в DatabaseOperations
+    dbOperations = DatabaseOperations(database);
+
+    // Ждем инициализации базы данных
+    await database.customSelect('SELECT 1').get();
   });
 
   tearDown(() async {
@@ -32,7 +34,7 @@ void main() {
       // Act
       await dbOperations.createNote(
         title: title,
-        category: category,
+        noteCategory: category,
         description: description,
       );
 
@@ -40,7 +42,7 @@ void main() {
       final notes = await dbOperations.getAllNotes();
       expect(notes.length, 1);
       expect(notes.first.title, title);
-      expect(notes.first.category, category);
+      expect(notes.first.noteCategory, category);
       expect(notes.first.description, description);
       expect(notes.first.projectId, isNull);
       expect(notes.first.createdAt, isNotNull);
@@ -66,7 +68,7 @@ void main() {
       // Act
       await dbOperations.createNote(
         title: title,
-        category: category,
+        noteCategory: category,
         description: description,
         projectId: projectId,
       );
@@ -75,7 +77,7 @@ void main() {
       final notes = await dbOperations.getAllNotes();
       expect(notes.length, 1);
       expect(notes.first.title, title);
-      expect(notes.first.category, category);
+      expect(notes.first.noteCategory, category);
       expect(notes.first.description, description);
       expect(notes.first.projectId, projectId);
     });
@@ -84,11 +86,11 @@ void main() {
       // Arrange
       await dbOperations.createNote(
         title: 'Заметка 1',
-        category: NoteCategory.inbox,
+        noteCategory: NoteCategory.inbox,
       );
       await dbOperations.createNote(
         title: 'Заметка 2',
-        category: NoteCategory.next,
+        noteCategory: NoteCategory.next,
       );
 
       // Act
@@ -103,7 +105,7 @@ void main() {
       // Arrange
       await dbOperations.createNote(
         title: 'Тестовая заметка',
-        category: NoteCategory.inbox,
+        noteCategory: NoteCategory.inbox,
       );
       final notes = await dbOperations.getAllNotes();
       final noteId = notes.first.id;
@@ -114,7 +116,28 @@ void main() {
       // Assert
       expect(note.id, noteId);
       expect(note.title, 'Тестовая заметка');
-      expect(note.category, NoteCategory.inbox);
+      expect(note.noteCategory, NoteCategory.inbox);
+    });
+
+    test('getNotesByCategory - получение заметок по noteCategory', () async {
+      // Arrange
+      await dbOperations.createNote(
+        title: 'Тестовая заметка',
+        noteCategory: NoteCategory.inbox,
+      );
+
+      await dbOperations.createNote(
+        title: 'Тестовая заметка2',
+        noteCategory: NoteCategory.next,
+      );
+
+      // Act
+      final note = await dbOperations.getNotesByCategory(NoteCategory.next);
+      final listNotesLength = note.length;
+
+      // Assert
+      expect(listNotesLength, 1);
+      expect(note.first.noteCategory, NoteCategory.next);
     });
 
     test('getNoteById - получение несуществующей заметки вызывает исключение', () async {
@@ -129,7 +152,7 @@ void main() {
       // Arrange
       await dbOperations.createNote(
         title: 'Исходная заметка',
-        category: NoteCategory.inbox,
+        noteCategory: NoteCategory.inbox,
         description: 'Исходное описание',
       );
       final notes = await dbOperations.getAllNotes();
@@ -146,7 +169,7 @@ void main() {
       // Assert
       final updatedNote = await dbOperations.getNoteById(noteId);
       expect(updatedNote.title, 'Обновленная заметка');
-      expect(updatedNote.category, NoteCategory.next);
+      expect(updatedNote.noteCategory, NoteCategory.next);
       expect(updatedNote.description, 'Обновленное описание');
       expect(updatedNote.updatedAt, isNotNull);
     });
@@ -155,7 +178,7 @@ void main() {
       // Arrange
       await dbOperations.createNote(
         title: 'Исходная заметка',
-        category: NoteCategory.inbox,
+        noteCategory: NoteCategory.inbox,
         description: 'Исходное описание',
       );
       final notes = await dbOperations.getAllNotes();
@@ -172,7 +195,7 @@ void main() {
       // Assert
       final updatedNote = await dbOperations.getNoteById(noteId);
       expect(updatedNote.title, 'Обновленная заметка');
-      expect(updatedNote.category, NoteCategory.inbox); // Остается прежней
+      expect(updatedNote.noteCategory, NoteCategory.inbox); // Остается прежней
       expect(updatedNote.description, 'Исходное описание'); // Остается прежним
       expect(updatedNote.updatedAt, isNotNull);
     });
@@ -181,7 +204,7 @@ void main() {
       // Arrange
       await dbOperations.createNote(
         title: 'Заметка',
-        category: NoteCategory.inbox,
+        noteCategory: NoteCategory.inbox,
         description: 'Описание',
       );
       final notes = await dbOperations.getAllNotes();
@@ -210,7 +233,7 @@ void main() {
       // Assert
       final updatedNote = await dbOperations.getNoteById(noteId);
       expect(updatedNote.title, 'Заметка'); // Остается прежним
-      expect(updatedNote.category, NoteCategory.inbox); // Остается прежним
+      expect(updatedNote.noteCategory, NoteCategory.inbox); // Остается прежним
       expect(updatedNote.description, 'Описание'); // Остается прежним
       expect(updatedNote.projectId, projectId); // Обновлен
       expect(updatedNote.updatedAt, isNotNull);
@@ -220,7 +243,7 @@ void main() {
       // Arrange
       await dbOperations.createNote(
         title: 'Заметка для удаления',
-        category: NoteCategory.inbox,
+        noteCategory: NoteCategory.inbox,
       );
       final notes = await dbOperations.getAllNotes();
       final noteId = notes.first.id;
@@ -247,7 +270,7 @@ void main() {
       expect(
         () => dbOperations.createNote(
           title: '',
-          category: NoteCategory.inbox,
+          noteCategory: NoteCategory.inbox,
         ),
         throwsA(isA<Exception>()),
       );
@@ -261,7 +284,7 @@ void main() {
       expect(
         () => dbOperations.createNote(
           title: longTitle,
-          category: NoteCategory.inbox,
+          noteCategory: NoteCategory.inbox,
         ),
         throwsA(isA<Exception>()),
       );
@@ -271,7 +294,7 @@ void main() {
       // Create
       await dbOperations.createNote(
         title: 'Интеграционная заметка',
-        category: NoteCategory.inbox,
+        noteCategory: NoteCategory.inbox,
         description: 'Тестовое описание',
       );
 
@@ -291,7 +314,7 @@ void main() {
       // Read again
       final updatedNote = await dbOperations.getNoteById(noteId);
       expect(updatedNote.title, 'Обновленная интеграционная заметка');
-      expect(updatedNote.category, NoteCategory.next);
+      expect(updatedNote.noteCategory, NoteCategory.next);
       expect(updatedNote.description, 'Обновленное описание');
 
       // Delete

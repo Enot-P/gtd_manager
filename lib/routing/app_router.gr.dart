@@ -60,18 +60,77 @@ class HomeRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [ListNotesScreen]
-class ListNotesRoute extends PageRouteInfo<void> {
-  const ListNotesRoute({List<PageRouteInfo>? children})
-    : super(ListNotesRoute.name, initialChildren: children);
+class ListNotesRoute extends PageRouteInfo<ListNotesRouteArgs> {
+  ListNotesRoute({
+    Key? key,
+    required NoteCategory noteCategory,
+    required String name,
+    required String description,
+    List<PageRouteInfo>? children,
+  }) : super(
+         ListNotesRoute.name,
+         args: ListNotesRouteArgs(
+           key: key,
+           noteCategory: noteCategory,
+           name: name,
+           description: description,
+         ),
+         initialChildren: children,
+       );
 
   static const String name = 'ListNotesRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const ListNotesScreen();
+      final args = data.argsAs<ListNotesRouteArgs>();
+      return ListNotesScreen(
+        key: args.key,
+        noteCategory: args.noteCategory,
+        name: args.name,
+        description: args.description,
+      );
     },
   );
+}
+
+class ListNotesRouteArgs {
+  const ListNotesRouteArgs({
+    this.key,
+    required this.noteCategory,
+    required this.name,
+    required this.description,
+  });
+
+  final Key? key;
+
+  final NoteCategory noteCategory;
+
+  final String name;
+
+  final String description;
+
+  @override
+  String toString() {
+    return 'ListNotesRouteArgs{key: $key, noteCategory: $noteCategory, name: $name, description: $description}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! ListNotesRouteArgs) return false;
+    return key == other.key &&
+        noteCategory == other.noteCategory &&
+        name == other.name &&
+        description == other.description;
+  }
+
+  @override
+  int get hashCode =>
+      key.hashCode ^
+      noteCategory.hashCode ^
+      name.hashCode ^
+      description.hashCode;
 }
 
 /// generated route for

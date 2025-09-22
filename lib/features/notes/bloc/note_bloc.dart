@@ -1,26 +1,34 @@
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gtd_manager/features/features.dart';
-import 'package:gtd_manager/features/notes/data/repositories/notes_repositories.dart';
 
 part 'note_event.dart';
 part 'note_state.dart';
 
-class NoteBloc extends Bloc<NoteEvent, NoteState> {
-  final noteRepository = NotesRepository();
+class NoteBloc extends Bloc<NoteEvent, ListNotesState> {
+  final noteRepository;
 
-  NoteBloc() : super(NoteInitial()) {
+  NoteBloc(this.noteRepository) : super(ListNotesInitial()) {
     on<LoadNotes>((event, emit) async {
-      final notes = await noteRepository.getAllNotes();
-      final List<Widget> listNotes = List.generate(
-        notes.length,
-        (int index) => NoteWidget(
-          title: notes[index].title,
-        ),
-        growable: true,
-      );
+      try {
+        if (state is! ListNotesLoaded) emit(ListNotesLoading());
 
-      listNotes.isEmpty ? emit(ListNotesIsEmpty()) : emit(NoteLoaded(listNotes));
+        // TODO: Убрать задержку надо в релизе
+        await Future.delayed(const Duration(seconds: 2));
+
+        final notes = await noteRepository.getAllNotes();
+        final List<Widget> listNotes = List.generate(
+          notes.length,
+          (int index) => NoteWidget(
+            title: notes[index].title,
+          ),
+          growable: true,
+        );
+        listNotes.isEmpty ? emit(ListNotesIsEmpty()) : emit(ListNotesLoaded(listNotes));
+      } catch (e) {
+        emit(ListNotesFailure(e));
+      }
     });
   }
 }

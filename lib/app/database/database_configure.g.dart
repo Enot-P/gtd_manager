@@ -69,12 +69,12 @@ class $ProjectTable extends Project with TableInfo<$ProjectTable, ProjectData> {
     requiredDuringInsert: false,
   );
   @override
-  late final GeneratedColumnWithTypeConverter<ProjectStatus, String> status =
-      GeneratedColumn<String>(
+  late final GeneratedColumnWithTypeConverter<ProjectStatus, int> status =
+      GeneratedColumn<int>(
         'status',
         aliasedName,
         false,
-        type: DriftSqlType.string,
+        type: DriftSqlType.int,
         requiredDuringInsert: true,
       ).withConverter<ProjectStatus>($ProjectTable.$converterstatus);
   static const VerificationMeta _parentProjectIdMeta = const VerificationMeta(
@@ -185,7 +185,7 @@ class $ProjectTable extends Project with TableInfo<$ProjectTable, ProjectData> {
       ),
       status: $ProjectTable.$converterstatus.fromSql(
         attachedDatabase.typeMapping.read(
-          DriftSqlType.string,
+          DriftSqlType.int,
           data['${effectivePrefix}status'],
         )!,
       ),
@@ -201,8 +201,8 @@ class $ProjectTable extends Project with TableInfo<$ProjectTable, ProjectData> {
     return $ProjectTable(attachedDatabase, alias);
   }
 
-  static JsonTypeConverter2<ProjectStatus, String, String> $converterstatus =
-      const EnumNameConverter<ProjectStatus>(ProjectStatus.values);
+  static JsonTypeConverter2<ProjectStatus, int, int> $converterstatus =
+      const EnumIndexConverter<ProjectStatus>(ProjectStatus.values);
 }
 
 class ProjectData extends DataClass implements Insertable<ProjectData> {
@@ -235,7 +235,7 @@ class ProjectData extends DataClass implements Insertable<ProjectData> {
       map['description'] = Variable<String>(description);
     }
     {
-      map['status'] = Variable<String>(
+      map['status'] = Variable<int>(
         $ProjectTable.$converterstatus.toSql(status),
       );
     }
@@ -275,7 +275,7 @@ class ProjectData extends DataClass implements Insertable<ProjectData> {
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String?>(json['description']),
       status: $ProjectTable.$converterstatus.fromJson(
-        serializer.fromJson<String>(json['status']),
+        serializer.fromJson<int>(json['status']),
       ),
       parentProjectId: serializer.fromJson<int?>(json['parentProjectId']),
     );
@@ -289,7 +289,7 @@ class ProjectData extends DataClass implements Insertable<ProjectData> {
       'id': serializer.toJson<int>(id),
       'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String?>(description),
-      'status': serializer.toJson<String>(
+      'status': serializer.toJson<int>(
         $ProjectTable.$converterstatus.toJson(status),
       ),
       'parentProjectId': serializer.toJson<int?>(parentProjectId),
@@ -401,7 +401,7 @@ class ProjectCompanion extends UpdateCompanion<ProjectData> {
     Expression<int>? id,
     Expression<String>? title,
     Expression<String>? description,
-    Expression<String>? status,
+    Expression<int>? status,
     Expression<int>? parentProjectId,
   }) {
     return RawValuesInsertable({
@@ -454,7 +454,7 @@ class ProjectCompanion extends UpdateCompanion<ProjectData> {
       map['description'] = Variable<String>(description.value);
     }
     if (status.present) {
-      map['status'] = Variable<String>(
+      map['status'] = Variable<int>(
         $ProjectTable.$converterstatus.toSql(status.value),
       );
     }
@@ -534,14 +534,14 @@ class $NoteTable extends Note with TableInfo<$NoteTable, NoteData> {
     requiredDuringInsert: true,
   );
   @override
-  late final GeneratedColumnWithTypeConverter<NoteCategory, String> category =
-      GeneratedColumn<String>(
-        'category',
+  late final GeneratedColumnWithTypeConverter<NoteCategory, int> noteCategory =
+      GeneratedColumn<int>(
+        'note_category',
         aliasedName,
         false,
-        type: DriftSqlType.string,
+        type: DriftSqlType.int,
         requiredDuringInsert: true,
-      ).withConverter<NoteCategory>($NoteTable.$convertercategory);
+      ).withConverter<NoteCategory>($NoteTable.$converternoteCategory);
   static const VerificationMeta _descriptionMeta = const VerificationMeta(
     'description',
   );
@@ -573,7 +573,7 @@ class $NoteTable extends Note with TableInfo<$NoteTable, NoteData> {
     updatedAt,
     id,
     title,
-    category,
+    noteCategory,
     description,
     projectId,
   ];
@@ -652,10 +652,10 @@ class $NoteTable extends Note with TableInfo<$NoteTable, NoteData> {
         DriftSqlType.string,
         data['${effectivePrefix}title'],
       )!,
-      category: $NoteTable.$convertercategory.fromSql(
+      noteCategory: $NoteTable.$converternoteCategory.fromSql(
         attachedDatabase.typeMapping.read(
-          DriftSqlType.string,
-          data['${effectivePrefix}category'],
+          DriftSqlType.int,
+          data['${effectivePrefix}note_category'],
         )!,
       ),
       description: attachedDatabase.typeMapping.read(
@@ -674,8 +674,8 @@ class $NoteTable extends Note with TableInfo<$NoteTable, NoteData> {
     return $NoteTable(attachedDatabase, alias);
   }
 
-  static JsonTypeConverter2<NoteCategory, String, String> $convertercategory =
-      const EnumNameConverter<NoteCategory>(NoteCategory.values);
+  static JsonTypeConverter2<NoteCategory, int, int> $converternoteCategory =
+      const EnumIndexConverter<NoteCategory>(NoteCategory.values);
 }
 
 class NoteData extends DataClass implements Insertable<NoteData> {
@@ -683,7 +683,7 @@ class NoteData extends DataClass implements Insertable<NoteData> {
   final DateTime? updatedAt;
   final int id;
   final String title;
-  final NoteCategory category;
+  final NoteCategory noteCategory;
   final String? description;
   final int? projectId;
   const NoteData({
@@ -691,7 +691,7 @@ class NoteData extends DataClass implements Insertable<NoteData> {
     this.updatedAt,
     required this.id,
     required this.title,
-    required this.category,
+    required this.noteCategory,
     this.description,
     this.projectId,
   });
@@ -705,8 +705,8 @@ class NoteData extends DataClass implements Insertable<NoteData> {
     map['id'] = Variable<int>(id);
     map['title'] = Variable<String>(title);
     {
-      map['category'] = Variable<String>(
-        $NoteTable.$convertercategory.toSql(category),
+      map['note_category'] = Variable<int>(
+        $NoteTable.$converternoteCategory.toSql(noteCategory),
       );
     }
     if (!nullToAbsent || description != null) {
@@ -726,7 +726,7 @@ class NoteData extends DataClass implements Insertable<NoteData> {
           : Value(updatedAt),
       id: Value(id),
       title: Value(title),
-      category: Value(category),
+      noteCategory: Value(noteCategory),
       description: description == null && nullToAbsent
           ? const Value.absent()
           : Value(description),
@@ -746,8 +746,8 @@ class NoteData extends DataClass implements Insertable<NoteData> {
       updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
       id: serializer.fromJson<int>(json['id']),
       title: serializer.fromJson<String>(json['title']),
-      category: $NoteTable.$convertercategory.fromJson(
-        serializer.fromJson<String>(json['category']),
+      noteCategory: $NoteTable.$converternoteCategory.fromJson(
+        serializer.fromJson<int>(json['noteCategory']),
       ),
       description: serializer.fromJson<String?>(json['description']),
       projectId: serializer.fromJson<int?>(json['projectId']),
@@ -761,8 +761,8 @@ class NoteData extends DataClass implements Insertable<NoteData> {
       'updatedAt': serializer.toJson<DateTime?>(updatedAt),
       'id': serializer.toJson<int>(id),
       'title': serializer.toJson<String>(title),
-      'category': serializer.toJson<String>(
-        $NoteTable.$convertercategory.toJson(category),
+      'noteCategory': serializer.toJson<int>(
+        $NoteTable.$converternoteCategory.toJson(noteCategory),
       ),
       'description': serializer.toJson<String?>(description),
       'projectId': serializer.toJson<int?>(projectId),
@@ -774,7 +774,7 @@ class NoteData extends DataClass implements Insertable<NoteData> {
     Value<DateTime?> updatedAt = const Value.absent(),
     int? id,
     String? title,
-    NoteCategory? category,
+    NoteCategory? noteCategory,
     Value<String?> description = const Value.absent(),
     Value<int?> projectId = const Value.absent(),
   }) => NoteData(
@@ -782,7 +782,7 @@ class NoteData extends DataClass implements Insertable<NoteData> {
     updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
     id: id ?? this.id,
     title: title ?? this.title,
-    category: category ?? this.category,
+    noteCategory: noteCategory ?? this.noteCategory,
     description: description.present ? description.value : this.description,
     projectId: projectId.present ? projectId.value : this.projectId,
   );
@@ -792,7 +792,9 @@ class NoteData extends DataClass implements Insertable<NoteData> {
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       id: data.id.present ? data.id.value : this.id,
       title: data.title.present ? data.title.value : this.title,
-      category: data.category.present ? data.category.value : this.category,
+      noteCategory: data.noteCategory.present
+          ? data.noteCategory.value
+          : this.noteCategory,
       description: data.description.present
           ? data.description.value
           : this.description,
@@ -807,7 +809,7 @@ class NoteData extends DataClass implements Insertable<NoteData> {
           ..write('updatedAt: $updatedAt, ')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('category: $category, ')
+          ..write('noteCategory: $noteCategory, ')
           ..write('description: $description, ')
           ..write('projectId: $projectId')
           ..write(')'))
@@ -820,7 +822,7 @@ class NoteData extends DataClass implements Insertable<NoteData> {
     updatedAt,
     id,
     title,
-    category,
+    noteCategory,
     description,
     projectId,
   );
@@ -832,7 +834,7 @@ class NoteData extends DataClass implements Insertable<NoteData> {
           other.updatedAt == this.updatedAt &&
           other.id == this.id &&
           other.title == this.title &&
-          other.category == this.category &&
+          other.noteCategory == this.noteCategory &&
           other.description == this.description &&
           other.projectId == this.projectId);
 }
@@ -842,7 +844,7 @@ class NoteCompanion extends UpdateCompanion<NoteData> {
   final Value<DateTime?> updatedAt;
   final Value<int> id;
   final Value<String> title;
-  final Value<NoteCategory> category;
+  final Value<NoteCategory> noteCategory;
   final Value<String?> description;
   final Value<int?> projectId;
   const NoteCompanion({
@@ -850,7 +852,7 @@ class NoteCompanion extends UpdateCompanion<NoteData> {
     this.updatedAt = const Value.absent(),
     this.id = const Value.absent(),
     this.title = const Value.absent(),
-    this.category = const Value.absent(),
+    this.noteCategory = const Value.absent(),
     this.description = const Value.absent(),
     this.projectId = const Value.absent(),
   });
@@ -859,17 +861,17 @@ class NoteCompanion extends UpdateCompanion<NoteData> {
     this.updatedAt = const Value.absent(),
     this.id = const Value.absent(),
     required String title,
-    required NoteCategory category,
+    required NoteCategory noteCategory,
     this.description = const Value.absent(),
     this.projectId = const Value.absent(),
   }) : title = Value(title),
-       category = Value(category);
+       noteCategory = Value(noteCategory);
   static Insertable<NoteData> custom({
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? id,
     Expression<String>? title,
-    Expression<String>? category,
+    Expression<int>? noteCategory,
     Expression<String>? description,
     Expression<int>? projectId,
   }) {
@@ -878,7 +880,7 @@ class NoteCompanion extends UpdateCompanion<NoteData> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (id != null) 'id': id,
       if (title != null) 'title': title,
-      if (category != null) 'category': category,
+      if (noteCategory != null) 'note_category': noteCategory,
       if (description != null) 'description': description,
       if (projectId != null) 'project_id': projectId,
     });
@@ -889,7 +891,7 @@ class NoteCompanion extends UpdateCompanion<NoteData> {
     Value<DateTime?>? updatedAt,
     Value<int>? id,
     Value<String>? title,
-    Value<NoteCategory>? category,
+    Value<NoteCategory>? noteCategory,
     Value<String?>? description,
     Value<int?>? projectId,
   }) {
@@ -898,7 +900,7 @@ class NoteCompanion extends UpdateCompanion<NoteData> {
       updatedAt: updatedAt ?? this.updatedAt,
       id: id ?? this.id,
       title: title ?? this.title,
-      category: category ?? this.category,
+      noteCategory: noteCategory ?? this.noteCategory,
       description: description ?? this.description,
       projectId: projectId ?? this.projectId,
     );
@@ -919,9 +921,9 @@ class NoteCompanion extends UpdateCompanion<NoteData> {
     if (title.present) {
       map['title'] = Variable<String>(title.value);
     }
-    if (category.present) {
-      map['category'] = Variable<String>(
-        $NoteTable.$convertercategory.toSql(category.value),
+    if (noteCategory.present) {
+      map['note_category'] = Variable<int>(
+        $NoteTable.$converternoteCategory.toSql(noteCategory.value),
       );
     }
     if (description.present) {
@@ -940,7 +942,7 @@ class NoteCompanion extends UpdateCompanion<NoteData> {
           ..write('updatedAt: $updatedAt, ')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('category: $category, ')
+          ..write('noteCategory: $noteCategory, ')
           ..write('description: $description, ')
           ..write('projectId: $projectId')
           ..write(')'))
@@ -1643,9 +1645,9 @@ class ProjectTagCompanion extends UpdateCompanion<ProjectTagData> {
   }
 }
 
-abstract class _$AppDatabase extends GeneratedDatabase {
-  _$AppDatabase(QueryExecutor e) : super(e);
-  $AppDatabaseManager get managers => $AppDatabaseManager(this);
+abstract class _$DatabaseConfigure extends GeneratedDatabase {
+  _$DatabaseConfigure(QueryExecutor e) : super(e);
+  $DatabaseConfigureManager get managers => $DatabaseConfigureManager(this);
   late final $ProjectTable project = $ProjectTable(this);
   late final $NoteTable note = $NoteTable(this);
   late final $TagTable tag = $TagTable(this);
@@ -1686,10 +1688,10 @@ typedef $$ProjectTableUpdateCompanionBuilder =
     });
 
 final class $$ProjectTableReferences
-    extends BaseReferences<_$AppDatabase, $ProjectTable, ProjectData> {
+    extends BaseReferences<_$DatabaseConfigure, $ProjectTable, ProjectData> {
   $$ProjectTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $ProjectTable _parentProjectIdTable(_$AppDatabase db) =>
+  static $ProjectTable _parentProjectIdTable(_$DatabaseConfigure db) =>
       db.project.createAlias(
         $_aliasNameGenerator(db.project.parentProjectId, db.project.id),
       );
@@ -1709,7 +1711,7 @@ final class $$ProjectTableReferences
   }
 
   static MultiTypedResultKey<$NoteTable, List<NoteData>> _noteRefsTable(
-    _$AppDatabase db,
+    _$DatabaseConfigure db,
   ) => MultiTypedResultKey.fromTable(
     db.note,
     aliasName: $_aliasNameGenerator(db.project.id, db.note.projectId),
@@ -1728,7 +1730,7 @@ final class $$ProjectTableReferences
   }
 
   static MultiTypedResultKey<$ProjectTagTable, List<ProjectTagData>>
-  _projectTagRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+  _projectTagRefsTable(_$DatabaseConfigure db) => MultiTypedResultKey.fromTable(
     db.projectTag,
     aliasName: $_aliasNameGenerator(db.project.id, db.projectTag.projectId),
   );
@@ -1747,7 +1749,7 @@ final class $$ProjectTableReferences
 }
 
 class $$ProjectTableFilterComposer
-    extends Composer<_$AppDatabase, $ProjectTable> {
+    extends Composer<_$DatabaseConfigure, $ProjectTable> {
   $$ProjectTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -1780,7 +1782,7 @@ class $$ProjectTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnWithTypeConverterFilters<ProjectStatus, ProjectStatus, String>
+  ColumnWithTypeConverterFilters<ProjectStatus, ProjectStatus, int>
   get status => $composableBuilder(
     column: $table.status,
     builder: (column) => ColumnWithTypeConverterFilters(column),
@@ -1861,7 +1863,7 @@ class $$ProjectTableFilterComposer
 }
 
 class $$ProjectTableOrderingComposer
-    extends Composer<_$AppDatabase, $ProjectTable> {
+    extends Composer<_$DatabaseConfigure, $ProjectTable> {
   $$ProjectTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -1894,7 +1896,7 @@ class $$ProjectTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get status => $composableBuilder(
+  ColumnOrderings<int> get status => $composableBuilder(
     column: $table.status,
     builder: (column) => ColumnOrderings(column),
   );
@@ -1924,7 +1926,7 @@ class $$ProjectTableOrderingComposer
 }
 
 class $$ProjectTableAnnotationComposer
-    extends Composer<_$AppDatabase, $ProjectTable> {
+    extends Composer<_$DatabaseConfigure, $ProjectTable> {
   $$ProjectTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -1949,7 +1951,7 @@ class $$ProjectTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumnWithTypeConverter<ProjectStatus, String> get status =>
+  GeneratedColumnWithTypeConverter<ProjectStatus, int> get status =>
       $composableBuilder(column: $table.status, builder: (column) => column);
 
   $$ProjectTableAnnotationComposer get parentProjectId {
@@ -2029,7 +2031,7 @@ class $$ProjectTableAnnotationComposer
 class $$ProjectTableTableManager
     extends
         RootTableManager<
-          _$AppDatabase,
+          _$DatabaseConfigure,
           $ProjectTable,
           ProjectData,
           $$ProjectTableFilterComposer,
@@ -2045,7 +2047,7 @@ class $$ProjectTableTableManager
             bool projectTagRefs,
           })
         > {
-  $$ProjectTableTableManager(_$AppDatabase db, $ProjectTable table)
+  $$ProjectTableTableManager(_$DatabaseConfigure db, $ProjectTable table)
     : super(
         TableManagerState(
           db: db,
@@ -2194,7 +2196,7 @@ class $$ProjectTableTableManager
 
 typedef $$ProjectTableProcessedTableManager =
     ProcessedTableManager<
-      _$AppDatabase,
+      _$DatabaseConfigure,
       $ProjectTable,
       ProjectData,
       $$ProjectTableFilterComposer,
@@ -2216,7 +2218,7 @@ typedef $$NoteTableCreateCompanionBuilder =
       Value<DateTime?> updatedAt,
       Value<int> id,
       required String title,
-      required NoteCategory category,
+      required NoteCategory noteCategory,
       Value<String?> description,
       Value<int?> projectId,
     });
@@ -2226,16 +2228,16 @@ typedef $$NoteTableUpdateCompanionBuilder =
       Value<DateTime?> updatedAt,
       Value<int> id,
       Value<String> title,
-      Value<NoteCategory> category,
+      Value<NoteCategory> noteCategory,
       Value<String?> description,
       Value<int?> projectId,
     });
 
 final class $$NoteTableReferences
-    extends BaseReferences<_$AppDatabase, $NoteTable, NoteData> {
+    extends BaseReferences<_$DatabaseConfigure, $NoteTable, NoteData> {
   $$NoteTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $ProjectTable _projectIdTable(_$AppDatabase db) => db.project
+  static $ProjectTable _projectIdTable(_$DatabaseConfigure db) => db.project
       .createAlias($_aliasNameGenerator(db.note.projectId, db.project.id));
 
   $$ProjectTableProcessedTableManager? get projectId {
@@ -2253,7 +2255,7 @@ final class $$NoteTableReferences
   }
 
   static MultiTypedResultKey<$NoteTagTable, List<NoteTagData>>
-  _noteTagRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+  _noteTagRefsTable(_$DatabaseConfigure db) => MultiTypedResultKey.fromTable(
     db.noteTag,
     aliasName: $_aliasNameGenerator(db.note.id, db.noteTag.noteId),
   );
@@ -2271,7 +2273,8 @@ final class $$NoteTableReferences
   }
 }
 
-class $$NoteTableFilterComposer extends Composer<_$AppDatabase, $NoteTable> {
+class $$NoteTableFilterComposer
+    extends Composer<_$DatabaseConfigure, $NoteTable> {
   $$NoteTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -2299,9 +2302,9 @@ class $$NoteTableFilterComposer extends Composer<_$AppDatabase, $NoteTable> {
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnWithTypeConverterFilters<NoteCategory, NoteCategory, String>
-  get category => $composableBuilder(
-    column: $table.category,
+  ColumnWithTypeConverterFilters<NoteCategory, NoteCategory, int>
+  get noteCategory => $composableBuilder(
+    column: $table.noteCategory,
     builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
@@ -2359,7 +2362,8 @@ class $$NoteTableFilterComposer extends Composer<_$AppDatabase, $NoteTable> {
   }
 }
 
-class $$NoteTableOrderingComposer extends Composer<_$AppDatabase, $NoteTable> {
+class $$NoteTableOrderingComposer
+    extends Composer<_$DatabaseConfigure, $NoteTable> {
   $$NoteTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -2387,8 +2391,8 @@ class $$NoteTableOrderingComposer extends Composer<_$AppDatabase, $NoteTable> {
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get category => $composableBuilder(
-    column: $table.category,
+  ColumnOrderings<int> get noteCategory => $composableBuilder(
+    column: $table.noteCategory,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -2422,7 +2426,7 @@ class $$NoteTableOrderingComposer extends Composer<_$AppDatabase, $NoteTable> {
 }
 
 class $$NoteTableAnnotationComposer
-    extends Composer<_$AppDatabase, $NoteTable> {
+    extends Composer<_$DatabaseConfigure, $NoteTable> {
   $$NoteTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -2442,8 +2446,11 @@ class $$NoteTableAnnotationComposer
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
-  GeneratedColumnWithTypeConverter<NoteCategory, String> get category =>
-      $composableBuilder(column: $table.category, builder: (column) => column);
+  GeneratedColumnWithTypeConverter<NoteCategory, int> get noteCategory =>
+      $composableBuilder(
+        column: $table.noteCategory,
+        builder: (column) => column,
+      );
 
   GeneratedColumn<String> get description => $composableBuilder(
     column: $table.description,
@@ -2502,7 +2509,7 @@ class $$NoteTableAnnotationComposer
 class $$NoteTableTableManager
     extends
         RootTableManager<
-          _$AppDatabase,
+          _$DatabaseConfigure,
           $NoteTable,
           NoteData,
           $$NoteTableFilterComposer,
@@ -2514,7 +2521,7 @@ class $$NoteTableTableManager
           NoteData,
           PrefetchHooks Function({bool projectId, bool noteTagRefs})
         > {
-  $$NoteTableTableManager(_$AppDatabase db, $NoteTable table)
+  $$NoteTableTableManager(_$DatabaseConfigure db, $NoteTable table)
     : super(
         TableManagerState(
           db: db,
@@ -2531,7 +2538,7 @@ class $$NoteTableTableManager
                 Value<DateTime?> updatedAt = const Value.absent(),
                 Value<int> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
-                Value<NoteCategory> category = const Value.absent(),
+                Value<NoteCategory> noteCategory = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<int?> projectId = const Value.absent(),
               }) => NoteCompanion(
@@ -2539,7 +2546,7 @@ class $$NoteTableTableManager
                 updatedAt: updatedAt,
                 id: id,
                 title: title,
-                category: category,
+                noteCategory: noteCategory,
                 description: description,
                 projectId: projectId,
               ),
@@ -2549,7 +2556,7 @@ class $$NoteTableTableManager
                 Value<DateTime?> updatedAt = const Value.absent(),
                 Value<int> id = const Value.absent(),
                 required String title,
-                required NoteCategory category,
+                required NoteCategory noteCategory,
                 Value<String?> description = const Value.absent(),
                 Value<int?> projectId = const Value.absent(),
               }) => NoteCompanion.insert(
@@ -2557,7 +2564,7 @@ class $$NoteTableTableManager
                 updatedAt: updatedAt,
                 id: id,
                 title: title,
-                category: category,
+                noteCategory: noteCategory,
                 description: description,
                 projectId: projectId,
               ),
@@ -2631,7 +2638,7 @@ class $$NoteTableTableManager
 
 typedef $$NoteTableProcessedTableManager =
     ProcessedTableManager<
-      _$AppDatabase,
+      _$DatabaseConfigure,
       $NoteTable,
       NoteData,
       $$NoteTableFilterComposer,
@@ -2649,11 +2656,11 @@ typedef $$TagTableUpdateCompanionBuilder =
     TagCompanion Function({Value<int> id, Value<String> title});
 
 final class $$TagTableReferences
-    extends BaseReferences<_$AppDatabase, $TagTable, TagData> {
+    extends BaseReferences<_$DatabaseConfigure, $TagTable, TagData> {
   $$TagTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static MultiTypedResultKey<$NoteTagTable, List<NoteTagData>>
-  _noteTagRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+  _noteTagRefsTable(_$DatabaseConfigure db) => MultiTypedResultKey.fromTable(
     db.noteTag,
     aliasName: $_aliasNameGenerator(db.tag.id, db.noteTag.tagId),
   );
@@ -2671,7 +2678,7 @@ final class $$TagTableReferences
   }
 
   static MultiTypedResultKey<$ProjectTagTable, List<ProjectTagData>>
-  _projectTagRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+  _projectTagRefsTable(_$DatabaseConfigure db) => MultiTypedResultKey.fromTable(
     db.projectTag,
     aliasName: $_aliasNameGenerator(db.tag.id, db.projectTag.tagId),
   );
@@ -2689,7 +2696,8 @@ final class $$TagTableReferences
   }
 }
 
-class $$TagTableFilterComposer extends Composer<_$AppDatabase, $TagTable> {
+class $$TagTableFilterComposer
+    extends Composer<_$DatabaseConfigure, $TagTable> {
   $$TagTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -2758,7 +2766,8 @@ class $$TagTableFilterComposer extends Composer<_$AppDatabase, $TagTable> {
   }
 }
 
-class $$TagTableOrderingComposer extends Composer<_$AppDatabase, $TagTable> {
+class $$TagTableOrderingComposer
+    extends Composer<_$DatabaseConfigure, $TagTable> {
   $$TagTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -2777,7 +2786,8 @@ class $$TagTableOrderingComposer extends Composer<_$AppDatabase, $TagTable> {
   );
 }
 
-class $$TagTableAnnotationComposer extends Composer<_$AppDatabase, $TagTable> {
+class $$TagTableAnnotationComposer
+    extends Composer<_$DatabaseConfigure, $TagTable> {
   $$TagTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -2845,7 +2855,7 @@ class $$TagTableAnnotationComposer extends Composer<_$AppDatabase, $TagTable> {
 class $$TagTableTableManager
     extends
         RootTableManager<
-          _$AppDatabase,
+          _$DatabaseConfigure,
           $TagTable,
           TagData,
           $$TagTableFilterComposer,
@@ -2857,7 +2867,7 @@ class $$TagTableTableManager
           TagData,
           PrefetchHooks Function({bool noteTagRefs, bool projectTagRefs})
         > {
-  $$TagTableTableManager(_$AppDatabase db, $TagTable table)
+  $$TagTableTableManager(_$DatabaseConfigure db, $TagTable table)
     : super(
         TableManagerState(
           db: db,
@@ -2939,7 +2949,7 @@ class $$TagTableTableManager
 
 typedef $$TagTableProcessedTableManager =
     ProcessedTableManager<
-      _$AppDatabase,
+      _$DatabaseConfigure,
       $TagTable,
       TagData,
       $$TagTableFilterComposer,
@@ -2965,10 +2975,10 @@ typedef $$NoteTagTableUpdateCompanionBuilder =
     });
 
 final class $$NoteTagTableReferences
-    extends BaseReferences<_$AppDatabase, $NoteTagTable, NoteTagData> {
+    extends BaseReferences<_$DatabaseConfigure, $NoteTagTable, NoteTagData> {
   $$NoteTagTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $NoteTable _noteIdTable(_$AppDatabase db) =>
+  static $NoteTable _noteIdTable(_$DatabaseConfigure db) =>
       db.note.createAlias($_aliasNameGenerator(db.noteTag.noteId, db.note.id));
 
   $$NoteTableProcessedTableManager get noteId {
@@ -2985,7 +2995,7 @@ final class $$NoteTagTableReferences
     );
   }
 
-  static $TagTable _tagIdTable(_$AppDatabase db) =>
+  static $TagTable _tagIdTable(_$DatabaseConfigure db) =>
       db.tag.createAlias($_aliasNameGenerator(db.noteTag.tagId, db.tag.id));
 
   $$TagTableProcessedTableManager get tagId {
@@ -3004,7 +3014,7 @@ final class $$NoteTagTableReferences
 }
 
 class $$NoteTagTableFilterComposer
-    extends Composer<_$AppDatabase, $NoteTagTable> {
+    extends Composer<_$DatabaseConfigure, $NoteTagTable> {
   $$NoteTagTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -3065,7 +3075,7 @@ class $$NoteTagTableFilterComposer
 }
 
 class $$NoteTagTableOrderingComposer
-    extends Composer<_$AppDatabase, $NoteTagTable> {
+    extends Composer<_$DatabaseConfigure, $NoteTagTable> {
   $$NoteTagTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -3126,7 +3136,7 @@ class $$NoteTagTableOrderingComposer
 }
 
 class $$NoteTagTableAnnotationComposer
-    extends Composer<_$AppDatabase, $NoteTagTable> {
+    extends Composer<_$DatabaseConfigure, $NoteTagTable> {
   $$NoteTagTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -3187,7 +3197,7 @@ class $$NoteTagTableAnnotationComposer
 class $$NoteTagTableTableManager
     extends
         RootTableManager<
-          _$AppDatabase,
+          _$DatabaseConfigure,
           $NoteTagTable,
           NoteTagData,
           $$NoteTagTableFilterComposer,
@@ -3199,7 +3209,7 @@ class $$NoteTagTableTableManager
           NoteTagData,
           PrefetchHooks Function({bool noteId, bool tagId})
         > {
-  $$NoteTagTableTableManager(_$AppDatabase db, $NoteTagTable table)
+  $$NoteTagTableTableManager(_$DatabaseConfigure db, $NoteTagTable table)
     : super(
         TableManagerState(
           db: db,
@@ -3291,7 +3301,7 @@ class $$NoteTagTableTableManager
 
 typedef $$NoteTagTableProcessedTableManager =
     ProcessedTableManager<
-      _$AppDatabase,
+      _$DatabaseConfigure,
       $NoteTagTable,
       NoteTagData,
       $$NoteTagTableFilterComposer,
@@ -3317,10 +3327,11 @@ typedef $$ProjectTagTableUpdateCompanionBuilder =
     });
 
 final class $$ProjectTagTableReferences
-    extends BaseReferences<_$AppDatabase, $ProjectTagTable, ProjectTagData> {
+    extends
+        BaseReferences<_$DatabaseConfigure, $ProjectTagTable, ProjectTagData> {
   $$ProjectTagTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $ProjectTable _projectIdTable(_$AppDatabase db) =>
+  static $ProjectTable _projectIdTable(_$DatabaseConfigure db) =>
       db.project.createAlias(
         $_aliasNameGenerator(db.projectTag.projectId, db.project.id),
       );
@@ -3339,7 +3350,7 @@ final class $$ProjectTagTableReferences
     );
   }
 
-  static $TagTable _tagIdTable(_$AppDatabase db) =>
+  static $TagTable _tagIdTable(_$DatabaseConfigure db) =>
       db.tag.createAlias($_aliasNameGenerator(db.projectTag.tagId, db.tag.id));
 
   $$TagTableProcessedTableManager get tagId {
@@ -3358,7 +3369,7 @@ final class $$ProjectTagTableReferences
 }
 
 class $$ProjectTagTableFilterComposer
-    extends Composer<_$AppDatabase, $ProjectTagTable> {
+    extends Composer<_$DatabaseConfigure, $ProjectTagTable> {
   $$ProjectTagTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -3419,7 +3430,7 @@ class $$ProjectTagTableFilterComposer
 }
 
 class $$ProjectTagTableOrderingComposer
-    extends Composer<_$AppDatabase, $ProjectTagTable> {
+    extends Composer<_$DatabaseConfigure, $ProjectTagTable> {
   $$ProjectTagTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -3480,7 +3491,7 @@ class $$ProjectTagTableOrderingComposer
 }
 
 class $$ProjectTagTableAnnotationComposer
-    extends Composer<_$AppDatabase, $ProjectTagTable> {
+    extends Composer<_$DatabaseConfigure, $ProjectTagTable> {
   $$ProjectTagTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -3541,7 +3552,7 @@ class $$ProjectTagTableAnnotationComposer
 class $$ProjectTagTableTableManager
     extends
         RootTableManager<
-          _$AppDatabase,
+          _$DatabaseConfigure,
           $ProjectTagTable,
           ProjectTagData,
           $$ProjectTagTableFilterComposer,
@@ -3553,7 +3564,7 @@ class $$ProjectTagTableTableManager
           ProjectTagData,
           PrefetchHooks Function({bool projectId, bool tagId})
         > {
-  $$ProjectTagTableTableManager(_$AppDatabase db, $ProjectTagTable table)
+  $$ProjectTagTableTableManager(_$DatabaseConfigure db, $ProjectTagTable table)
     : super(
         TableManagerState(
           db: db,
@@ -3652,7 +3663,7 @@ class $$ProjectTagTableTableManager
 
 typedef $$ProjectTagTableProcessedTableManager =
     ProcessedTableManager<
-      _$AppDatabase,
+      _$DatabaseConfigure,
       $ProjectTagTable,
       ProjectTagData,
       $$ProjectTagTableFilterComposer,
@@ -3665,9 +3676,9 @@ typedef $$ProjectTagTableProcessedTableManager =
       PrefetchHooks Function({bool projectId, bool tagId})
     >;
 
-class $AppDatabaseManager {
-  final _$AppDatabase _db;
-  $AppDatabaseManager(this._db);
+class $DatabaseConfigureManager {
+  final _$DatabaseConfigure _db;
+  $DatabaseConfigureManager(this._db);
   $$ProjectTableTableManager get project =>
       $$ProjectTableTableManager(_db, _db.project);
   $$NoteTableTableManager get note => $$NoteTableTableManager(_db, _db.note);

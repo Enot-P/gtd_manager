@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:gtd_manager/app/database/database.dart';
 import 'package:gtd_manager/routing/app_router.dart';
 
 @RoutePage()
@@ -9,14 +10,30 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AutoTabsScaffold(
-      routes: const [
-        ListNotesRoute(),
-        ListNotesRoute(),
-        ListNotesRoute(),
-        CalendarRoute(),
-        ListNotesRoute(),
-        ProjectsRoute(),
-        TagsRoute(),
+      routes: [
+        ListNotesRoute(
+          noteCategory: NoteCategory.inbox,
+          name: 'Корзина дел',
+          description: 'Сюда записывается все, что приходит в голову',
+        ),
+        ListNotesRoute(
+          noteCategory: NoteCategory.next,
+          name: 'Текущие действия',
+          description: '',
+        ),
+        ListNotesRoute(
+          noteCategory: NoteCategory.waiting,
+          name: 'Список ожидания',
+          description: 'Эти дела, должен сделать кто-то другой',
+        ),
+        const CalendarRoute(),
+        ListNotesRoute(
+          noteCategory: NoteCategory.someday,
+          name: 'Когда-нибудь',
+          description: 'Тут дела, которые ты вечно откладываешь',
+        ),
+        const ProjectsRoute(),
+        const TagsRoute(),
       ],
       appBarBuilder: (_, tabsRouter) => AppBar(
         actions: const [

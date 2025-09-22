@@ -1,15 +1,19 @@
 import 'package:gtd_manager/app/database/database.dart';
 import 'package:gtd_manager/features/notes/data/entyties/note_entity.dart';
 
-class NotesRepository {
-  final dbOperations = DatabaseOperations();
+class ListNotesRepository {
+  final DatabaseOperations dbOperations;
+  ListNotesRepository(this.dbOperations);
 
   Future<List<NoteData>> getAllNotes() async => dbOperations.getAllNotes();
+
+  Future<List<NoteData>> getNotesByCategory(NoteCategory noteCategory) async =>
+      dbOperations.getNotesByCategory(noteCategory);
 
   Future<void> createNote(NoteEntity note) async {
     await dbOperations.createNote(
       title: note.title,
-      category: note.category,
+      noteCategory: note.category,
       description: note.description,
       projectId: note.projectId,
     );
