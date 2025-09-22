@@ -9,3 +9,9 @@ class CreateNote extends NoteEvent {
   final NoteEntity noteEntity;
   CreateNote(this.noteEntity);
 }
+
+class DeleteNote extends NoteEvent {
+  final int noteId;
+
+  DeleteNote({required this.noteId});
+}

@@ -15,6 +15,7 @@ class NoteBloc extends Bloc<NoteEvent, ListNotesState> {
   NoteBloc(this.noteRepository) : super(ListNotesInitial()) {
     on<LoadNotes>(_load);
     on<CreateNote>(_createNote);
+    on<DeleteNote>(_deleteNote);
   }
 
   Future<void> _load(LoadNotes event, Emitter<ListNotesState> emit) async {
@@ -30,7 +31,7 @@ class NoteBloc extends Bloc<NoteEvent, ListNotesState> {
         notes.length,
         (int index) => NoteWidget(
           key: Key('$index'),
-          title: notes[index].title,
+          note: notes[index],
         ),
       );
       listNotes.isEmpty ? emit(ListNotesIsEmpty()) : emit(ListNotesLoaded(listNotes));
@@ -42,6 +43,15 @@ class NoteBloc extends Bloc<NoteEvent, ListNotesState> {
   FutureOr<void> _createNote(CreateNote event, Emitter<ListNotesState> emit) async {
     try {
       await noteRepository.createNote(event.noteEntity);
+      add(LoadNotes());
+    } catch (e) {
+      emit(ListNotesFailure(e));
+    }
+  }
+
+  FutureOr<void> _deleteNote(DeleteNote event, Emitter<ListNotesState> emit) async {
+    try {
+      await noteRepository.deleteNote(event.noteId);
       add(LoadNotes());
     } catch (e) {
       emit(ListNotesFailure(e));

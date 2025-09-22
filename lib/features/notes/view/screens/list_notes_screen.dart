@@ -86,8 +86,7 @@ class _ListNotesScreenState extends State<ListNotesScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => noteBloc.add(
           CreateNote(
-            // TODO: Надо придумать что делать с этим id
-            NoteEntity(id: -999, title: 'TestName', noteCategory: NoteCategory.inbox),
+            const NoteEntity(title: 'TestName', noteCategory: NoteCategory.inbox),
           ),
         ),
         child: const Icon(Icons.add),
