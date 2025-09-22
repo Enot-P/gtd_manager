@@ -12,9 +12,9 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
-  auto_route: ^10.1.2
+  
+  auto_route: ^7.8.4
   flutter_bloc: ^9.1.1
-  get_it: ^8.2.0
   talker: ^5.0.0
   talker_flutter: ^5.0.0
   # talker_dio_logger: ^5.0.0
