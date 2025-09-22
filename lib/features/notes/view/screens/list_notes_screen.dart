@@ -1,13 +1,17 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gtd_manager/app/database/database.dart';
+import 'package:gtd_manager/domain/domain.dart';
 import 'package:gtd_manager/features/notes/bloc/note_bloc.dart';
-import 'package:gtd_manager/features/notes/data/entyties/note_entity.dart';
 
 @RoutePage()
 class ListNotesScreen extends StatefulWidget {
-  const ListNotesScreen({super.key, required this.noteCategory, required this.name, required this.description});
+  const ListNotesScreen({
+    super.key,
+    required this.noteCategory,
+    required this.name,
+    required this.description,
+  });
   final NoteCategory noteCategory;
   final String name;
   final String description;
@@ -47,7 +51,7 @@ class _ListNotesScreenState extends State<ListNotesScreen> {
                 if (state is ListNotesLoaded) {
                   return ReorderableListView(
                     // TODO: Здесь надо будет через БД еще реализовать смену индексов
-                    //* INFO: Этот виджет загружает все элементы сразу, надо исправить
+                    //* INFO: Этот виджет загружает все элементы сразу
                     onReorder: (oldIndex, newIndex) {
                       setState(() {
                         // if (oldIndex < newIndex) {
@@ -83,7 +87,7 @@ class _ListNotesScreenState extends State<ListNotesScreen> {
         onPressed: () => noteBloc.add(
           CreateNote(
             // TODO: Надо придумать что делать с этим id
-            NoteEntity(id: -999, title: 'TestName', category: NoteCategory.inbox),
+            NoteEntity(id: -999, title: 'TestName', noteCategory: NoteCategory.inbox),
           ),
         ),
         child: const Icon(Icons.add),

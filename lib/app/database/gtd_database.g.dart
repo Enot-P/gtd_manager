@@ -1,9 +1,10 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'database_configure.dart';
+part of 'gtd_database.dart';
 
 // ignore_for_file: type=lint
-class $ProjectTable extends Project with TableInfo<$ProjectTable, ProjectData> {
+class $ProjectTable extends Project
+    with TableInfo<$ProjectTable, ProjectEntity> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -69,14 +70,14 @@ class $ProjectTable extends Project with TableInfo<$ProjectTable, ProjectData> {
     requiredDuringInsert: false,
   );
   @override
-  late final GeneratedColumnWithTypeConverter<ProjectStatus, int> status =
-      GeneratedColumn<int>(
-        'status',
-        aliasedName,
-        false,
-        type: DriftSqlType.int,
-        requiredDuringInsert: true,
-      ).withConverter<ProjectStatus>($ProjectTable.$converterstatus);
+  late final GeneratedColumnWithTypeConverter<ProjectStatus, int>
+  projectStatus = GeneratedColumn<int>(
+    'project_status',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  ).withConverter<ProjectStatus>($ProjectTable.$converterprojectStatus);
   static const VerificationMeta _parentProjectIdMeta = const VerificationMeta(
     'parentProjectId',
   );
@@ -98,7 +99,7 @@ class $ProjectTable extends Project with TableInfo<$ProjectTable, ProjectData> {
     id,
     title,
     description,
-    status,
+    projectStatus,
     parentProjectId,
   ];
   @override
@@ -108,7 +109,7 @@ class $ProjectTable extends Project with TableInfo<$ProjectTable, ProjectData> {
   static const String $name = 'project';
   @override
   VerificationContext validateIntegrity(
-    Insertable<ProjectData> instance, {
+    Insertable<ProjectEntity> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -160,17 +161,9 @@ class $ProjectTable extends Project with TableInfo<$ProjectTable, ProjectData> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  ProjectData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  ProjectEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return ProjectData(
-      createdAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}created_at'],
-      )!,
-      updatedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}updated_at'],
-      ),
+    return ProjectEntity.new(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -183,10 +176,10 @@ class $ProjectTable extends Project with TableInfo<$ProjectTable, ProjectData> {
         DriftSqlType.string,
         data['${effectivePrefix}description'],
       ),
-      status: $ProjectTable.$converterstatus.fromSql(
+      projectStatus: $ProjectTable.$converterprojectStatus.fromSql(
         attachedDatabase.typeMapping.read(
           DriftSqlType.int,
-          data['${effectivePrefix}status'],
+          data['${effectivePrefix}project_status'],
         )!,
       ),
       parentProjectId: attachedDatabase.typeMapping.read(
@@ -201,180 +194,17 @@ class $ProjectTable extends Project with TableInfo<$ProjectTable, ProjectData> {
     return $ProjectTable(attachedDatabase, alias);
   }
 
-  static JsonTypeConverter2<ProjectStatus, int, int> $converterstatus =
+  static JsonTypeConverter2<ProjectStatus, int, int> $converterprojectStatus =
       const EnumIndexConverter<ProjectStatus>(ProjectStatus.values);
 }
 
-class ProjectData extends DataClass implements Insertable<ProjectData> {
-  final DateTime createdAt;
-  final DateTime? updatedAt;
-  final int id;
-  final String title;
-  final String? description;
-  final ProjectStatus status;
-  final int? parentProjectId;
-  const ProjectData({
-    required this.createdAt,
-    this.updatedAt,
-    required this.id,
-    required this.title,
-    this.description,
-    required this.status,
-    this.parentProjectId,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['created_at'] = Variable<DateTime>(createdAt);
-    if (!nullToAbsent || updatedAt != null) {
-      map['updated_at'] = Variable<DateTime>(updatedAt);
-    }
-    map['id'] = Variable<int>(id);
-    map['title'] = Variable<String>(title);
-    if (!nullToAbsent || description != null) {
-      map['description'] = Variable<String>(description);
-    }
-    {
-      map['status'] = Variable<int>(
-        $ProjectTable.$converterstatus.toSql(status),
-      );
-    }
-    if (!nullToAbsent || parentProjectId != null) {
-      map['parent_project_id'] = Variable<int>(parentProjectId);
-    }
-    return map;
-  }
-
-  ProjectCompanion toCompanion(bool nullToAbsent) {
-    return ProjectCompanion(
-      createdAt: Value(createdAt),
-      updatedAt: updatedAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(updatedAt),
-      id: Value(id),
-      title: Value(title),
-      description: description == null && nullToAbsent
-          ? const Value.absent()
-          : Value(description),
-      status: Value(status),
-      parentProjectId: parentProjectId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(parentProjectId),
-    );
-  }
-
-  factory ProjectData.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return ProjectData(
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
-      id: serializer.fromJson<int>(json['id']),
-      title: serializer.fromJson<String>(json['title']),
-      description: serializer.fromJson<String?>(json['description']),
-      status: $ProjectTable.$converterstatus.fromJson(
-        serializer.fromJson<int>(json['status']),
-      ),
-      parentProjectId: serializer.fromJson<int?>(json['parentProjectId']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
-      'id': serializer.toJson<int>(id),
-      'title': serializer.toJson<String>(title),
-      'description': serializer.toJson<String?>(description),
-      'status': serializer.toJson<int>(
-        $ProjectTable.$converterstatus.toJson(status),
-      ),
-      'parentProjectId': serializer.toJson<int?>(parentProjectId),
-    };
-  }
-
-  ProjectData copyWith({
-    DateTime? createdAt,
-    Value<DateTime?> updatedAt = const Value.absent(),
-    int? id,
-    String? title,
-    Value<String?> description = const Value.absent(),
-    ProjectStatus? status,
-    Value<int?> parentProjectId = const Value.absent(),
-  }) => ProjectData(
-    createdAt: createdAt ?? this.createdAt,
-    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
-    id: id ?? this.id,
-    title: title ?? this.title,
-    description: description.present ? description.value : this.description,
-    status: status ?? this.status,
-    parentProjectId: parentProjectId.present
-        ? parentProjectId.value
-        : this.parentProjectId,
-  );
-  ProjectData copyWithCompanion(ProjectCompanion data) {
-    return ProjectData(
-      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
-      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
-      id: data.id.present ? data.id.value : this.id,
-      title: data.title.present ? data.title.value : this.title,
-      description: data.description.present
-          ? data.description.value
-          : this.description,
-      status: data.status.present ? data.status.value : this.status,
-      parentProjectId: data.parentProjectId.present
-          ? data.parentProjectId.value
-          : this.parentProjectId,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('ProjectData(')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('id: $id, ')
-          ..write('title: $title, ')
-          ..write('description: $description, ')
-          ..write('status: $status, ')
-          ..write('parentProjectId: $parentProjectId')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(
-    createdAt,
-    updatedAt,
-    id,
-    title,
-    description,
-    status,
-    parentProjectId,
-  );
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is ProjectData &&
-          other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt &&
-          other.id == this.id &&
-          other.title == this.title &&
-          other.description == this.description &&
-          other.status == this.status &&
-          other.parentProjectId == this.parentProjectId);
-}
-
-class ProjectCompanion extends UpdateCompanion<ProjectData> {
+class ProjectCompanion extends UpdateCompanion<ProjectEntity> {
   final Value<DateTime> createdAt;
   final Value<DateTime?> updatedAt;
   final Value<int> id;
   final Value<String> title;
   final Value<String?> description;
-  final Value<ProjectStatus> status;
+  final Value<ProjectStatus> projectStatus;
   final Value<int?> parentProjectId;
   const ProjectCompanion({
     this.createdAt = const Value.absent(),
@@ -382,7 +212,7 @@ class ProjectCompanion extends UpdateCompanion<ProjectData> {
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.description = const Value.absent(),
-    this.status = const Value.absent(),
+    this.projectStatus = const Value.absent(),
     this.parentProjectId = const Value.absent(),
   });
   ProjectCompanion.insert({
@@ -391,17 +221,17 @@ class ProjectCompanion extends UpdateCompanion<ProjectData> {
     this.id = const Value.absent(),
     required String title,
     this.description = const Value.absent(),
-    required ProjectStatus status,
+    required ProjectStatus projectStatus,
     this.parentProjectId = const Value.absent(),
   }) : title = Value(title),
-       status = Value(status);
-  static Insertable<ProjectData> custom({
+       projectStatus = Value(projectStatus);
+  static Insertable<ProjectEntity> custom({
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? id,
     Expression<String>? title,
     Expression<String>? description,
-    Expression<int>? status,
+    Expression<int>? projectStatus,
     Expression<int>? parentProjectId,
   }) {
     return RawValuesInsertable({
@@ -410,7 +240,7 @@ class ProjectCompanion extends UpdateCompanion<ProjectData> {
       if (id != null) 'id': id,
       if (title != null) 'title': title,
       if (description != null) 'description': description,
-      if (status != null) 'status': status,
+      if (projectStatus != null) 'project_status': projectStatus,
       if (parentProjectId != null) 'parent_project_id': parentProjectId,
     });
   }
@@ -421,7 +251,7 @@ class ProjectCompanion extends UpdateCompanion<ProjectData> {
     Value<int>? id,
     Value<String>? title,
     Value<String?>? description,
-    Value<ProjectStatus>? status,
+    Value<ProjectStatus>? projectStatus,
     Value<int?>? parentProjectId,
   }) {
     return ProjectCompanion(
@@ -430,7 +260,7 @@ class ProjectCompanion extends UpdateCompanion<ProjectData> {
       id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,
-      status: status ?? this.status,
+      projectStatus: projectStatus ?? this.projectStatus,
       parentProjectId: parentProjectId ?? this.parentProjectId,
     );
   }
@@ -453,9 +283,9 @@ class ProjectCompanion extends UpdateCompanion<ProjectData> {
     if (description.present) {
       map['description'] = Variable<String>(description.value);
     }
-    if (status.present) {
-      map['status'] = Variable<int>(
-        $ProjectTable.$converterstatus.toSql(status.value),
+    if (projectStatus.present) {
+      map['project_status'] = Variable<int>(
+        $ProjectTable.$converterprojectStatus.toSql(projectStatus.value),
       );
     }
     if (parentProjectId.present) {
@@ -472,14 +302,14 @@ class ProjectCompanion extends UpdateCompanion<ProjectData> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
-          ..write('status: $status, ')
+          ..write('projectStatus: $projectStatus, ')
           ..write('parentProjectId: $parentProjectId')
           ..write(')'))
         .toString();
   }
 }
 
-class $NoteTable extends Note with TableInfo<$NoteTable, NoteData> {
+class $NoteTable extends Note with TableInfo<$NoteTable, NoteEntity> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -584,7 +414,7 @@ class $NoteTable extends Note with TableInfo<$NoteTable, NoteData> {
   static const String $name = 'note';
   @override
   VerificationContext validateIntegrity(
-    Insertable<NoteData> instance, {
+    Insertable<NoteEntity> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -633,17 +463,9 @@ class $NoteTable extends Note with TableInfo<$NoteTable, NoteData> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  NoteData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  NoteEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return NoteData(
-      createdAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}created_at'],
-      )!,
-      updatedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}updated_at'],
-      ),
+    return NoteEntity.new(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -678,168 +500,7 @@ class $NoteTable extends Note with TableInfo<$NoteTable, NoteData> {
       const EnumIndexConverter<NoteCategory>(NoteCategory.values);
 }
 
-class NoteData extends DataClass implements Insertable<NoteData> {
-  final DateTime createdAt;
-  final DateTime? updatedAt;
-  final int id;
-  final String title;
-  final NoteCategory noteCategory;
-  final String? description;
-  final int? projectId;
-  const NoteData({
-    required this.createdAt,
-    this.updatedAt,
-    required this.id,
-    required this.title,
-    required this.noteCategory,
-    this.description,
-    this.projectId,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['created_at'] = Variable<DateTime>(createdAt);
-    if (!nullToAbsent || updatedAt != null) {
-      map['updated_at'] = Variable<DateTime>(updatedAt);
-    }
-    map['id'] = Variable<int>(id);
-    map['title'] = Variable<String>(title);
-    {
-      map['note_category'] = Variable<int>(
-        $NoteTable.$converternoteCategory.toSql(noteCategory),
-      );
-    }
-    if (!nullToAbsent || description != null) {
-      map['description'] = Variable<String>(description);
-    }
-    if (!nullToAbsent || projectId != null) {
-      map['project_id'] = Variable<int>(projectId);
-    }
-    return map;
-  }
-
-  NoteCompanion toCompanion(bool nullToAbsent) {
-    return NoteCompanion(
-      createdAt: Value(createdAt),
-      updatedAt: updatedAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(updatedAt),
-      id: Value(id),
-      title: Value(title),
-      noteCategory: Value(noteCategory),
-      description: description == null && nullToAbsent
-          ? const Value.absent()
-          : Value(description),
-      projectId: projectId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(projectId),
-    );
-  }
-
-  factory NoteData.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return NoteData(
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
-      id: serializer.fromJson<int>(json['id']),
-      title: serializer.fromJson<String>(json['title']),
-      noteCategory: $NoteTable.$converternoteCategory.fromJson(
-        serializer.fromJson<int>(json['noteCategory']),
-      ),
-      description: serializer.fromJson<String?>(json['description']),
-      projectId: serializer.fromJson<int?>(json['projectId']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
-      'id': serializer.toJson<int>(id),
-      'title': serializer.toJson<String>(title),
-      'noteCategory': serializer.toJson<int>(
-        $NoteTable.$converternoteCategory.toJson(noteCategory),
-      ),
-      'description': serializer.toJson<String?>(description),
-      'projectId': serializer.toJson<int?>(projectId),
-    };
-  }
-
-  NoteData copyWith({
-    DateTime? createdAt,
-    Value<DateTime?> updatedAt = const Value.absent(),
-    int? id,
-    String? title,
-    NoteCategory? noteCategory,
-    Value<String?> description = const Value.absent(),
-    Value<int?> projectId = const Value.absent(),
-  }) => NoteData(
-    createdAt: createdAt ?? this.createdAt,
-    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
-    id: id ?? this.id,
-    title: title ?? this.title,
-    noteCategory: noteCategory ?? this.noteCategory,
-    description: description.present ? description.value : this.description,
-    projectId: projectId.present ? projectId.value : this.projectId,
-  );
-  NoteData copyWithCompanion(NoteCompanion data) {
-    return NoteData(
-      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
-      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
-      id: data.id.present ? data.id.value : this.id,
-      title: data.title.present ? data.title.value : this.title,
-      noteCategory: data.noteCategory.present
-          ? data.noteCategory.value
-          : this.noteCategory,
-      description: data.description.present
-          ? data.description.value
-          : this.description,
-      projectId: data.projectId.present ? data.projectId.value : this.projectId,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('NoteData(')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('id: $id, ')
-          ..write('title: $title, ')
-          ..write('noteCategory: $noteCategory, ')
-          ..write('description: $description, ')
-          ..write('projectId: $projectId')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(
-    createdAt,
-    updatedAt,
-    id,
-    title,
-    noteCategory,
-    description,
-    projectId,
-  );
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is NoteData &&
-          other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt &&
-          other.id == this.id &&
-          other.title == this.title &&
-          other.noteCategory == this.noteCategory &&
-          other.description == this.description &&
-          other.projectId == this.projectId);
-}
-
-class NoteCompanion extends UpdateCompanion<NoteData> {
+class NoteCompanion extends UpdateCompanion<NoteEntity> {
   final Value<DateTime> createdAt;
   final Value<DateTime?> updatedAt;
   final Value<int> id;
@@ -866,7 +527,7 @@ class NoteCompanion extends UpdateCompanion<NoteData> {
     this.projectId = const Value.absent(),
   }) : title = Value(title),
        noteCategory = Value(noteCategory);
-  static Insertable<NoteData> custom({
+  static Insertable<NoteEntity> custom({
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? id,
@@ -950,7 +611,7 @@ class NoteCompanion extends UpdateCompanion<NoteData> {
   }
 }
 
-class $TagTable extends Tag with TableInfo<$TagTable, TagData> {
+class $TagTable extends Tag with TableInfo<$TagTable, TagEntity> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -991,7 +652,7 @@ class $TagTable extends Tag with TableInfo<$TagTable, TagData> {
   static const String $name = 'tag';
   @override
   VerificationContext validateIntegrity(
-    Insertable<TagData> instance, {
+    Insertable<TagEntity> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -1013,9 +674,9 @@ class $TagTable extends Tag with TableInfo<$TagTable, TagData> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  TagData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  TagEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return TagData(
+    return TagEntity.new(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -1033,68 +694,7 @@ class $TagTable extends Tag with TableInfo<$TagTable, TagData> {
   }
 }
 
-class TagData extends DataClass implements Insertable<TagData> {
-  final int id;
-  final String title;
-  const TagData({required this.id, required this.title});
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['title'] = Variable<String>(title);
-    return map;
-  }
-
-  TagCompanion toCompanion(bool nullToAbsent) {
-    return TagCompanion(id: Value(id), title: Value(title));
-  }
-
-  factory TagData.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return TagData(
-      id: serializer.fromJson<int>(json['id']),
-      title: serializer.fromJson<String>(json['title']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'title': serializer.toJson<String>(title),
-    };
-  }
-
-  TagData copyWith({int? id, String? title}) =>
-      TagData(id: id ?? this.id, title: title ?? this.title);
-  TagData copyWithCompanion(TagCompanion data) {
-    return TagData(
-      id: data.id.present ? data.id.value : this.id,
-      title: data.title.present ? data.title.value : this.title,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('TagData(')
-          ..write('id: $id, ')
-          ..write('title: $title')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(id, title);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is TagData && other.id == this.id && other.title == this.title);
-}
-
-class TagCompanion extends UpdateCompanion<TagData> {
+class TagCompanion extends UpdateCompanion<TagEntity> {
   final Value<int> id;
   final Value<String> title;
   const TagCompanion({
@@ -1103,7 +703,7 @@ class TagCompanion extends UpdateCompanion<TagData> {
   });
   TagCompanion.insert({this.id = const Value.absent(), required String title})
     : title = Value(title);
-  static Insertable<TagData> custom({
+  static Insertable<TagEntity> custom({
     Expression<int>? id,
     Expression<String>? title,
   }) {
@@ -1139,7 +739,8 @@ class TagCompanion extends UpdateCompanion<TagData> {
   }
 }
 
-class $NoteTagTable extends NoteTag with TableInfo<$NoteTagTable, NoteTagData> {
+class $NoteTagTable extends NoteTag
+    with TableInfo<$NoteTagTable, NoteTagEntity> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -1190,7 +791,7 @@ class $NoteTagTable extends NoteTag with TableInfo<$NoteTagTable, NoteTagData> {
   static const String $name = 'note_tag';
   @override
   VerificationContext validateIntegrity(
-    Insertable<NoteTagData> instance, {
+    Insertable<NoteTagEntity> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -1220,9 +821,9 @@ class $NoteTagTable extends NoteTag with TableInfo<$NoteTagTable, NoteTagData> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  NoteTagData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  NoteTagEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return NoteTagData(
+    return NoteTagEntity.new(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -1244,88 +845,7 @@ class $NoteTagTable extends NoteTag with TableInfo<$NoteTagTable, NoteTagData> {
   }
 }
 
-class NoteTagData extends DataClass implements Insertable<NoteTagData> {
-  final int id;
-  final int noteId;
-  final int tagId;
-  const NoteTagData({
-    required this.id,
-    required this.noteId,
-    required this.tagId,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['note_id'] = Variable<int>(noteId);
-    map['tag_id'] = Variable<int>(tagId);
-    return map;
-  }
-
-  NoteTagCompanion toCompanion(bool nullToAbsent) {
-    return NoteTagCompanion(
-      id: Value(id),
-      noteId: Value(noteId),
-      tagId: Value(tagId),
-    );
-  }
-
-  factory NoteTagData.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return NoteTagData(
-      id: serializer.fromJson<int>(json['id']),
-      noteId: serializer.fromJson<int>(json['noteId']),
-      tagId: serializer.fromJson<int>(json['tagId']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'noteId': serializer.toJson<int>(noteId),
-      'tagId': serializer.toJson<int>(tagId),
-    };
-  }
-
-  NoteTagData copyWith({int? id, int? noteId, int? tagId}) => NoteTagData(
-    id: id ?? this.id,
-    noteId: noteId ?? this.noteId,
-    tagId: tagId ?? this.tagId,
-  );
-  NoteTagData copyWithCompanion(NoteTagCompanion data) {
-    return NoteTagData(
-      id: data.id.present ? data.id.value : this.id,
-      noteId: data.noteId.present ? data.noteId.value : this.noteId,
-      tagId: data.tagId.present ? data.tagId.value : this.tagId,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('NoteTagData(')
-          ..write('id: $id, ')
-          ..write('noteId: $noteId, ')
-          ..write('tagId: $tagId')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(id, noteId, tagId);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is NoteTagData &&
-          other.id == this.id &&
-          other.noteId == this.noteId &&
-          other.tagId == this.tagId);
-}
-
-class NoteTagCompanion extends UpdateCompanion<NoteTagData> {
+class NoteTagCompanion extends UpdateCompanion<NoteTagEntity> {
   final Value<int> id;
   final Value<int> noteId;
   final Value<int> tagId;
@@ -1340,7 +860,7 @@ class NoteTagCompanion extends UpdateCompanion<NoteTagData> {
     required int tagId,
   }) : noteId = Value(noteId),
        tagId = Value(tagId);
-  static Insertable<NoteTagData> custom({
+  static Insertable<NoteTagEntity> custom({
     Expression<int>? id,
     Expression<int>? noteId,
     Expression<int>? tagId,
@@ -1391,7 +911,7 @@ class NoteTagCompanion extends UpdateCompanion<NoteTagData> {
 }
 
 class $ProjectTagTable extends ProjectTag
-    with TableInfo<$ProjectTagTable, ProjectTagData> {
+    with TableInfo<$ProjectTagTable, ProjectTagEntity> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -1444,7 +964,7 @@ class $ProjectTagTable extends ProjectTag
   static const String $name = 'project_tag';
   @override
   VerificationContext validateIntegrity(
-    Insertable<ProjectTagData> instance, {
+    Insertable<ProjectTagEntity> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -1474,9 +994,9 @@ class $ProjectTagTable extends ProjectTag
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  ProjectTagData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  ProjectTagEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return ProjectTagData(
+    return ProjectTagEntity.new(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -1498,89 +1018,7 @@ class $ProjectTagTable extends ProjectTag
   }
 }
 
-class ProjectTagData extends DataClass implements Insertable<ProjectTagData> {
-  final int id;
-  final int projectId;
-  final int tagId;
-  const ProjectTagData({
-    required this.id,
-    required this.projectId,
-    required this.tagId,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['project_id'] = Variable<int>(projectId);
-    map['tag_id'] = Variable<int>(tagId);
-    return map;
-  }
-
-  ProjectTagCompanion toCompanion(bool nullToAbsent) {
-    return ProjectTagCompanion(
-      id: Value(id),
-      projectId: Value(projectId),
-      tagId: Value(tagId),
-    );
-  }
-
-  factory ProjectTagData.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return ProjectTagData(
-      id: serializer.fromJson<int>(json['id']),
-      projectId: serializer.fromJson<int>(json['projectId']),
-      tagId: serializer.fromJson<int>(json['tagId']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'projectId': serializer.toJson<int>(projectId),
-      'tagId': serializer.toJson<int>(tagId),
-    };
-  }
-
-  ProjectTagData copyWith({int? id, int? projectId, int? tagId}) =>
-      ProjectTagData(
-        id: id ?? this.id,
-        projectId: projectId ?? this.projectId,
-        tagId: tagId ?? this.tagId,
-      );
-  ProjectTagData copyWithCompanion(ProjectTagCompanion data) {
-    return ProjectTagData(
-      id: data.id.present ? data.id.value : this.id,
-      projectId: data.projectId.present ? data.projectId.value : this.projectId,
-      tagId: data.tagId.present ? data.tagId.value : this.tagId,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('ProjectTagData(')
-          ..write('id: $id, ')
-          ..write('projectId: $projectId, ')
-          ..write('tagId: $tagId')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(id, projectId, tagId);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is ProjectTagData &&
-          other.id == this.id &&
-          other.projectId == this.projectId &&
-          other.tagId == this.tagId);
-}
-
-class ProjectTagCompanion extends UpdateCompanion<ProjectTagData> {
+class ProjectTagCompanion extends UpdateCompanion<ProjectTagEntity> {
   final Value<int> id;
   final Value<int> projectId;
   final Value<int> tagId;
@@ -1595,7 +1033,7 @@ class ProjectTagCompanion extends UpdateCompanion<ProjectTagData> {
     required int tagId,
   }) : projectId = Value(projectId),
        tagId = Value(tagId);
-  static Insertable<ProjectTagData> custom({
+  static Insertable<ProjectTagEntity> custom({
     Expression<int>? id,
     Expression<int>? projectId,
     Expression<int>? tagId,
@@ -1645,14 +1083,15 @@ class ProjectTagCompanion extends UpdateCompanion<ProjectTagData> {
   }
 }
 
-abstract class _$DatabaseConfigure extends GeneratedDatabase {
-  _$DatabaseConfigure(QueryExecutor e) : super(e);
-  $DatabaseConfigureManager get managers => $DatabaseConfigureManager(this);
+abstract class _$GtdDatabase extends GeneratedDatabase {
+  _$GtdDatabase(QueryExecutor e) : super(e);
+  $GtdDatabaseManager get managers => $GtdDatabaseManager(this);
   late final $ProjectTable project = $ProjectTable(this);
   late final $NoteTable note = $NoteTable(this);
   late final $TagTable tag = $TagTable(this);
   late final $NoteTagTable noteTag = $NoteTagTable(this);
   late final $ProjectTagTable projectTag = $ProjectTagTable(this);
+  late final NoteDao noteDao = NoteDao(this as GtdDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1673,7 +1112,7 @@ typedef $$ProjectTableCreateCompanionBuilder =
       Value<int> id,
       required String title,
       Value<String?> description,
-      required ProjectStatus status,
+      required ProjectStatus projectStatus,
       Value<int?> parentProjectId,
     });
 typedef $$ProjectTableUpdateCompanionBuilder =
@@ -1683,15 +1122,15 @@ typedef $$ProjectTableUpdateCompanionBuilder =
       Value<int> id,
       Value<String> title,
       Value<String?> description,
-      Value<ProjectStatus> status,
+      Value<ProjectStatus> projectStatus,
       Value<int?> parentProjectId,
     });
 
 final class $$ProjectTableReferences
-    extends BaseReferences<_$DatabaseConfigure, $ProjectTable, ProjectData> {
+    extends BaseReferences<_$GtdDatabase, $ProjectTable, ProjectEntity> {
   $$ProjectTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $ProjectTable _parentProjectIdTable(_$DatabaseConfigure db) =>
+  static $ProjectTable _parentProjectIdTable(_$GtdDatabase db) =>
       db.project.createAlias(
         $_aliasNameGenerator(db.project.parentProjectId, db.project.id),
       );
@@ -1710,8 +1149,8 @@ final class $$ProjectTableReferences
     );
   }
 
-  static MultiTypedResultKey<$NoteTable, List<NoteData>> _noteRefsTable(
-    _$DatabaseConfigure db,
+  static MultiTypedResultKey<$NoteTable, List<NoteEntity>> _noteRefsTable(
+    _$GtdDatabase db,
   ) => MultiTypedResultKey.fromTable(
     db.note,
     aliasName: $_aliasNameGenerator(db.project.id, db.note.projectId),
@@ -1729,8 +1168,8 @@ final class $$ProjectTableReferences
     );
   }
 
-  static MultiTypedResultKey<$ProjectTagTable, List<ProjectTagData>>
-  _projectTagRefsTable(_$DatabaseConfigure db) => MultiTypedResultKey.fromTable(
+  static MultiTypedResultKey<$ProjectTagTable, List<ProjectTagEntity>>
+  _projectTagRefsTable(_$GtdDatabase db) => MultiTypedResultKey.fromTable(
     db.projectTag,
     aliasName: $_aliasNameGenerator(db.project.id, db.projectTag.projectId),
   );
@@ -1749,7 +1188,7 @@ final class $$ProjectTableReferences
 }
 
 class $$ProjectTableFilterComposer
-    extends Composer<_$DatabaseConfigure, $ProjectTable> {
+    extends Composer<_$GtdDatabase, $ProjectTable> {
   $$ProjectTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -1783,8 +1222,8 @@ class $$ProjectTableFilterComposer
   );
 
   ColumnWithTypeConverterFilters<ProjectStatus, ProjectStatus, int>
-  get status => $composableBuilder(
-    column: $table.status,
+  get projectStatus => $composableBuilder(
+    column: $table.projectStatus,
     builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
@@ -1863,7 +1302,7 @@ class $$ProjectTableFilterComposer
 }
 
 class $$ProjectTableOrderingComposer
-    extends Composer<_$DatabaseConfigure, $ProjectTable> {
+    extends Composer<_$GtdDatabase, $ProjectTable> {
   $$ProjectTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -1896,8 +1335,8 @@ class $$ProjectTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get status => $composableBuilder(
-    column: $table.status,
+  ColumnOrderings<int> get projectStatus => $composableBuilder(
+    column: $table.projectStatus,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -1926,7 +1365,7 @@ class $$ProjectTableOrderingComposer
 }
 
 class $$ProjectTableAnnotationComposer
-    extends Composer<_$DatabaseConfigure, $ProjectTable> {
+    extends Composer<_$GtdDatabase, $ProjectTable> {
   $$ProjectTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -1951,8 +1390,11 @@ class $$ProjectTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumnWithTypeConverter<ProjectStatus, int> get status =>
-      $composableBuilder(column: $table.status, builder: (column) => column);
+  GeneratedColumnWithTypeConverter<ProjectStatus, int> get projectStatus =>
+      $composableBuilder(
+        column: $table.projectStatus,
+        builder: (column) => column,
+      );
 
   $$ProjectTableAnnotationComposer get parentProjectId {
     final $$ProjectTableAnnotationComposer composer = $composerBuilder(
@@ -2031,23 +1473,23 @@ class $$ProjectTableAnnotationComposer
 class $$ProjectTableTableManager
     extends
         RootTableManager<
-          _$DatabaseConfigure,
+          _$GtdDatabase,
           $ProjectTable,
-          ProjectData,
+          ProjectEntity,
           $$ProjectTableFilterComposer,
           $$ProjectTableOrderingComposer,
           $$ProjectTableAnnotationComposer,
           $$ProjectTableCreateCompanionBuilder,
           $$ProjectTableUpdateCompanionBuilder,
-          (ProjectData, $$ProjectTableReferences),
-          ProjectData,
+          (ProjectEntity, $$ProjectTableReferences),
+          ProjectEntity,
           PrefetchHooks Function({
             bool parentProjectId,
             bool noteRefs,
             bool projectTagRefs,
           })
         > {
-  $$ProjectTableTableManager(_$DatabaseConfigure db, $ProjectTable table)
+  $$ProjectTableTableManager(_$GtdDatabase db, $ProjectTable table)
     : super(
         TableManagerState(
           db: db,
@@ -2065,7 +1507,7 @@ class $$ProjectTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String?> description = const Value.absent(),
-                Value<ProjectStatus> status = const Value.absent(),
+                Value<ProjectStatus> projectStatus = const Value.absent(),
                 Value<int?> parentProjectId = const Value.absent(),
               }) => ProjectCompanion(
                 createdAt: createdAt,
@@ -2073,7 +1515,7 @@ class $$ProjectTableTableManager
                 id: id,
                 title: title,
                 description: description,
-                status: status,
+                projectStatus: projectStatus,
                 parentProjectId: parentProjectId,
               ),
           createCompanionCallback:
@@ -2083,7 +1525,7 @@ class $$ProjectTableTableManager
                 Value<int> id = const Value.absent(),
                 required String title,
                 Value<String?> description = const Value.absent(),
-                required ProjectStatus status,
+                required ProjectStatus projectStatus,
                 Value<int?> parentProjectId = const Value.absent(),
               }) => ProjectCompanion.insert(
                 createdAt: createdAt,
@@ -2091,7 +1533,7 @@ class $$ProjectTableTableManager
                 id: id,
                 title: title,
                 description: description,
-                status: status,
+                projectStatus: projectStatus,
                 parentProjectId: parentProjectId,
               ),
           withReferenceMapper: (p0) => p0
@@ -2150,9 +1592,9 @@ class $$ProjectTableTableManager
                     return [
                       if (noteRefs)
                         await $_getPrefetchedData<
-                          ProjectData,
+                          ProjectEntity,
                           $ProjectTable,
-                          NoteData
+                          NoteEntity
                         >(
                           currentTable: table,
                           referencedTable: $$ProjectTableReferences
@@ -2167,9 +1609,9 @@ class $$ProjectTableTableManager
                         ),
                       if (projectTagRefs)
                         await $_getPrefetchedData<
-                          ProjectData,
+                          ProjectEntity,
                           $ProjectTable,
-                          ProjectTagData
+                          ProjectTagEntity
                         >(
                           currentTable: table,
                           referencedTable: $$ProjectTableReferences
@@ -2196,16 +1638,16 @@ class $$ProjectTableTableManager
 
 typedef $$ProjectTableProcessedTableManager =
     ProcessedTableManager<
-      _$DatabaseConfigure,
+      _$GtdDatabase,
       $ProjectTable,
-      ProjectData,
+      ProjectEntity,
       $$ProjectTableFilterComposer,
       $$ProjectTableOrderingComposer,
       $$ProjectTableAnnotationComposer,
       $$ProjectTableCreateCompanionBuilder,
       $$ProjectTableUpdateCompanionBuilder,
-      (ProjectData, $$ProjectTableReferences),
-      ProjectData,
+      (ProjectEntity, $$ProjectTableReferences),
+      ProjectEntity,
       PrefetchHooks Function({
         bool parentProjectId,
         bool noteRefs,
@@ -2234,10 +1676,10 @@ typedef $$NoteTableUpdateCompanionBuilder =
     });
 
 final class $$NoteTableReferences
-    extends BaseReferences<_$DatabaseConfigure, $NoteTable, NoteData> {
+    extends BaseReferences<_$GtdDatabase, $NoteTable, NoteEntity> {
   $$NoteTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $ProjectTable _projectIdTable(_$DatabaseConfigure db) => db.project
+  static $ProjectTable _projectIdTable(_$GtdDatabase db) => db.project
       .createAlias($_aliasNameGenerator(db.note.projectId, db.project.id));
 
   $$ProjectTableProcessedTableManager? get projectId {
@@ -2254,8 +1696,8 @@ final class $$NoteTableReferences
     );
   }
 
-  static MultiTypedResultKey<$NoteTagTable, List<NoteTagData>>
-  _noteTagRefsTable(_$DatabaseConfigure db) => MultiTypedResultKey.fromTable(
+  static MultiTypedResultKey<$NoteTagTable, List<NoteTagEntity>>
+  _noteTagRefsTable(_$GtdDatabase db) => MultiTypedResultKey.fromTable(
     db.noteTag,
     aliasName: $_aliasNameGenerator(db.note.id, db.noteTag.noteId),
   );
@@ -2273,8 +1715,7 @@ final class $$NoteTableReferences
   }
 }
 
-class $$NoteTableFilterComposer
-    extends Composer<_$DatabaseConfigure, $NoteTable> {
+class $$NoteTableFilterComposer extends Composer<_$GtdDatabase, $NoteTable> {
   $$NoteTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -2362,8 +1803,7 @@ class $$NoteTableFilterComposer
   }
 }
 
-class $$NoteTableOrderingComposer
-    extends Composer<_$DatabaseConfigure, $NoteTable> {
+class $$NoteTableOrderingComposer extends Composer<_$GtdDatabase, $NoteTable> {
   $$NoteTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -2426,7 +1866,7 @@ class $$NoteTableOrderingComposer
 }
 
 class $$NoteTableAnnotationComposer
-    extends Composer<_$DatabaseConfigure, $NoteTable> {
+    extends Composer<_$GtdDatabase, $NoteTable> {
   $$NoteTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -2509,19 +1949,19 @@ class $$NoteTableAnnotationComposer
 class $$NoteTableTableManager
     extends
         RootTableManager<
-          _$DatabaseConfigure,
+          _$GtdDatabase,
           $NoteTable,
-          NoteData,
+          NoteEntity,
           $$NoteTableFilterComposer,
           $$NoteTableOrderingComposer,
           $$NoteTableAnnotationComposer,
           $$NoteTableCreateCompanionBuilder,
           $$NoteTableUpdateCompanionBuilder,
-          (NoteData, $$NoteTableReferences),
-          NoteData,
+          (NoteEntity, $$NoteTableReferences),
+          NoteEntity,
           PrefetchHooks Function({bool projectId, bool noteTagRefs})
         > {
-  $$NoteTableTableManager(_$DatabaseConfigure db, $NoteTable table)
+  $$NoteTableTableManager(_$GtdDatabase db, $NoteTable table)
     : super(
         TableManagerState(
           db: db,
@@ -2614,9 +2054,9 @@ class $$NoteTableTableManager
                 return [
                   if (noteTagRefs)
                     await $_getPrefetchedData<
-                      NoteData,
+                      NoteEntity,
                       $NoteTable,
-                      NoteTagData
+                      NoteTagEntity
                     >(
                       currentTable: table,
                       referencedTable: $$NoteTableReferences._noteTagRefsTable(
@@ -2638,16 +2078,16 @@ class $$NoteTableTableManager
 
 typedef $$NoteTableProcessedTableManager =
     ProcessedTableManager<
-      _$DatabaseConfigure,
+      _$GtdDatabase,
       $NoteTable,
-      NoteData,
+      NoteEntity,
       $$NoteTableFilterComposer,
       $$NoteTableOrderingComposer,
       $$NoteTableAnnotationComposer,
       $$NoteTableCreateCompanionBuilder,
       $$NoteTableUpdateCompanionBuilder,
-      (NoteData, $$NoteTableReferences),
-      NoteData,
+      (NoteEntity, $$NoteTableReferences),
+      NoteEntity,
       PrefetchHooks Function({bool projectId, bool noteTagRefs})
     >;
 typedef $$TagTableCreateCompanionBuilder =
@@ -2656,11 +2096,11 @@ typedef $$TagTableUpdateCompanionBuilder =
     TagCompanion Function({Value<int> id, Value<String> title});
 
 final class $$TagTableReferences
-    extends BaseReferences<_$DatabaseConfigure, $TagTable, TagData> {
+    extends BaseReferences<_$GtdDatabase, $TagTable, TagEntity> {
   $$TagTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static MultiTypedResultKey<$NoteTagTable, List<NoteTagData>>
-  _noteTagRefsTable(_$DatabaseConfigure db) => MultiTypedResultKey.fromTable(
+  static MultiTypedResultKey<$NoteTagTable, List<NoteTagEntity>>
+  _noteTagRefsTable(_$GtdDatabase db) => MultiTypedResultKey.fromTable(
     db.noteTag,
     aliasName: $_aliasNameGenerator(db.tag.id, db.noteTag.tagId),
   );
@@ -2677,8 +2117,8 @@ final class $$TagTableReferences
     );
   }
 
-  static MultiTypedResultKey<$ProjectTagTable, List<ProjectTagData>>
-  _projectTagRefsTable(_$DatabaseConfigure db) => MultiTypedResultKey.fromTable(
+  static MultiTypedResultKey<$ProjectTagTable, List<ProjectTagEntity>>
+  _projectTagRefsTable(_$GtdDatabase db) => MultiTypedResultKey.fromTable(
     db.projectTag,
     aliasName: $_aliasNameGenerator(db.tag.id, db.projectTag.tagId),
   );
@@ -2696,8 +2136,7 @@ final class $$TagTableReferences
   }
 }
 
-class $$TagTableFilterComposer
-    extends Composer<_$DatabaseConfigure, $TagTable> {
+class $$TagTableFilterComposer extends Composer<_$GtdDatabase, $TagTable> {
   $$TagTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -2766,8 +2205,7 @@ class $$TagTableFilterComposer
   }
 }
 
-class $$TagTableOrderingComposer
-    extends Composer<_$DatabaseConfigure, $TagTable> {
+class $$TagTableOrderingComposer extends Composer<_$GtdDatabase, $TagTable> {
   $$TagTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -2786,8 +2224,7 @@ class $$TagTableOrderingComposer
   );
 }
 
-class $$TagTableAnnotationComposer
-    extends Composer<_$DatabaseConfigure, $TagTable> {
+class $$TagTableAnnotationComposer extends Composer<_$GtdDatabase, $TagTable> {
   $$TagTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -2855,19 +2292,19 @@ class $$TagTableAnnotationComposer
 class $$TagTableTableManager
     extends
         RootTableManager<
-          _$DatabaseConfigure,
+          _$GtdDatabase,
           $TagTable,
-          TagData,
+          TagEntity,
           $$TagTableFilterComposer,
           $$TagTableOrderingComposer,
           $$TagTableAnnotationComposer,
           $$TagTableCreateCompanionBuilder,
           $$TagTableUpdateCompanionBuilder,
-          (TagData, $$TagTableReferences),
-          TagData,
+          (TagEntity, $$TagTableReferences),
+          TagEntity,
           PrefetchHooks Function({bool noteTagRefs, bool projectTagRefs})
         > {
-  $$TagTableTableManager(_$DatabaseConfigure db, $TagTable table)
+  $$TagTableTableManager(_$GtdDatabase db, $TagTable table)
     : super(
         TableManagerState(
           db: db,
@@ -2904,9 +2341,9 @@ class $$TagTableTableManager
                     return [
                       if (noteTagRefs)
                         await $_getPrefetchedData<
-                          TagData,
+                          TagEntity,
                           $TagTable,
-                          NoteTagData
+                          NoteTagEntity
                         >(
                           currentTable: table,
                           referencedTable: $$TagTableReferences
@@ -2921,9 +2358,9 @@ class $$TagTableTableManager
                         ),
                       if (projectTagRefs)
                         await $_getPrefetchedData<
-                          TagData,
+                          TagEntity,
                           $TagTable,
-                          ProjectTagData
+                          ProjectTagEntity
                         >(
                           currentTable: table,
                           referencedTable: $$TagTableReferences
@@ -2949,16 +2386,16 @@ class $$TagTableTableManager
 
 typedef $$TagTableProcessedTableManager =
     ProcessedTableManager<
-      _$DatabaseConfigure,
+      _$GtdDatabase,
       $TagTable,
-      TagData,
+      TagEntity,
       $$TagTableFilterComposer,
       $$TagTableOrderingComposer,
       $$TagTableAnnotationComposer,
       $$TagTableCreateCompanionBuilder,
       $$TagTableUpdateCompanionBuilder,
-      (TagData, $$TagTableReferences),
-      TagData,
+      (TagEntity, $$TagTableReferences),
+      TagEntity,
       PrefetchHooks Function({bool noteTagRefs, bool projectTagRefs})
     >;
 typedef $$NoteTagTableCreateCompanionBuilder =
@@ -2975,10 +2412,10 @@ typedef $$NoteTagTableUpdateCompanionBuilder =
     });
 
 final class $$NoteTagTableReferences
-    extends BaseReferences<_$DatabaseConfigure, $NoteTagTable, NoteTagData> {
+    extends BaseReferences<_$GtdDatabase, $NoteTagTable, NoteTagEntity> {
   $$NoteTagTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $NoteTable _noteIdTable(_$DatabaseConfigure db) =>
+  static $NoteTable _noteIdTable(_$GtdDatabase db) =>
       db.note.createAlias($_aliasNameGenerator(db.noteTag.noteId, db.note.id));
 
   $$NoteTableProcessedTableManager get noteId {
@@ -2995,7 +2432,7 @@ final class $$NoteTagTableReferences
     );
   }
 
-  static $TagTable _tagIdTable(_$DatabaseConfigure db) =>
+  static $TagTable _tagIdTable(_$GtdDatabase db) =>
       db.tag.createAlias($_aliasNameGenerator(db.noteTag.tagId, db.tag.id));
 
   $$TagTableProcessedTableManager get tagId {
@@ -3014,7 +2451,7 @@ final class $$NoteTagTableReferences
 }
 
 class $$NoteTagTableFilterComposer
-    extends Composer<_$DatabaseConfigure, $NoteTagTable> {
+    extends Composer<_$GtdDatabase, $NoteTagTable> {
   $$NoteTagTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -3075,7 +2512,7 @@ class $$NoteTagTableFilterComposer
 }
 
 class $$NoteTagTableOrderingComposer
-    extends Composer<_$DatabaseConfigure, $NoteTagTable> {
+    extends Composer<_$GtdDatabase, $NoteTagTable> {
   $$NoteTagTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -3136,7 +2573,7 @@ class $$NoteTagTableOrderingComposer
 }
 
 class $$NoteTagTableAnnotationComposer
-    extends Composer<_$DatabaseConfigure, $NoteTagTable> {
+    extends Composer<_$GtdDatabase, $NoteTagTable> {
   $$NoteTagTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -3197,19 +2634,19 @@ class $$NoteTagTableAnnotationComposer
 class $$NoteTagTableTableManager
     extends
         RootTableManager<
-          _$DatabaseConfigure,
+          _$GtdDatabase,
           $NoteTagTable,
-          NoteTagData,
+          NoteTagEntity,
           $$NoteTagTableFilterComposer,
           $$NoteTagTableOrderingComposer,
           $$NoteTagTableAnnotationComposer,
           $$NoteTagTableCreateCompanionBuilder,
           $$NoteTagTableUpdateCompanionBuilder,
-          (NoteTagData, $$NoteTagTableReferences),
-          NoteTagData,
+          (NoteTagEntity, $$NoteTagTableReferences),
+          NoteTagEntity,
           PrefetchHooks Function({bool noteId, bool tagId})
         > {
-  $$NoteTagTableTableManager(_$DatabaseConfigure db, $NoteTagTable table)
+  $$NoteTagTableTableManager(_$GtdDatabase db, $NoteTagTable table)
     : super(
         TableManagerState(
           db: db,
@@ -3301,16 +2738,16 @@ class $$NoteTagTableTableManager
 
 typedef $$NoteTagTableProcessedTableManager =
     ProcessedTableManager<
-      _$DatabaseConfigure,
+      _$GtdDatabase,
       $NoteTagTable,
-      NoteTagData,
+      NoteTagEntity,
       $$NoteTagTableFilterComposer,
       $$NoteTagTableOrderingComposer,
       $$NoteTagTableAnnotationComposer,
       $$NoteTagTableCreateCompanionBuilder,
       $$NoteTagTableUpdateCompanionBuilder,
-      (NoteTagData, $$NoteTagTableReferences),
-      NoteTagData,
+      (NoteTagEntity, $$NoteTagTableReferences),
+      NoteTagEntity,
       PrefetchHooks Function({bool noteId, bool tagId})
     >;
 typedef $$ProjectTagTableCreateCompanionBuilder =
@@ -3327,11 +2764,10 @@ typedef $$ProjectTagTableUpdateCompanionBuilder =
     });
 
 final class $$ProjectTagTableReferences
-    extends
-        BaseReferences<_$DatabaseConfigure, $ProjectTagTable, ProjectTagData> {
+    extends BaseReferences<_$GtdDatabase, $ProjectTagTable, ProjectTagEntity> {
   $$ProjectTagTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $ProjectTable _projectIdTable(_$DatabaseConfigure db) =>
+  static $ProjectTable _projectIdTable(_$GtdDatabase db) =>
       db.project.createAlias(
         $_aliasNameGenerator(db.projectTag.projectId, db.project.id),
       );
@@ -3350,7 +2786,7 @@ final class $$ProjectTagTableReferences
     );
   }
 
-  static $TagTable _tagIdTable(_$DatabaseConfigure db) =>
+  static $TagTable _tagIdTable(_$GtdDatabase db) =>
       db.tag.createAlias($_aliasNameGenerator(db.projectTag.tagId, db.tag.id));
 
   $$TagTableProcessedTableManager get tagId {
@@ -3369,7 +2805,7 @@ final class $$ProjectTagTableReferences
 }
 
 class $$ProjectTagTableFilterComposer
-    extends Composer<_$DatabaseConfigure, $ProjectTagTable> {
+    extends Composer<_$GtdDatabase, $ProjectTagTable> {
   $$ProjectTagTableFilterComposer({
     required super.$db,
     required super.$table,
@@ -3430,7 +2866,7 @@ class $$ProjectTagTableFilterComposer
 }
 
 class $$ProjectTagTableOrderingComposer
-    extends Composer<_$DatabaseConfigure, $ProjectTagTable> {
+    extends Composer<_$GtdDatabase, $ProjectTagTable> {
   $$ProjectTagTableOrderingComposer({
     required super.$db,
     required super.$table,
@@ -3491,7 +2927,7 @@ class $$ProjectTagTableOrderingComposer
 }
 
 class $$ProjectTagTableAnnotationComposer
-    extends Composer<_$DatabaseConfigure, $ProjectTagTable> {
+    extends Composer<_$GtdDatabase, $ProjectTagTable> {
   $$ProjectTagTableAnnotationComposer({
     required super.$db,
     required super.$table,
@@ -3552,19 +2988,19 @@ class $$ProjectTagTableAnnotationComposer
 class $$ProjectTagTableTableManager
     extends
         RootTableManager<
-          _$DatabaseConfigure,
+          _$GtdDatabase,
           $ProjectTagTable,
-          ProjectTagData,
+          ProjectTagEntity,
           $$ProjectTagTableFilterComposer,
           $$ProjectTagTableOrderingComposer,
           $$ProjectTagTableAnnotationComposer,
           $$ProjectTagTableCreateCompanionBuilder,
           $$ProjectTagTableUpdateCompanionBuilder,
-          (ProjectTagData, $$ProjectTagTableReferences),
-          ProjectTagData,
+          (ProjectTagEntity, $$ProjectTagTableReferences),
+          ProjectTagEntity,
           PrefetchHooks Function({bool projectId, bool tagId})
         > {
-  $$ProjectTagTableTableManager(_$DatabaseConfigure db, $ProjectTagTable table)
+  $$ProjectTagTableTableManager(_$GtdDatabase db, $ProjectTagTable table)
     : super(
         TableManagerState(
           db: db,
@@ -3663,22 +3099,22 @@ class $$ProjectTagTableTableManager
 
 typedef $$ProjectTagTableProcessedTableManager =
     ProcessedTableManager<
-      _$DatabaseConfigure,
+      _$GtdDatabase,
       $ProjectTagTable,
-      ProjectTagData,
+      ProjectTagEntity,
       $$ProjectTagTableFilterComposer,
       $$ProjectTagTableOrderingComposer,
       $$ProjectTagTableAnnotationComposer,
       $$ProjectTagTableCreateCompanionBuilder,
       $$ProjectTagTableUpdateCompanionBuilder,
-      (ProjectTagData, $$ProjectTagTableReferences),
-      ProjectTagData,
+      (ProjectTagEntity, $$ProjectTagTableReferences),
+      ProjectTagEntity,
       PrefetchHooks Function({bool projectId, bool tagId})
     >;
 
-class $DatabaseConfigureManager {
-  final _$DatabaseConfigure _db;
-  $DatabaseConfigureManager(this._db);
+class $GtdDatabaseManager {
+  final _$GtdDatabase _db;
+  $GtdDatabaseManager(this._db);
   $$ProjectTableTableManager get project =>
       $$ProjectTableTableManager(_db, _db.project);
   $$NoteTableTableManager get note => $$NoteTableTableManager(_db, _db.note);

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gtd_manager/app/app_config.dart';
 import 'package:gtd_manager/app/database/database.dart';
 import 'package:gtd_manager/features/notes/bloc/note_bloc.dart';
-import 'package:gtd_manager/features/notes/data/repositories/list_notes_repositories.dart';
+import 'package:gtd_manager/domain/repositories/list_notes_repositories.dart';
 import 'package:talker/talker.dart';
 
 class AppInitializer extends StatelessWidget {
@@ -21,12 +21,9 @@ class AppInitializer extends StatelessWidget {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<Talker>(create: (context) => config.talker),
-        RepositoryProvider<DatabaseConfigure>(create: (_) => DatabaseConfigure()),
-        RepositoryProvider<DatabaseOperations>(
-          create: (context) => DatabaseOperations(context.read<DatabaseConfigure>()),
-        ),
+        RepositoryProvider<GtdDatabase>(create: (_) => GtdDatabase()),
         RepositoryProvider<ListNotesRepository>(
-          create: (context) => ListNotesRepository(context.read<DatabaseOperations>()),
+          create: (context) => ListNotesRepository(context.read<GtdDatabase>()),
         ),
       ],
       child: MultiBlocProvider(

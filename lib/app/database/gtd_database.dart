@@ -2,16 +2,15 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:gtd_manager/app/database/database.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:gtd_manager/domain/entities/entities.dart'; // Нужен для Dao
 import 'package:path/path.dart' as p;
 import 'dart:io';
 
-part 'database_configure.g.dart';
+part 'gtd_database.g.dart';
 
-@DriftDatabase(
-  tables: [Note, Project, Tag, NoteTag, ProjectTag],
-)
-class DatabaseConfigure extends _$DatabaseConfigure {
-  DatabaseConfigure([QueryExecutor? executor]) : super(executor ?? _openConnection());
+@DriftDatabase(tables: [Note, Project, Tag, NoteTag, ProjectTag], daos: [NoteDao])
+class GtdDatabase extends _$GtdDatabase {
+  GtdDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
   int get schemaVersion => 1;

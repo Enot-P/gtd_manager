@@ -1,10 +1,12 @@
 import 'package:drift/drift.dart';
 import 'package:gtd_manager/app/database/database.dart';
+import 'package:gtd_manager/domain/entities/entities.dart';
 
-class DatabaseOperations {
-  final DatabaseConfigure db;
+part 'note_dao.g.dart';
 
-  DatabaseOperations(this.db);
+@DriftAccessor(tables: [Note])
+class NoteDao extends DatabaseAccessor<GtdDatabase> with _$NoteDaoMixin {
+  NoteDao(super.db);
 
   Future<void> createNote({
     required String title,
@@ -25,8 +27,8 @@ class DatabaseOperations {
         );
   }
 
-  Future<List<NoteData>> getAllNotes() => db.select(db.note).get();
-  Future<List<NoteData>> getNotesByCategory(NoteCategory category) {
+  Future<List<NoteEntity>> getAllNotes() => db.select(db.note).get();
+  Future<List<NoteEntity>> getNotesByCategory(NoteCategory category) {
     return (db.select(db.note)..where(
           (note) => note.noteCategory.equals(
             note.noteCategory.converter.toSql(category)!,
@@ -35,13 +37,13 @@ class DatabaseOperations {
         .get();
   }
 
-  Future<NoteData> getNoteById(int id) => (db.select(db.note)..where((note) => note.id.equals(id))).getSingle();
+  Future<NoteEntity> getNoteById(int id) => (db.select(db.note)..where((note) => note.id.equals(id))).getSingle();
   Future<void> deleteNoteById(int id) => (db.delete(db.note)..where((f) => f.id.equals(id))).go();
 
   Future<void> updateNote({
     required int id,
-    required String? title,
-    required NoteCategory? category,
+    String? title,
+    NoteCategory? category,
     String? description,
     int? projectId,
   }) async {

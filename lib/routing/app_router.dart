@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:gtd_manager/app/database/database.dart';
+import 'package:gtd_manager/domain/entities/entities.dart';
 import 'package:gtd_manager/features/features.dart';
 
 part 'app_router.gr.dart';

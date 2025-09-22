@@ -3,9 +3,8 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gtd_manager/domain/domain.dart';
 import 'package:gtd_manager/features/features.dart';
-import 'package:gtd_manager/features/notes/data/entyties/note_entity.dart';
-import 'package:gtd_manager/features/notes/data/repositories/list_notes_repositories.dart';
 
 part 'note_event.dart';
 part 'note_state.dart';
@@ -20,10 +19,11 @@ class NoteBloc extends Bloc<NoteEvent, ListNotesState> {
 
   Future<void> _load(LoadNotes event, Emitter<ListNotesState> emit) async {
     try {
-      if (state is! ListNotesLoaded) emit(ListNotesLoading());
-
-      // TODO: Убрать задержку надо в релизе
-      await Future.delayed(const Duration(seconds: 2));
+      if (state is! ListNotesLoaded) {
+        emit(ListNotesLoading());
+        // TODO: Убрать задержку надо в релизе
+        await Future.delayed(const Duration(seconds: 2));
+      }
 
       final notes = await noteRepository.getAllNotes();
       final List<Widget> listNotes = List.generate(
