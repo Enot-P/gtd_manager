@@ -3,6 +3,7 @@ part of 'list_note_bloc.dart';
 @immutable
 sealed class ListNotesState extends Equatable {}
 
+// Можно и без него
 final class ListNotesInitial extends ListNotesState {
   @override
   List<Object?> get props => [];
@@ -11,10 +12,12 @@ final class ListNotesInitial extends ListNotesState {
 final class ListNotesLoading extends ListNotesState {
   @override
   List<Object?> get props => [];
+
+  List<int> intlist = [22, 4, 2, 1, 4, 5];
 }
 
 final class ListNotesLoaded extends ListNotesState {
-  final List<Widget> notes;
+  final List<NoteEntity> notes;
 
   ListNotesLoaded(this.notes);
 
@@ -22,6 +25,7 @@ final class ListNotesLoaded extends ListNotesState {
   List<Object?> get props => [notes];
 }
 
+// Скорее всего не надо
 final class ListNotesIsEmpty extends ListNotesState {
   @override
   List<Object?> get props => [];

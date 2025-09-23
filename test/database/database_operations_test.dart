@@ -97,7 +97,13 @@ void main() {
       await noteRepo.createNote(inboxNote);
       // Для получения из бд с параметром ID
       final noteInDB = await noteRepo.getNoteById(1);
-      await noteRepo.updateNote(noteInDB.id!, updateParams);
+      final noteId = noteInDB.id;
+      if (noteId != null) {
+        await noteRepo.updateNote(
+          noteId: noteId,
+          newParamsNote: updateParams,
+        );
+      }
 
       final notes = await noteRepo.getAllNotes();
       Talker().debug(notes);

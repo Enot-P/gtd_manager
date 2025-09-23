@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gtd_manager/domain/domain.dart';
-import 'package:gtd_manager/features/notes/bloc/list_note/list_note_bloc.dart';
 import 'package:gtd_manager/features/notes/notes.dart';
 
 @RoutePage()
@@ -52,27 +51,14 @@ class _ListNotesScreenState extends State<ListNotesScreen> {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (state is ListNotesLoaded) {
-                  return ReorderableListView(
-                    // TODO: Здесь надо будет через БД еще реализовать смену индексов
-                    //* INFO: Этот виджет загружает все элементы сразу
-                    onReorder: (oldIndex, newIndex) {
-                      setState(() {
-                        // if (oldIndex < newIndex) {
-                        //   newIndex -= 1;
-                        // }
-                        // final item = notesWidget.removeAt(oldIndex);
-                        // notesWidget.insert(newIndex, item);
-                      });
-                    },
-                    children: state.notes,
-                  );
+                  return;
                 }
                 if (state is ListNotesIsEmpty) {
                   return const Center(
                     child: Text('Список пуст'),
                   );
                 }
-
+                // FREZYD
                 if (state is ListNotesFailure) {
                   return Center(
                     child: _FailureWidget(
@@ -110,15 +96,6 @@ class _ListNotesScreenState extends State<ListNotesScreen> {
     );
   }
 }
-
-// noteBloc.add(
-//           CreateNote(
-//             NoteEntity(
-//               title: 'TestName',
-//               noteCategory: widget.noteCategory,
-//             ),
-//           ),
-//         )
 
 class _FailureWidget extends StatelessWidget {
   const _FailureWidget({
@@ -171,6 +148,39 @@ class _HeaderWidget extends StatelessWidget {
           style: const TextStyle(fontStyle: FontStyle.italic),
         ),
       ],
+    );
+  }
+}
+
+class _ListNotesWidget extends StatefulWidget {
+  const _ListNotesWidget({
+    super.key,
+    required this.state,
+  });
+  final ListNotesLoaded state;
+
+  @override
+  State<_ListNotesWidget> createState() => _ListNotesWidgetState();
+}
+
+class _ListNotesWidgetState extends State<_ListNotesWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return ReorderableListView.builder(
+      // TODO: Здесь надо будет через БД еще реализовать смену индексов
+      //* INFO: Этот виджет загружает все элементы сразу
+      onReorder: (oldIndex, newIndex) {
+        setState(() {
+          // if (oldIndex < newIndex) {
+          //   newIndex -= 1;
+          // }
+          // final item = notesWidget.removeAt(oldIndex);
+          // notesWidget.insert(newIndex, item);
+        });
+      },
+      itemBuilder: (BuildContext context, int index) {  },
+      itemCount: null,
+      children: widget.state.notes,
     );
   }
 }

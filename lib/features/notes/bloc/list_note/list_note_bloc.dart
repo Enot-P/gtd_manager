@@ -3,7 +3,6 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gtd_manager/domain/domain.dart';
-import 'package:gtd_manager/features/features.dart';
 
 part 'list_note_event.dart';
 part 'list_note_state.dart';
@@ -26,14 +25,8 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
       }
 
       final notes = await noteRepository.getNotesByCategory(event.noteCategory);
-      final List<Widget> listNotes = List.generate(
-        notes.length,
-        (int index) => NoteWidget(
-          key: Key('$index'),
-          note: notes[index],
-        ),
-      );
-      listNotes.isEmpty ? emit(ListNotesIsEmpty()) : emit(ListNotesLoaded(listNotes));
+
+      notes.isEmpty ? emit(ListNotesIsEmpty()) : emit(ListNotesLoaded(notes));
     } catch (e) {
       emit(ListNotesFailure(e));
     }

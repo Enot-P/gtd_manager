@@ -24,7 +24,7 @@ class ListNotesRepository {
     );
   }
 
-  Future<void> updateNote(int noteId, NoteEntity newParamsNote) async {
+  Future<void> updateNote({required int noteId, required NoteEntity newParamsNote}) async {
     await noteDao.updateNote(
       id: noteId,
       title: newParamsNote.title,

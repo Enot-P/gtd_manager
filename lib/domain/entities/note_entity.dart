@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 
 enum NoteCategory { inbox, waiting, scheduled, someday, next, backlog }
@@ -23,10 +22,9 @@ class NoteEntity extends Equatable {
   List<Object?> get props => [id, title, noteCategory, description, projectId];
 
   @override
-  String toString() {
-    return 'NoteEntity(id: $id, title: $title, noteCategory: $noteCategory, description: $description, projectId: $projectId)';
-  }
+  bool? get stringify => true;
 
+  // Frezed
   NoteEntity copyWith({
     int? id,
     String? title,

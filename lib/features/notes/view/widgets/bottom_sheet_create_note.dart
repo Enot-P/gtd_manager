@@ -12,7 +12,7 @@ class BottomSheetCreateNote extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final noteTitleController = TextEditingController();
+    final noteTitleController = TextEditingController(); // лучше не в билде
     return SizedBox(
       width: double.infinity,
       child: Padding(
@@ -136,7 +136,6 @@ class _SetTagButtonWidget extends StatelessWidget {
   }
 }
 
-// WARNING: Как передать параметры, та еще и как-то надо подсветить, что поле названия пустое!
 class _CreateNoteWidget extends StatelessWidget {
   const _CreateNoteWidget({
     required this.noteCategory,
