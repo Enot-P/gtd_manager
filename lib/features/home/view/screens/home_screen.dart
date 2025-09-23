@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gtd_manager/domain/entities/entities.dart';
-import 'package:gtd_manager/features/notes/bloc/note_bloc.dart';
+import 'package:gtd_manager/features/notes/bloc/list_note/list_note_bloc.dart';
 import 'package:gtd_manager/routing/app_router.dart';
 
 @RoutePage()
@@ -48,7 +48,7 @@ class HomeScreen extends StatelessWidget {
       drawer: Builder(
         builder: (context) {
           final tabsRouter = AutoTabsRouter.of(context);
-          final noteBloc = context.read<NoteBloc>();
+          final noteBloc = context.read<ListNoteBloc>();
           void onTap({required int index, NoteCategory? noteCategory}) {
             tabsRouter.setActiveIndex(index);
             if (noteCategory != null) noteBloc.add(LoadNotes(noteCategory));

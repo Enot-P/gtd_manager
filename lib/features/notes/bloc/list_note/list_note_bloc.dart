@@ -1,18 +1,17 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gtd_manager/domain/domain.dart';
 import 'package:gtd_manager/features/features.dart';
 
-part 'note_event.dart';
-part 'note_state.dart';
+part 'list_note_event.dart';
+part 'list_note_state.dart';
 
-class NoteBloc extends Bloc<NoteEvent, ListNotesState> {
+class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
   final ListNotesRepository noteRepository;
 
-  NoteBloc(this.noteRepository) : super(ListNotesInitial()) {
+  ListNoteBloc(this.noteRepository) : super(ListNotesInitial()) {
     on<LoadNotes>(_load);
     on<CreateNote>(_createNote);
     on<DeleteNote>(_deleteNote);

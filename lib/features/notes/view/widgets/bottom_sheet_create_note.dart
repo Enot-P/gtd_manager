@@ -1,0 +1,175 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gtd_manager/domain/domain.dart';
+import 'package:gtd_manager/features/notes/notes.dart';
+
+class BottomSheetCreateNote extends StatelessWidget {
+  const BottomSheetCreateNote({
+    super.key,
+    required this.noteCategory,
+  });
+  final NoteCategory noteCategory;
+
+  @override
+  Widget build(BuildContext context) {
+    final noteTitleController = TextEditingController();
+    return SizedBox(
+      width: double.infinity,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        child: Column(
+          spacing: 10,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _NoteInputNameWidget(
+              noteCategory: noteCategory,
+              noteTitleController: noteTitleController,
+            ),
+            _NoteSettingsWidget(noteCategory, noteTitleController),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NoteInputNameWidget extends StatelessWidget {
+  const _NoteInputNameWidget({
+    required this.noteCategory,
+    required this.noteTitleController,
+  });
+  final NoteCategory noteCategory;
+  final TextEditingController noteTitleController;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      autofocus: true,
+      decoration: InputDecoration(
+        border: InputBorder.none,
+        hintText: 'Новая задача',
+        suffixIcon: IconButton(
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(),
+          style: const ButtonStyle(
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+          onPressed: () {},
+          icon: Image.asset(
+            'assets/icons/arrows_more_up.png',
+          ),
+        ),
+      ),
+      style: const TextStyle(fontSize: 18),
+      controller: noteTitleController,
+    );
+  }
+}
+
+class _NoteSettingsWidget extends StatelessWidget {
+  const _NoteSettingsWidget(this.noteCategory, this.noteTitleController);
+
+  final NoteCategory noteCategory;
+  final TextEditingController noteTitleController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      spacing: 10,
+      children: [
+        const _SetDataTimeWidget(),
+        const _SetTagButtonWidget(),
+        const _SetProjectButtonWidget(),
+        _CreateNoteWidget(
+          noteCategory: noteCategory,
+          noteTitleController: noteTitleController,
+        ),
+      ],
+    );
+  }
+}
+
+class _SetDataTimeWidget extends StatelessWidget {
+  const _SetDataTimeWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(),
+      style: const ButtonStyle(
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
+      onPressed: () {},
+      icon: const Icon(Icons.calendar_today),
+    );
+  }
+}
+
+class _SetProjectButtonWidget extends StatelessWidget {
+  const _SetProjectButtonWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {},
+      child: const Text('Без проекта'),
+    );
+  }
+}
+
+class _SetTagButtonWidget extends StatelessWidget {
+  const _SetTagButtonWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(),
+      style: const ButtonStyle(
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
+      onPressed: () {},
+      icon: const Icon(Icons.sell_outlined),
+    );
+  }
+}
+
+// WARNING: Как передать параметры, та еще и как-то надо подсветить, что поле названия пустое!
+class _CreateNoteWidget extends StatelessWidget {
+  const _CreateNoteWidget({
+    required this.noteCategory,
+    required this.noteTitleController,
+  });
+
+  final NoteCategory noteCategory;
+  final TextEditingController noteTitleController;
+
+  @override
+  Widget build(BuildContext context) {
+    final listNoteBloc = context.read<ListNoteBloc>();
+    void createNote() {
+      if (noteTitleController.text.isNotEmpty) {
+        listNoteBloc.add(
+          CreateNote(
+            NoteEntity(
+              title: noteTitleController.text,
+              noteCategory: noteCategory,
+            ),
+          ),
+        );
+      } else {}
+    }
+
+    return IconButton(
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(),
+      style: const ButtonStyle(
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
+      onPressed: createNote,
+      icon: const Icon(Icons.send),
+    );
+  }
+}

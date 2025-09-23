@@ -2,7 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gtd_manager/domain/domain.dart';
-import 'package:gtd_manager/features/notes/bloc/note_bloc.dart';
+import 'package:gtd_manager/features/notes/bloc/list_note/list_note_bloc.dart';
+import 'package:gtd_manager/features/notes/notes.dart';
 
 @RoutePage()
 class ListNotesScreen extends StatefulWidget {
@@ -21,12 +22,12 @@ class ListNotesScreen extends StatefulWidget {
 }
 
 class _ListNotesScreenState extends State<ListNotesScreen> {
-  late final NoteBloc noteBloc;
+  late final ListNoteBloc noteBloc;
 
   @override
   void initState() {
     super.initState();
-    noteBloc = context.read<NoteBloc>();
+    noteBloc = context.read<ListNoteBloc>();
     noteBloc.add(LoadNotes(widget.noteCategory));
   }
 
@@ -44,7 +45,7 @@ class _ListNotesScreenState extends State<ListNotesScreen> {
             ),
           ),
           Expanded(
-            child: BlocBuilder<NoteBloc, ListNotesState>(
+            child: BlocBuilder<ListNoteBloc, ListNotesState>(
               bloc: noteBloc,
               builder: (context, state) {
                 if (state is ListNotesLoading) {
@@ -94,16 +95,30 @@ class _ListNotesScreenState extends State<ListNotesScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => noteBloc.add(
-          CreateNote(
-            NoteEntity(title: 'TestName', noteCategory: widget.noteCategory),
-          ),
+        onPressed: () => showModalBottomSheet(
+          shape: const RoundedRectangleBorder(),
+          context: context,
+          builder: (context) {
+            return Padding(
+              padding: MediaQuery.of(context).viewInsets, // Чтобы под клавиатуру подстраивалась
+              child: BottomSheetCreateNote(noteCategory: widget.noteCategory),
+            );
+          },
         ),
         child: const Icon(Icons.add),
       ),
     );
   }
 }
+
+// noteBloc.add(
+//           CreateNote(
+//             NoteEntity(
+//               title: 'TestName',
+//               noteCategory: widget.noteCategory,
+//             ),
+//           ),
+//         )
 
 class _FailureWidget extends StatelessWidget {
   const _FailureWidget({
@@ -112,7 +127,7 @@ class _FailureWidget extends StatelessWidget {
     required this.noteCategory,
   });
 
-  final NoteBloc noteBloc;
+  final ListNoteBloc noteBloc;
   final Object? error;
   final NoteCategory noteCategory;
 

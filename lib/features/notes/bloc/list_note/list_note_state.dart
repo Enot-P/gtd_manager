@@ -1,4 +1,4 @@
-part of 'note_bloc.dart';
+part of 'list_note_bloc.dart';
 
 @immutable
 sealed class ListNotesState extends Equatable {}

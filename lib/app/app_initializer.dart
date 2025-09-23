@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gtd_manager/app/app_config.dart';
 import 'package:gtd_manager/app/database/database.dart';
-import 'package:gtd_manager/features/notes/bloc/note_bloc.dart';
+import 'package:gtd_manager/features/notes/bloc/list_note/list_note_bloc.dart';
 import 'package:gtd_manager/domain/repositories/list_notes_repositories.dart';
 import 'package:talker/talker.dart';
 
@@ -29,7 +29,7 @@ class AppInitializer extends StatelessWidget {
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => NoteBloc(
+            create: (context) => ListNoteBloc(
               context.read<ListNotesRepository>(),
             ),
           ),

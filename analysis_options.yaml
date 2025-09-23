@@ -6,7 +6,6 @@ linter:
     unawaited_futures: true
     # Другие полезные правила для async/await
     avoid_void_async: true
-    prefer_async_await: true
     # Общие правила
     prefer_const_constructors: true
     prefer_const_literals_to_create_immutables: true

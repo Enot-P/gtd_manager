@@ -163,7 +163,7 @@ class $ProjectTable extends Project
   @override
   ProjectEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return ProjectEntity.new(
+    return ProjectEntity(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -465,7 +465,7 @@ class $NoteTable extends Note with TableInfo<$NoteTable, NoteEntity> {
   @override
   NoteEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return NoteEntity.new(
+    return NoteEntity(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -676,7 +676,7 @@ class $TagTable extends Tag with TableInfo<$TagTable, TagEntity> {
   @override
   TagEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return TagEntity.new(
+    return TagEntity(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -823,7 +823,7 @@ class $NoteTagTable extends NoteTag
   @override
   NoteTagEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return NoteTagEntity.new(
+    return NoteTagEntity(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -996,7 +996,7 @@ class $ProjectTagTable extends ProjectTag
   @override
   ProjectTagEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return ProjectTagEntity.new(
+    return ProjectTagEntity(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
