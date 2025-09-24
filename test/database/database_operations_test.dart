@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:gtd_manager/app/database/database.dart';
 import 'package:gtd_manager/domain/entities/entities.dart';
 import 'package:gtd_manager/domain/repositories/list_notes_repositories.dart';
-import 'package:talker/talker.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -101,12 +100,11 @@ void main() {
       if (noteId != null) {
         await noteRepo.updateNote(
           noteId: noteId,
-          newParamsNote: updateParams,
+          newNoteParams: updateParams,
         );
       }
 
       final notes = await noteRepo.getAllNotes();
-      Talker().debug(notes);
       expect(notes.length, 1);
       expect(notes.first.title, updatedTitle);
       expect(notes.first.noteCategory, NoteCategory.next);

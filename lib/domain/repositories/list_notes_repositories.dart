@@ -15,26 +15,22 @@ class ListNotesRepository {
   Future<List<NoteEntity>> getNotesByCategory(NoteCategory noteCategory) async =>
       noteDao.getNotesByCategory(noteCategory);
 
-  Future<void> createNote(NoteEntity note) async {
-    await noteDao.createNote(
-      title: note.title,
-      noteCategory: note.noteCategory,
-      description: note.description,
-      projectId: note.projectId,
-    );
-  }
+  Future<void> createNote(NoteEntity note) async => noteDao.createNote(note: note);
 
-  Future<void> updateNote({required int noteId, required NoteEntity newParamsNote}) async {
-    await noteDao.updateNote(
-      id: noteId,
-      title: newParamsNote.title,
-      category: newParamsNote.noteCategory,
-      description: newParamsNote.description,
-      projectId: newParamsNote.projectId,
-    );
-  }
+  Future<void> updateNote({required int noteId, required NoteEntity newNoteParams}) async => noteDao.updateNote(
+    noteId: noteId,
+    newNoteParams: newNoteParams,
+  );
 
-  Future<void> deleteNote(int noteId) async {
-    await noteDao.deleteNoteById(noteId);
+  Future<void> deleteNote(int noteId) async => noteDao.deleteNoteById(noteId);
+
+  Future<void> changeKeyOrderNotes({
+    required int firstId,
+    required int secondId,
+    required int firstKeyOrder,
+    required int secondKeyOrder,
+  }) async {
+    await noteDao.changeKeyOrder(noteId: firstId, newKeyOrder: secondKeyOrder);
+    await noteDao.changeKeyOrder(noteId: secondId, newKeyOrder: firstKeyOrder);
   }
 }

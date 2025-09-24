@@ -78,6 +78,18 @@ class $ProjectTable extends Project
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   ).withConverter<ProjectStatus>($ProjectTable.$converterprojectStatus);
+  static const VerificationMeta _keyOrderMeta = const VerificationMeta(
+    'keyOrder',
+  );
+  @override
+  late final GeneratedColumn<int> keyOrder = GeneratedColumn<int>(
+    'key_order',
+    aliasedName,
+    false,
+    generatedAs: GeneratedAs(id, true),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _parentProjectIdMeta = const VerificationMeta(
     'parentProjectId',
   );
@@ -89,7 +101,7 @@ class $ProjectTable extends Project
     type: DriftSqlType.int,
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES project (id)',
+      'REFERENCES project (id) ON DELETE CASCADE',
     ),
   );
   @override
@@ -100,6 +112,7 @@ class $ProjectTable extends Project
     title,
     description,
     projectStatus,
+    keyOrder,
     parentProjectId,
   ];
   @override
@@ -144,6 +157,12 @@ class $ProjectTable extends Project
           data['description']!,
           _descriptionMeta,
         ),
+      );
+    }
+    if (data.containsKey('key_order')) {
+      context.handle(
+        _keyOrderMeta,
+        keyOrder.isAcceptableOrUnknown(data['key_order']!, _keyOrderMeta),
       );
     }
     if (data.containsKey('parent_project_id')) {
@@ -394,8 +413,20 @@ class $NoteTable extends Note with TableInfo<$NoteTable, NoteEntity> {
     type: DriftSqlType.int,
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES project (id)',
+      'REFERENCES project (id) ON DELETE CASCADE',
     ),
+  );
+  static const VerificationMeta _keyOrderMeta = const VerificationMeta(
+    'keyOrder',
+  );
+  @override
+  late final GeneratedColumn<int> keyOrder = GeneratedColumn<int>(
+    'key_order',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
   );
   @override
   List<GeneratedColumn> get $columns => [
@@ -406,6 +437,7 @@ class $NoteTable extends Note with TableInfo<$NoteTable, NoteEntity> {
     noteCategory,
     description,
     projectId,
+    keyOrder,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -457,6 +489,12 @@ class $NoteTable extends Note with TableInfo<$NoteTable, NoteEntity> {
         projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
       );
     }
+    if (data.containsKey('key_order')) {
+      context.handle(
+        _keyOrderMeta,
+        keyOrder.isAcceptableOrUnknown(data['key_order']!, _keyOrderMeta),
+      );
+    }
     return context;
   }
 
@@ -488,6 +526,10 @@ class $NoteTable extends Note with TableInfo<$NoteTable, NoteEntity> {
         DriftSqlType.int,
         data['${effectivePrefix}project_id'],
       ),
+      keyOrder: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}key_order'],
+      )!,
     );
   }
 
@@ -508,6 +550,7 @@ class NoteCompanion extends UpdateCompanion<NoteEntity> {
   final Value<NoteCategory> noteCategory;
   final Value<String?> description;
   final Value<int?> projectId;
+  final Value<int> keyOrder;
   const NoteCompanion({
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -516,6 +559,7 @@ class NoteCompanion extends UpdateCompanion<NoteEntity> {
     this.noteCategory = const Value.absent(),
     this.description = const Value.absent(),
     this.projectId = const Value.absent(),
+    this.keyOrder = const Value.absent(),
   });
   NoteCompanion.insert({
     this.createdAt = const Value.absent(),
@@ -525,6 +569,7 @@ class NoteCompanion extends UpdateCompanion<NoteEntity> {
     required NoteCategory noteCategory,
     this.description = const Value.absent(),
     this.projectId = const Value.absent(),
+    this.keyOrder = const Value.absent(),
   }) : title = Value(title),
        noteCategory = Value(noteCategory);
   static Insertable<NoteEntity> custom({
@@ -535,6 +580,7 @@ class NoteCompanion extends UpdateCompanion<NoteEntity> {
     Expression<int>? noteCategory,
     Expression<String>? description,
     Expression<int>? projectId,
+    Expression<int>? keyOrder,
   }) {
     return RawValuesInsertable({
       if (createdAt != null) 'created_at': createdAt,
@@ -544,6 +590,7 @@ class NoteCompanion extends UpdateCompanion<NoteEntity> {
       if (noteCategory != null) 'note_category': noteCategory,
       if (description != null) 'description': description,
       if (projectId != null) 'project_id': projectId,
+      if (keyOrder != null) 'key_order': keyOrder,
     });
   }
 
@@ -555,6 +602,7 @@ class NoteCompanion extends UpdateCompanion<NoteEntity> {
     Value<NoteCategory>? noteCategory,
     Value<String?>? description,
     Value<int?>? projectId,
+    Value<int>? keyOrder,
   }) {
     return NoteCompanion(
       createdAt: createdAt ?? this.createdAt,
@@ -564,6 +612,7 @@ class NoteCompanion extends UpdateCompanion<NoteEntity> {
       noteCategory: noteCategory ?? this.noteCategory,
       description: description ?? this.description,
       projectId: projectId ?? this.projectId,
+      keyOrder: keyOrder ?? this.keyOrder,
     );
   }
 
@@ -593,6 +642,9 @@ class NoteCompanion extends UpdateCompanion<NoteEntity> {
     if (projectId.present) {
       map['project_id'] = Variable<int>(projectId.value);
     }
+    if (keyOrder.present) {
+      map['key_order'] = Variable<int>(keyOrder.value);
+    }
     return map;
   }
 
@@ -605,7 +657,8 @@ class NoteCompanion extends UpdateCompanion<NoteEntity> {
           ..write('title: $title, ')
           ..write('noteCategory: $noteCategory, ')
           ..write('description: $description, ')
-          ..write('projectId: $projectId')
+          ..write('projectId: $projectId, ')
+          ..write('keyOrder: $keyOrder')
           ..write(')'))
         .toString();
   }
@@ -767,7 +820,7 @@ class $NoteTagTable extends NoteTag
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES note (id)',
+      'REFERENCES note (id) ON DELETE CASCADE',
     ),
   );
   static const VerificationMeta _tagIdMeta = const VerificationMeta('tagId');
@@ -779,7 +832,7 @@ class $NoteTagTable extends NoteTag
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES tag (id)',
+      'REFERENCES tag (id) ON DELETE CASCADE',
     ),
   );
   @override
@@ -940,7 +993,7 @@ class $ProjectTagTable extends ProjectTag
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES project (id)',
+      'REFERENCES project (id) ON DELETE CASCADE',
     ),
   );
   static const VerificationMeta _tagIdMeta = const VerificationMeta('tagId');
@@ -952,7 +1005,7 @@ class $ProjectTagTable extends ProjectTag
     type: DriftSqlType.int,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES tag (id)',
+      'REFERENCES tag (id) ON DELETE CASCADE',
     ),
   );
   @override
@@ -1103,6 +1156,51 @@ abstract class _$GtdDatabase extends GeneratedDatabase {
     noteTag,
     projectTag,
   ];
+  @override
+  StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'project',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('project', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'project',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('note', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'note',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('note_tag', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'tag',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('note_tag', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'project',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('project_tag', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'tag',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('project_tag', kind: UpdateKind.delete)],
+    ),
+  ]);
 }
 
 typedef $$ProjectTableCreateCompanionBuilder =
@@ -1227,6 +1325,11 @@ class $$ProjectTableFilterComposer
     builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
+  ColumnFilters<int> get keyOrder => $composableBuilder(
+    column: $table.keyOrder,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$ProjectTableFilterComposer get parentProjectId {
     final $$ProjectTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -1340,6 +1443,11 @@ class $$ProjectTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get keyOrder => $composableBuilder(
+    column: $table.keyOrder,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$ProjectTableOrderingComposer get parentProjectId {
     final $$ProjectTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -1395,6 +1503,9 @@ class $$ProjectTableAnnotationComposer
         column: $table.projectStatus,
         builder: (column) => column,
       );
+
+  GeneratedColumn<int> get keyOrder =>
+      $composableBuilder(column: $table.keyOrder, builder: (column) => column);
 
   $$ProjectTableAnnotationComposer get parentProjectId {
     final $$ProjectTableAnnotationComposer composer = $composerBuilder(
@@ -1663,6 +1774,7 @@ typedef $$NoteTableCreateCompanionBuilder =
       required NoteCategory noteCategory,
       Value<String?> description,
       Value<int?> projectId,
+      Value<int> keyOrder,
     });
 typedef $$NoteTableUpdateCompanionBuilder =
     NoteCompanion Function({
@@ -1673,6 +1785,7 @@ typedef $$NoteTableUpdateCompanionBuilder =
       Value<NoteCategory> noteCategory,
       Value<String?> description,
       Value<int?> projectId,
+      Value<int> keyOrder,
     });
 
 final class $$NoteTableReferences
@@ -1751,6 +1864,11 @@ class $$NoteTableFilterComposer extends Composer<_$GtdDatabase, $NoteTable> {
 
   ColumnFilters<String> get description => $composableBuilder(
     column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get keyOrder => $composableBuilder(
+    column: $table.keyOrder,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1841,6 +1959,11 @@ class $$NoteTableOrderingComposer extends Composer<_$GtdDatabase, $NoteTable> {
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get keyOrder => $composableBuilder(
+    column: $table.keyOrder,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$ProjectTableOrderingComposer get projectId {
     final $$ProjectTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -1896,6 +2019,9 @@ class $$NoteTableAnnotationComposer
     column: $table.description,
     builder: (column) => column,
   );
+
+  GeneratedColumn<int> get keyOrder =>
+      $composableBuilder(column: $table.keyOrder, builder: (column) => column);
 
   $$ProjectTableAnnotationComposer get projectId {
     final $$ProjectTableAnnotationComposer composer = $composerBuilder(
@@ -1981,6 +2107,7 @@ class $$NoteTableTableManager
                 Value<NoteCategory> noteCategory = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<int?> projectId = const Value.absent(),
+                Value<int> keyOrder = const Value.absent(),
               }) => NoteCompanion(
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -1989,6 +2116,7 @@ class $$NoteTableTableManager
                 noteCategory: noteCategory,
                 description: description,
                 projectId: projectId,
+                keyOrder: keyOrder,
               ),
           createCompanionCallback:
               ({
@@ -1999,6 +2127,7 @@ class $$NoteTableTableManager
                 required NoteCategory noteCategory,
                 Value<String?> description = const Value.absent(),
                 Value<int?> projectId = const Value.absent(),
+                Value<int> keyOrder = const Value.absent(),
               }) => NoteCompanion.insert(
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -2007,6 +2136,7 @@ class $$NoteTableTableManager
                 noteCategory: noteCategory,
                 description: description,
                 projectId: projectId,
+                keyOrder: keyOrder,
               ),
           withReferenceMapper: (p0) => p0
               .map(

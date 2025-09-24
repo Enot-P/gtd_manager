@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:flutter/foundation.dart';
 import 'package:gtd_manager/app/database/database.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:gtd_manager/domain/entities/entities.dart'; // Нужен для Dao
@@ -14,6 +15,30 @@ class GtdDatabase extends _$GtdDatabase {
 
   @override
   int get schemaVersion => 1;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (Migrator m) async {
+      await m.createAll();
+
+      // Создаем триггер после создания таблиц
+      await _increaseKeyOrderTrigger();
+    },
+  );
+
+  Future<void> _increaseKeyOrderTrigger() {
+    return customStatement('''
+      CREATE TRIGGER IF NOT EXISTS auto_set_key_order 
+      AFTER INSERT ON note 
+      FOR EACH ROW
+      WHEN NEW.key_order = 0
+      BEGIN 
+        UPDATE note 
+        SET key_order = COALESCE((SELECT MAX(key_order) FROM note), 0) + 1
+        WHERE id = NEW.id;
+      END
+    ''');
+  }
 }
 
 QueryExecutor _openConnection() {
@@ -22,8 +47,7 @@ QueryExecutor _openConnection() {
     final file = File(p.join(dbFolder.path, 'gtd_database.sqlite'));
 
     // Удаляем базу данных во время разработки
-    const bool inDevelopment = true; // или используйте kDebugMode
-    if (inDevelopment && await file.exists()) {
+    if (kDebugMode && await file.exists()) {
       await file.delete();
     }
 

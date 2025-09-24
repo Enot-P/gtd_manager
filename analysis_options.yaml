@@ -26,9 +26,7 @@ analyzer:
     - "**/*.g.dart"
     - "**/*.freezed.dart"
   errors:
-    # Делаем unawaited_futures ошибкой вместо предупреждения
     unawaited_futures: error
-    # Другие настройки
     invalid_annotation_target: ignore
     todo: ignore
 

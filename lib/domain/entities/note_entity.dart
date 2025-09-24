@@ -1,43 +1,35 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'note_entity.freezed.dart';
 
 enum NoteCategory { inbox, waiting, scheduled, someday, next, backlog }
 
-// WARNING: Нужно ли делать id обязательным?
-class NoteEntity extends Equatable {
-  final int? id;
-  final String title;
-  final NoteCategory noteCategory;
-  final String? description;
-  final int? projectId;
-
+@freezed
+class NoteEntity with _$NoteEntity {
   const NoteEntity({
     this.id,
     required this.title,
     required this.noteCategory,
     this.description,
     this.projectId,
+    this.keyOrder,
   });
 
   @override
-  List<Object?> get props => [id, title, noteCategory, description, projectId];
+  final int? id;
 
   @override
-  bool? get stringify => true;
+  final String title;
 
-  // Frezed
-  NoteEntity copyWith({
-    int? id,
-    String? title,
-    NoteCategory? noteCategory,
-    String? description,
-    int? projectId,
-  }) {
-    return NoteEntity(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      noteCategory: noteCategory ?? this.noteCategory,
-      description: description ?? this.description,
-      projectId: projectId ?? this.projectId,
-    );
-  }
+  @override
+  final NoteCategory noteCategory;
+
+  @override
+  final String? description;
+
+  @override
+  final int? projectId;
+
+  @override
+  final int? keyOrder;
 }

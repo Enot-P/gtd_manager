@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 // WARNING: Надо как-то сделать так, чтобы если я менял поле в бд, то менять надо было и здесь
+// WARNING: Надо поменять сущности на Freezed
 
 enum ProjectStatus { waiting, inProgress, done }
 

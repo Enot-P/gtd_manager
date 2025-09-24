@@ -51,12 +51,11 @@ class _ListNotesScreenState extends State<ListNotesScreen> {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (state is ListNotesLoaded) {
-                  return;
-                }
-                if (state is ListNotesIsEmpty) {
-                  return const Center(
-                    child: Text('Список пуст'),
-                  );
+                  return state.notes.isNotEmpty
+                      ? _ListNotesWidget(notes: state.notes)
+                      : const Center(
+                          child: Text('Список пуст'),
+                        );
                 }
                 // FREZYD
                 if (state is ListNotesFailure) {
@@ -152,35 +151,43 @@ class _HeaderWidget extends StatelessWidget {
   }
 }
 
-class _ListNotesWidget extends StatefulWidget {
+class _ListNotesWidget extends StatelessWidget {
   const _ListNotesWidget({
-    super.key,
-    required this.state,
+    required this.notes,
   });
-  final ListNotesLoaded state;
 
-  @override
-  State<_ListNotesWidget> createState() => _ListNotesWidgetState();
-}
+  final List<NoteEntity> notes;
 
-class _ListNotesWidgetState extends State<_ListNotesWidget> {
   @override
   Widget build(BuildContext context) {
     return ReorderableListView.builder(
-      // TODO: Здесь надо будет через БД еще реализовать смену индексов
-      //* INFO: Этот виджет загружает все элементы сразу
       onReorder: (oldIndex, newIndex) {
-        setState(() {
-          // if (oldIndex < newIndex) {
-          //   newIndex -= 1;
-          // }
-          // final item = notesWidget.removeAt(oldIndex);
-          // notesWidget.insert(newIndex, item);
-        });
+        final noteBloc = context.read<ListNoteBloc>();
+        if (oldIndex < newIndex) {
+          newIndex -= 1;
+        }
+        final firstId = notes[oldIndex].id;
+        final secondId = notes[newIndex].id;
+        final firstKeyOrder = notes[oldIndex].keyOrder;
+        final secondKeyOrder = notes[newIndex].keyOrder;
+
+        if (firstId == null || secondId == null || firstKeyOrder == null || secondKeyOrder == null) {
+          throw 'Перестановка заметок произошла с ошибкой';
+        }
+        // Меняю в бд
+        noteBloc.add(
+          ChangeNotesKeyOrder(
+            notes: notes,
+            oldIndex: oldIndex,
+            newIndex: newIndex,
+          ),
+        );
       },
-      itemBuilder: (BuildContext context, int index) {  },
-      itemCount: null,
-      children: widget.state.notes,
+      itemBuilder: (BuildContext context, int index) {
+        final note = notes[index];
+        return NoteWidget(key: ValueKey(note.id), note: note);
+      },
+      itemCount: notes.length,
     );
   }
 }
