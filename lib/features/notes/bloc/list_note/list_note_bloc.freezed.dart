@@ -588,12 +588,12 @@ return failure(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loading,TResult Function( List<NoteEntity> notes)?  loaded,TResult Function( Object? error)?  failure,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loading,TResult Function( List<NoteEntity> notes)?  loaded,TResult Function( Object? error,  StackTrace? st)?  failure,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Loading() when loading != null:
 return loading();case _Loaded() when loaded != null:
 return loaded(_that.notes);case _Failure() when failure != null:
-return failure(_that.error);case _:
+return failure(_that.error,_that.st);case _:
   return orElse();
 
 }
@@ -611,12 +611,12 @@ return failure(_that.error);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loading,required TResult Function( List<NoteEntity> notes)  loaded,required TResult Function( Object? error)  failure,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loading,required TResult Function( List<NoteEntity> notes)  loaded,required TResult Function( Object? error,  StackTrace? st)  failure,}) {final _that = this;
 switch (_that) {
 case _Loading():
 return loading();case _Loaded():
 return loaded(_that.notes);case _Failure():
-return failure(_that.error);case _:
+return failure(_that.error,_that.st);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -633,12 +633,12 @@ return failure(_that.error);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loading,TResult? Function( List<NoteEntity> notes)?  loaded,TResult? Function( Object? error)?  failure,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loading,TResult? Function( List<NoteEntity> notes)?  loaded,TResult? Function( Object? error,  StackTrace? st)?  failure,}) {final _that = this;
 switch (_that) {
 case _Loading() when loading != null:
 return loading();case _Loaded() when loaded != null:
 return loaded(_that.notes);case _Failure() when failure != null:
-return failure(_that.error);case _:
+return failure(_that.error,_that.st);case _:
   return null;
 
 }
@@ -754,10 +754,11 @@ as List<NoteEntity>,
 
 
 class _Failure implements ListNotesState {
-  const _Failure(this.error);
+  const _Failure({required this.error, this.st});
   
 
  final  Object? error;
+ final  StackTrace? st;
 
 /// Create a copy of ListNotesState
 /// with the given fields replaced by the non-null parameter values.
@@ -769,16 +770,16 @@ _$FailureCopyWith<_Failure> get copyWith => __$FailureCopyWithImpl<_Failure>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Failure&&const DeepCollectionEquality().equals(other.error, error));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Failure&&const DeepCollectionEquality().equals(other.error, error)&&(identical(other.st, st) || other.st == st));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(error));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(error),st);
 
 @override
 String toString() {
-  return 'ListNotesState.failure(error: $error)';
+  return 'ListNotesState.failure(error: $error, st: $st)';
 }
 
 
@@ -789,7 +790,7 @@ abstract mixin class _$FailureCopyWith<$Res> implements $ListNotesStateCopyWith<
   factory _$FailureCopyWith(_Failure value, $Res Function(_Failure) _then) = __$FailureCopyWithImpl;
 @useResult
 $Res call({
- Object? error
+ Object? error, StackTrace? st
 });
 
 
@@ -806,9 +807,10 @@ class __$FailureCopyWithImpl<$Res>
 
 /// Create a copy of ListNotesState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? error = freezed,}) {
+@pragma('vm:prefer-inline') $Res call({Object? error = freezed,Object? st = freezed,}) {
   return _then(_Failure(
-freezed == error ? _self.error : error ,
+error: freezed == error ? _self.error : error ,st: freezed == st ? _self.st : st // ignore: cast_nullable_to_non_nullable
+as StackTrace?,
   ));
 }
 

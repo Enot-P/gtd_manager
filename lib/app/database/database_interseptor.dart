@@ -33,14 +33,14 @@ class DataBaseInterceptor extends QueryInterceptor {
 
   Future<T> _run<T>(String description, FutureOr<T> Function() operation) async {
     final stopwatch = Stopwatch()..start();
-    talker.drift('Running $description');
+    final String runningInfo = ('Running $description');
 
     try {
       final result = await operation();
-      talker.drift(' => succeeded after ${stopwatch.elapsedMilliseconds}ms');
+      talker.drift('$runningInfo \n => succeeded after ${stopwatch.elapsedMilliseconds}ms');
       return result;
     } on Object catch (e) {
-      talker.drift(' => failed after ${stopwatch.elapsedMilliseconds}ms ($e)');
+      talker.drift('$runningInfo \n => failed after ${stopwatch.elapsedMilliseconds}ms ($e)');
       rethrow;
     }
   }

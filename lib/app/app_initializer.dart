@@ -32,10 +32,7 @@ class AppInitializer extends StatelessWidget {
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => ListNoteBloc(
-              context.read<ListNotesRepository>(),
-              talker,
-            ),
+            create: (context) => ListNoteBloc(context.read<ListNotesRepository>()),
           ),
         ],
         child: child,

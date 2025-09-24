@@ -54,7 +54,7 @@ class _ListNotesScreenState extends State<ListNotesScreen> {
                       : const Center(
                           child: Text('Список пуст'),
                         ),
-                  failure: (Object? error) => Center(
+                  failure: (Object? error, StackTrace? st) => Center(
                     child: _FailureWidget(
                       noteBloc: noteBloc,
                       error: error,

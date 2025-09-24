@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:gtd_manager/domain/domain.dart';
-import 'package:talker_flutter/talker_flutter.dart';
 
 part 'list_note_event.dart';
 part 'list_note_state.dart';
@@ -10,9 +9,16 @@ part 'list_note_bloc.freezed.dart';
 
 class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
   final ListNotesRepository noteRepository;
-  final Talker talker;
 
-  ListNoteBloc(this.noteRepository, this.talker) : super(const ListNotesState.loading()) {
+  ListNoteBloc(this.noteRepository) : super(const ListNotesState.loading()) {
+    // on<ListNoteEvent>((event, emit) {
+    // event.map(
+    //   loadNotes: (_) => _load,
+    //   createNote: (_) => _createNote,
+    //   deleteNote: (_) => _deleteNote,
+    //   changeNotesKeyOrder: (_) => _changeNotesKeyOrder,
+    // );
+    // });
     on<_LoadNotes>(_load);
     on<_CreateNote>(_createNote);
     on<_DeleteNote>(_deleteNote);
@@ -28,8 +34,7 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
       final notes = await noteRepository.getNotesByCategory(event.noteCategory);
       emit(ListNotesState.loaded(notes));
     } catch (e, st) {
-      emit(ListNotesState.failure(e));
-      talker.handle(e, st);
+      emit(ListNotesState.failure(error: e, st: st));
     }
   }
 
@@ -38,8 +43,7 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
       await noteRepository.createNote(event.noteEntity);
       add(ListNoteEvent.loadNotes(event.noteEntity.noteCategory));
     } catch (e, st) {
-      emit(ListNotesState.failure(e));
-      talker.handle(e, st);
+      emit(ListNotesState.failure(error: e, st: st));
     }
   }
 
@@ -48,8 +52,7 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
       await noteRepository.deleteNote(event.noteId);
       add(ListNoteEvent.loadNotes(event.noteCategory));
     } catch (e, st) {
-      emit(ListNotesState.failure(e));
-      talker.handle(e, st);
+      emit(ListNotesState.failure(error: e, st: st));
     }
   }
 
@@ -67,7 +70,7 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
 
       if (firstId == null || secondId == null || firstKeyOrder == null || secondKeyOrder == null) {
         const errorMassage = 'Перестановка заметок произошла с ошибкой';
-        emit(const ListNotesState.failure(errorMassage));
+        emit(const ListNotesState.failure(error: errorMassage));
         throw errorMassage;
       }
 
@@ -80,8 +83,7 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
 
       emit(ListNotesState.loaded(notes));
     } catch (e, st) {
-      emit(ListNotesState.failure(e));
-      talker.handle(e, st);
+      emit(ListNotesState.failure(error: e, st: st));
     }
   }
 }

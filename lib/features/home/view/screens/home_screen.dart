@@ -52,14 +52,13 @@ class HomeScreen extends StatelessWidget {
         return AppBar(
           actions: [
             const Icon(Icons.search),
-            const Icon(Icons.more_vert),
             IconButton(
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => TalkerScreen(talker: talker),
                 ),
               ),
-              icon: const Icon(Icons.help),
+              icon: const Icon(Icons.bug_report),
             ),
             const SizedBox(width: 10),
           ],

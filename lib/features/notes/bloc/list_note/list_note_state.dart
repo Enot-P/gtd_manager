@@ -6,5 +6,5 @@ class ListNotesState with _$ListNotesState {
 
   const factory ListNotesState.loaded(List<NoteEntity> notes) = _Loaded;
 
-  const factory ListNotesState.failure(Object? error) = _Failure;
+  const factory ListNotesState.failure({required Object? error, StackTrace? st}) = _Failure;
 }
