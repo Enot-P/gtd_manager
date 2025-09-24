@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gtd_manager/domain/entities/entities.dart';
 import 'package:gtd_manager/features/notes/bloc/list_note/list_note_bloc.dart';
 import 'package:gtd_manager/routing/app_router.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 @RoutePage()
 class HomeScreen extends StatelessWidget {
@@ -14,7 +15,7 @@ class HomeScreen extends StatelessWidget {
     final noteBloc = context.read<ListNoteBloc>();
 
     tabsRouter.setActiveIndex(index);
-    if (noteCategory != null) noteBloc.add(LoadNotes(noteCategory));
+    if (noteCategory != null) noteBloc.add(ListNoteEvent.loadNotes(noteCategory));
     Navigator.of(context).pop();
   }
 
@@ -46,14 +47,25 @@ class HomeScreen extends StatelessWidget {
         const ProjectsRoute(),
         const TagsRoute(),
       ],
-      appBarBuilder: (_, tabsRouter) => AppBar(
-        actions: const [
-          Icon(Icons.search),
-          Icon(Icons.more_vert),
-          SizedBox(width: 10),
-        ],
-        backgroundColor: Colors.blue,
-      ),
+      appBarBuilder: (context, tabsRouter) {
+        final talker = context.watch<Talker>();
+        return AppBar(
+          actions: [
+            const Icon(Icons.search),
+            const Icon(Icons.more_vert),
+            IconButton(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => TalkerScreen(talker: talker),
+                ),
+              ),
+              icon: const Icon(Icons.help),
+            ),
+            const SizedBox(width: 10),
+          ],
+          backgroundColor: Colors.blue,
+        );
+      },
       drawer: Builder(
         builder: (context) {
           return Drawer(

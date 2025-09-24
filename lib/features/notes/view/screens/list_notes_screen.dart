@@ -27,7 +27,7 @@ class _ListNotesScreenState extends State<ListNotesScreen> {
   void initState() {
     super.initState();
     noteBloc = context.read<ListNoteBloc>();
-    noteBloc.add(LoadNotes(widget.noteCategory));
+    noteBloc.add(ListNoteEvent.loadNotes(widget.noteCategory));
   }
 
   @override
@@ -47,31 +47,19 @@ class _ListNotesScreenState extends State<ListNotesScreen> {
             child: BlocBuilder<ListNoteBloc, ListNotesState>(
               bloc: noteBloc,
               builder: (context, state) {
-                if (state is ListNotesLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (state is ListNotesLoaded) {
-                  return state.notes.isNotEmpty
-                      ? _ListNotesWidget(notes: state.notes)
+                return state.when(
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  loaded: (List<NoteEntity> notes) => notes.isNotEmpty
+                      ? _ListNotesWidget(notes: notes)
                       : const Center(
                           child: Text('Список пуст'),
-                        );
-                }
-                // FREZYD
-                if (state is ListNotesFailure) {
-                  return Center(
+                        ),
+                  failure: (Object? error) => Center(
                     child: _FailureWidget(
-                      noteCategory: widget.noteCategory,
                       noteBloc: noteBloc,
-                      error: state.error,
+                      error: error,
+                      noteCategory: widget.noteCategory,
                     ),
-                  );
-                }
-                return Center(
-                  child: _FailureWidget(
-                    noteCategory: widget.noteCategory,
-                    noteBloc: noteBloc,
-                    error: 'Что-то сломалось',
                   ),
                 );
               },
@@ -114,7 +102,7 @@ class _FailureWidget extends StatelessWidget {
       children: [
         Text('$error'),
         TextButton(
-          onPressed: () => noteBloc.add(LoadNotes(noteCategory)),
+          onPressed: () => noteBloc.add(ListNoteEvent.loadNotes(noteCategory)),
           child: const Text('Попробовать снова'),
         ),
       ],
@@ -176,7 +164,7 @@ class _ListNotesWidget extends StatelessWidget {
         }
         // Меняю в бд
         noteBloc.add(
-          ChangeNotesKeyOrder(
+          ListNoteEvent.changeNotesKeyOrder(
             notes: notes,
             oldIndex: oldIndex,
             newIndex: newIndex,

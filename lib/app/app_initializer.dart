@@ -4,7 +4,9 @@ import 'package:gtd_manager/app/app_config.dart';
 import 'package:gtd_manager/app/database/database.dart';
 import 'package:gtd_manager/features/notes/bloc/list_note/list_note_bloc.dart';
 import 'package:gtd_manager/domain/repositories/list_notes_repositories.dart';
+import 'package:gtd_manager/main.dart';
 import 'package:talker/talker.dart';
+import 'package:talker_bloc_logger/talker_bloc_logger_observer.dart';
 
 class AppInitializer extends StatelessWidget {
   const AppInitializer({
@@ -18,9 +20,10 @@ class AppInitializer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Bloc.observer = TalkerBlocObserver(talker: talker);
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<Talker>(create: (context) => config.talker),
+        RepositoryProvider<Talker>(create: (context) => talker),
         RepositoryProvider<GtdDatabase>(create: (_) => GtdDatabase()),
         RepositoryProvider<ListNotesRepository>(
           create: (context) => ListNotesRepository(context.read<GtdDatabase>()),
@@ -31,6 +34,7 @@ class AppInitializer extends StatelessWidget {
           BlocProvider(
             create: (context) => ListNoteBloc(
               context.read<ListNotesRepository>(),
+              talker,
             ),
           ),
         ],

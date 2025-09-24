@@ -24,7 +24,7 @@ class NoteWidget extends StatelessWidget {
         const Expanded(child: SizedBox()),
         IconButton(
           onPressed: () => bloc.add(
-            DeleteNote(
+            ListNoteEvent.deleteNote(
               noteId: note.id!,
               noteCategory: note.noteCategory,
             ),

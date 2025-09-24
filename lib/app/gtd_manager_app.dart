@@ -1,5 +1,7 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:gtd_manager/app/app.dart';
+import 'package:gtd_manager/main.dart';
 import 'package:gtd_manager/routing/app_router.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
@@ -12,7 +14,7 @@ class GtdManager extends StatefulWidget {
 
 class _GtdManagerState extends State<GtdManager> {
   final config = AppConfig(
-    talker: TalkerFlutter.init(),
+    // talker: TalkerFlutter.init(),
     appRouter: AppRouter(),
   );
 
@@ -25,7 +27,11 @@ class _GtdManagerState extends State<GtdManager> {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.yellow),
         ),
-        routerConfig: config.appRouter.config(),
+        routerDelegate: AutoRouterDelegate(
+          config.appRouter,
+          navigatorObservers: () => [TalkerRouteObserver(talker)],
+        ),
+        routeInformationParser: config.appRouter.defaultRouteParser(),
       ),
     );
   }

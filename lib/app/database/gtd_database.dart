@@ -2,6 +2,8 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/foundation.dart';
 import 'package:gtd_manager/app/database/database.dart';
+import 'package:gtd_manager/app/database/database_interseptor.dart';
+import 'package:gtd_manager/main.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:gtd_manager/domain/entities/entities.dart'; // Нужен для Dao
 import 'package:path/path.dart' as p;
@@ -57,7 +59,7 @@ QueryExecutor _openConnection() {
         db.execute('PRAGMA foreign_keys = ON');
         db.execute('PRAGMA cache_size = 10000');
       },
-    );
+    ).interceptWith(DataBaseInterceptor(talker: talker));
   });
 }
 

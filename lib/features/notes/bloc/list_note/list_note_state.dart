@@ -1,27 +1,10 @@
 part of 'list_note_bloc.dart';
 
-@immutable
-sealed class ListNotesState extends Equatable {}
+@freezed
+class ListNotesState with _$ListNotesState {
+  const factory ListNotesState.loading() = _Loading;
 
-final class ListNotesLoading extends ListNotesState {
-  @override
-  List<Object?> get props => [];
-}
+  const factory ListNotesState.loaded(List<NoteEntity> notes) = _Loaded;
 
-final class ListNotesLoaded extends ListNotesState {
-  final List<NoteEntity> notes;
-
-  ListNotesLoaded(this.notes);
-
-  @override
-  List<Object?> get props => [notes];
-}
-
-final class ListNotesFailure extends ListNotesState {
-  final Object? error;
-
-  ListNotesFailure(this.error);
-
-  @override
-  List<Object?> get props => [error];
+  const factory ListNotesState.failure(Object? error) = _Failure;
 }

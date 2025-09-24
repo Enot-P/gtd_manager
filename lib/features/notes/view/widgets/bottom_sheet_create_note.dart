@@ -151,7 +151,7 @@ class _CreateNoteWidget extends StatelessWidget {
     void createNote() {
       if (noteTitleController.text.isNotEmpty) {
         listNoteBloc.add(
-          CreateNote(
+          ListNoteEvent.createNote(
             NoteEntity(
               title: noteTitleController.text,
               noteCategory: noteCategory,
