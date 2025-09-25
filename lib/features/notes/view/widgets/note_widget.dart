@@ -18,7 +18,7 @@ class NoteWidget extends StatelessWidget {
       children: [
         Checkbox(
           value: false,
-          onChanged: (_) {},
+          onChanged: (_) => bloc.add(ListNoteEvent.markNoteDone(note)),
         ),
         Text(note.title),
         const Expanded(child: SizedBox()),

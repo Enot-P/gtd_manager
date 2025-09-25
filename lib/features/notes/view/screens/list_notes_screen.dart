@@ -44,8 +44,9 @@ class _ListNotesScreenState extends State<ListNotesScreen> {
             ),
           ),
           Expanded(
-            child: BlocBuilder<ListNoteBloc, ListNotesState>(
+            child: BlocConsumer<ListNoteBloc, ListNotesState>(
               bloc: noteBloc,
+              listener: (context, state) {},
               builder: (context, state) {
                 return state.when(
                   loading: () => const Center(child: CircularProgressIndicator()),
@@ -173,7 +174,7 @@ class _ListNotesWidget extends StatelessWidget {
       },
       itemBuilder: (BuildContext context, int index) {
         final note = notes[index];
-        return NoteWidget(key: ValueKey(note.id), note: note);
+        return NoteWidget(key: Key('${note.id}'), note: note);
       },
       itemCount: notes.length,
     );

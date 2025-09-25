@@ -41,12 +41,14 @@ class BottomSheetCreateNote extends StatelessWidget {
 }
 
 // TODO: Валидация ошибки, как сделать?!
-void _onSubmittedTap(String text, ListNoteBloc bloc, NoteCategory noteCategory) {
+void _onSubmittedTap(String text, BuildContext context, NoteCategory noteCategory) {
+  final bloc = context.read<ListNoteBloc>();
   bloc.add(
     ListNoteEvent.createNote(
       NoteEntity(title: text, noteCategory: noteCategory),
     ),
   );
+  Navigator.pop(context);
 }
 
 class _NoteInputNameWidget extends StatelessWidget {
@@ -59,8 +61,6 @@ class _NoteInputNameWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final noteBloc = context.read<ListNoteBloc>();
-
     return TextField(
       autofocus: true,
       maxLines: 1,
@@ -81,7 +81,7 @@ class _NoteInputNameWidget extends StatelessWidget {
       ),
       style: const TextStyle(fontSize: 18),
       controller: noteTitleController,
-      onSubmitted: (text) => _onSubmittedTap(text, noteBloc, noteCategory),
+      onSubmitted: (text) => _onSubmittedTap(text, context, noteCategory),
     );
   }
 }

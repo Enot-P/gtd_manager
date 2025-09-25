@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'note_entity.freezed.dart';
 
-enum NoteCategory { inbox, waiting, scheduled, someday, next, backlog }
+enum NoteCategory { inbox, waiting, scheduled, someday, next, backlog, done }
 
 @freezed
 class NoteEntity with _$NoteEntity {

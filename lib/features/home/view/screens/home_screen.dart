@@ -45,6 +45,12 @@ class HomeScreen extends StatelessWidget {
           description: 'Тут дела, которые ты вечно откладываешь',
         ),
         const ProjectsRoute(),
+
+        ListNotesRoute(
+          noteCategory: NoteCategory.done,
+          name: 'Выполненные задачи',
+          description: '',
+        ),
         const TagsRoute(),
       ],
       appBarBuilder: (context, tabsRouter) {
@@ -97,9 +103,14 @@ class HomeScreen extends StatelessWidget {
                   title: const Text("Проекты"),
                   onTap: () => _onTapTab(context, index: 5),
                 ),
+
+                ListTile(
+                  title: const Text("Выполненые задачи"),
+                  onTap: () => _onTapTab(context, index: 6, noteCategory: NoteCategory.done),
+                ),
                 ListTile(
                   title: const Text("Теги"),
-                  onTap: () => _onTapTab(context, index: 6),
+                  onTap: () => _onTapTab(context, index: 7),
                 ),
               ],
             ),

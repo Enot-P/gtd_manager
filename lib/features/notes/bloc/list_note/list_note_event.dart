@@ -16,4 +16,6 @@ class ListNoteEvent with _$ListNoteEvent {
     required int oldIndex,
     required int newIndex,
   }) = _ChangeNotesKeyOrder;
+
+  const factory ListNoteEvent.markNoteDone(NoteEntity note) = _MarkNoteDone;
 }

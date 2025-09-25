@@ -1,12 +1,12 @@
 import 'dart:async';
+
 import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:gtd_manager/domain/domain.dart';
 
+part 'list_note_bloc.freezed.dart';
 part 'list_note_event.dart';
 part 'list_note_state.dart';
-part 'list_note_bloc.freezed.dart';
 
 class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
   final ListNotesRepository noteRepository;
@@ -24,6 +24,7 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
     on<_CreateNote>(_createNote);
     on<_DeleteNote>(_deleteNote);
     on<_ChangeNotesKeyOrder>(_changeNotesKeyOrder);
+    on<_MarkNoteDone>(_markNoteDone);
   }
 
   Future<void> _load(_LoadNotes event, Emitter<ListNotesState> emit) async {
@@ -41,16 +42,14 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
 
   Future<void> _createNote(_CreateNote event, Emitter<ListNotesState> emit) async {
     try {
-      final _controller = TextEditingController();
-      bool _validate = false;
-
       final note = event.noteEntity;
-      if (note.title.trim().isNotEmpty) {
-        await noteRepository.createNote(event.noteEntity);
-      } else {
+      if (note.title.trim().isEmpty) {
         throw 'Название заметки не должено быть пустым';
       }
-      add(ListNoteEvent.loadNotes(event.noteEntity.noteCategory));
+      final newId = await noteRepository.createNote(event.noteEntity);
+      _updateNotesState(emit, (notes) {
+        notes.add(note.copyWith(id: newId));
+      });
     } catch (e, st) {
       emit(ListNotesState.failure(error: e, st: st));
     }
@@ -67,12 +66,9 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
 
   Future<void> _changeNotesKeyOrder(_ChangeNotesKeyOrder event, Emitter<ListNotesState> emit) async {
     try {
-      final notes = List<NoteEntity>.from(event.notes);
-      final temp = notes[event.oldIndex];
-      notes[event.oldIndex] = notes[event.newIndex];
-      notes[event.newIndex] = temp;
+      final notes = event.notes;
 
-      // WARNING: wtf?
+      // INFO: Мейби стоит всетаки отдельную DTO сделать?
 
       final firstId = notes[event.oldIndex].id;
       final secondId = notes[event.newIndex].id;
@@ -92,9 +88,41 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
         secondKeyOrder: secondKeyOrder,
       );
 
-      emit(ListNotesState.loaded(notes));
+      _updateNotesState(emit, (notes) {
+        final temp = notes.removeAt(event.oldIndex);
+        notes.insert(event.newIndex, temp);
+      });
     } catch (e, st) {
       emit(ListNotesState.failure(error: e, st: st));
+    }
+  }
+
+  Future<void> _markNoteDone(_MarkNoteDone event, Emitter<ListNotesState> emit) async {
+    try {
+      final note = event.note;
+      final noteId = note.id;
+      if (noteId == null) {
+        const String massage = 'Id заметки отстутвует при пометки задачу сделанной';
+        emit(const ListNotesState.failure(error: massage));
+        throw massage;
+      }
+      await noteRepository.updateNote(
+        noteId: noteId,
+        newNoteParams: NoteEntity(title: note.title, noteCategory: NoteCategory.done),
+      );
+      _updateNotesState(emit, (notes) => notes.removeWhere((note) => note == event.note));
+    } catch (e, st) {
+      emit(ListNotesState.failure(error: e, st: st));
+    }
+  }
+
+  void _updateNotesState(Emitter<ListNotesState> emit, void Function(List<NoteEntity>) updateFunction) {
+    final currentState = state;
+    if (currentState is _Loaded) {
+      final List<NoteEntity> notes = currentState.notes;
+      final newListNotes = List<NoteEntity>.from(notes);
+      updateFunction(newListNotes);
+      emit(ListNotesState.loaded(newListNotes));
     }
   }
 }
