@@ -16,7 +16,7 @@ class ListNotesRepository {
       noteDao.getNotesByCategory(noteCategory);
 
   /// Возвращает idRows вставленной в бд
-  Future<int> createNote(NoteEntity note) async => noteDao.createNote(note: note);
+  Future<NoteEntity> createNote(NoteEntity note) async => noteDao.createNote(note: note);
   Future<void> updateNote({required int noteId, required NoteEntity newNoteParams}) async => noteDao.updateNote(
     noteId: noteId,
     newNoteParams: newNoteParams,

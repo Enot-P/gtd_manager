@@ -161,7 +161,9 @@ class _ListNotesWidget extends StatelessWidget {
         final secondKeyOrder = notes[newIndex].keyOrder;
 
         if (firstId == null || secondId == null || firstKeyOrder == null || secondKeyOrder == null) {
-          throw 'Перестановка заметок произошла с ошибкой';
+          final e =
+              'Перестановка заметок произошла с ошибкой {firstId = $firstId | secondId = $secondId | firstKeyOrder = $firstKeyOrder | secondKeyOrder = $secondKeyOrder}';
+          throw e;
         }
         // Меняю в бд
         noteBloc.add(

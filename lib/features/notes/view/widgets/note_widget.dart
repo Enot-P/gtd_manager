@@ -13,7 +13,6 @@ class NoteWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<ListNoteBloc>();
-
     return Row(
       children: [
         Checkbox(
@@ -31,6 +30,12 @@ class NoteWidget extends StatelessWidget {
           ),
           icon: const Icon(Icons.delete_outline),
         ),
+        note.id != null
+            ? ReorderableDragStartListener(
+                index: note.id!,
+                child: const Icon(Icons.drag_handle),
+              )
+            : const SizedBox.shrink(),
       ],
     );
   }

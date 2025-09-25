@@ -8,12 +8,12 @@ part 'note_dao.g.dart';
 class NoteDao extends DatabaseAccessor<GtdDatabase> with _$NoteDaoMixin {
   NoteDao(super.db);
 
-  Future<int> createNote({
+  Future<NoteEntity> createNote({
     required NoteEntity note,
   }) async {
     return db
         .into(db.note)
-        .insert(
+        .insertReturning(
           NoteCompanion(
             title: Value(note.title),
             noteCategory: Value(note.noteCategory),

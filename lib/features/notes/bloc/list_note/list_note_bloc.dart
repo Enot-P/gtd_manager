@@ -46,9 +46,9 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
       if (note.title.trim().isEmpty) {
         throw 'Название заметки не должено быть пустым';
       }
-      final newId = await noteRepository.createNote(event.noteEntity);
+      final newNote = await noteRepository.createNote(event.noteEntity);
       _updateNotesState(emit, (notes) {
-        notes.add(note.copyWith(id: newId));
+        notes.add(newNote);
       });
     } catch (e, st) {
       emit(ListNotesState.failure(error: e, st: st));
