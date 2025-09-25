@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:drift/drift.dart';
 import 'package:gtd_manager/app/database/database.dart';
 import 'package:gtd_manager/domain/entities/entities.dart';
@@ -39,19 +41,22 @@ class NoteDao extends DatabaseAccessor<GtdDatabase> with _$NoteDaoMixin {
   Future<NoteEntity> getNoteById(int id) => (db.select(db.note)..where((note) => note.id.equals(id))).getSingle();
   Future<void> deleteNoteById(int id) => (db.delete(db.note)..where((f) => f.id.equals(id))).go();
 
-  Future<void> updateNote({
+  /// Возвращает измененную NoteEntity
+  Future<NoteEntity> updateNote({
     required NoteEntity newNoteParams,
     required int noteId,
   }) async {
-    await (db.update(db.note)..where((e) => e.id.equals(noteId))).write(
-      NoteCompanion(
-        title: Value(newNoteParams.title),
-        noteCategory: Value(newNoteParams.noteCategory),
-        description: newNoteParams.description != null ? Value(newNoteParams.description) : const Value.absent(),
-        projectId: newNoteParams.projectId != null ? Value(newNoteParams.projectId) : const Value.absent(),
-        updatedAt: Value(DateTime.now()),
-      ),
-    );
+    return (db.update(db.note)..where((e) => e.id.equals(noteId)))
+        .writeReturning(
+          NoteCompanion(
+            title: Value(newNoteParams.title),
+            noteCategory: Value(newNoteParams.noteCategory),
+            description: newNoteParams.description != null ? Value(newNoteParams.description) : const Value.absent(),
+            projectId: newNoteParams.projectId != null ? Value(newNoteParams.projectId) : const Value.absent(),
+            updatedAt: Value(DateTime.now()),
+          ),
+        )
+        .then((e) => e.first);
   }
 
   // SQL иньекций лучше избежать и не передавать как строку

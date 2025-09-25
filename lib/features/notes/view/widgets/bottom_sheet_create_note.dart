@@ -14,6 +14,7 @@ class BottomSheetCreateNote extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: Как валидировать ошибку?
     final noteTitleController = TextEditingController(); // лучше не в билде
     return SizedBox(
       width: double.infinity,

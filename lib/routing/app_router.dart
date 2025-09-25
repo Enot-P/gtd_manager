@@ -17,11 +17,12 @@ class AppRouter extends RootStackRouter {
       path: '/',
       children: [
         AutoRoute(page: ListNotesRoute.page, path: 'listOfNotes'),
-        AutoRoute(page: DetailsNoteRoute.page, path: 'detailsNote'),
         AutoRoute(page: TagsRoute.page, path: 'tags'),
         AutoRoute(page: CalendarRoute.page, path: 'calendar'),
         AutoRoute(page: ProjectsRoute.page, path: 'project'),
       ],
     ),
+
+    AutoRoute(page: DetailsNoteRoute.page, path: '/detailsNote'),
   ];
 }

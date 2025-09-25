@@ -11,11 +11,16 @@ class ListNoteEvent with _$ListNoteEvent {
     required NoteCategory noteCategory,
   }) = _DeleteNote;
 
+  const factory ListNoteEvent.updateNote({
+    required int noteId,
+    required NoteEntity updateParamsNote,
+  }) = _UpdateNote;
+
   const factory ListNoteEvent.changeNotesKeyOrder({
     required List<NoteEntity> notes,
     required int oldIndex,
     required int newIndex,
   }) = _ChangeNotesKeyOrder;
 
-  const factory ListNoteEvent.markNoteDone(NoteEntity note) = _MarkNoteDone;
+  // const factory ListNoteEvent.markNoteDone(NoteEntity note) = _MarkNoteDone;
 }

@@ -51,7 +51,12 @@ class HomeScreen extends StatelessWidget {
           name: 'Выполненные задачи',
           description: '',
         ),
-        const TagsRoute(),
+
+        ListNotesRoute(
+          noteCategory: NoteCategory.backlog,
+          name: 'Удаленные задачи',
+          description: '',
+        ),
       ],
       appBarBuilder: (context, tabsRouter) {
         final talker = context.watch<Talker>();
@@ -109,8 +114,8 @@ class HomeScreen extends StatelessWidget {
                   onTap: () => _onTapTab(context, index: 6, noteCategory: NoteCategory.done),
                 ),
                 ListTile(
-                  title: const Text("Теги"),
-                  onTap: () => _onTapTab(context, index: 7),
+                  title: const Text("Удаленные задачи"),
+                  onTap: () => _onTapTab(context, index: 7, noteCategory: NoteCategory.backlog),
                 ),
               ],
             ),

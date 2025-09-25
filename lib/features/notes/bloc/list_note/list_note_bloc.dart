@@ -24,7 +24,8 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
     on<_CreateNote>(_createNote);
     on<_DeleteNote>(_deleteNote);
     on<_ChangeNotesKeyOrder>(_changeNotesKeyOrder);
-    on<_MarkNoteDone>(_markNoteDone);
+    // on<_MarkNoteDone>(_markNoteDone);
+    on<_UpdateNote>(_updateNote);
   }
 
   Future<void> _load(_LoadNotes event, Emitter<ListNotesState> emit) async {
@@ -47,7 +48,7 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
         throw 'Название заметки не должено быть пустым';
       }
       final newNote = await noteRepository.createNote(event.noteEntity);
-      _updateNotesState(emit, (notes) {
+      _updateNotesStateUI(emit, (notes) {
         notes.add(newNote);
       });
     } catch (e, st) {
@@ -88,7 +89,7 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
         secondKeyOrder: secondKeyOrder,
       );
 
-      _updateNotesState(emit, (notes) {
+      _updateNotesStateUI(emit, (notes) {
         final temp = notes.removeAt(event.oldIndex);
         notes.insert(event.newIndex, temp);
       });
@@ -97,26 +98,45 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
     }
   }
 
-  Future<void> _markNoteDone(_MarkNoteDone event, Emitter<ListNotesState> emit) async {
+  // Future<void> _markNoteDone(_MarkNoteDone event, Emitter<ListNotesState> emit) async {
+  //   try {
+  //     final note = event.note;
+  //     final noteId = note.id;
+  //     if (noteId == null) {
+  //       const String massage = 'Id заметки отстутвует при пометки задачу сделанной';
+  //       emit(const ListNotesState.failure(error: massage));
+  //       throw massage;
+  //     }
+  //     await noteRepository.updateNote(
+  //       noteId: noteId,
+  //       newNoteParams: NoteEntity(title: note.title, noteCategory: NoteCategory.done),
+  //     );
+  //     _updateNotesStateUI(emit, (notes) => notes.removeWhere((note) => note == event.note));
+  //   } catch (e, st) {
+  //     emit(ListNotesState.failure(error: e, st: st));
+  //   }
+  // }
+
+  Future<void> _updateNote(_UpdateNote event, Emitter<ListNotesState> emit) async {
     try {
-      final note = event.note;
-      final noteId = note.id;
-      if (noteId == null) {
+      final updatedNote = await noteRepository.updateNote(noteId: event.noteId, newNoteParams: event.updateParamsNote);
+      final updatedNoteId = updatedNote.id;
+      if (updatedNoteId == null) {
         const String massage = 'Id заметки отстутвует при пометки задачу сделанной';
         emit(const ListNotesState.failure(error: massage));
         throw massage;
       }
-      await noteRepository.updateNote(
-        noteId: noteId,
-        newNoteParams: NoteEntity(title: note.title, noteCategory: NoteCategory.done),
-      );
-      _updateNotesState(emit, (notes) => notes.removeWhere((note) => note == event.note));
+      _updateNotesStateUI(emit, (notes) {
+        notes.removeWhere((n) => n.id == updatedNoteId);
+      });
     } catch (e, st) {
       emit(ListNotesState.failure(error: e, st: st));
     }
   }
 
-  void _updateNotesState(Emitter<ListNotesState> emit, void Function(List<NoteEntity>) updateFunction) {
+  /// Не обновляет данные в бд! Меняет только отоброжаемые записки.
+  /// Используется, чтобы не делать SELECT из бд лишний раз.
+  void _updateNotesStateUI(Emitter<ListNotesState> emit, void Function(List<NoteEntity>) updateFunction) {
     final currentState = state;
     if (currentState is _Loaded) {
       final List<NoteEntity> notes = currentState.notes;
