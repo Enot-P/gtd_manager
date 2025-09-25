@@ -7,8 +7,10 @@ class BottomSheetCreateNote extends StatelessWidget {
   const BottomSheetCreateNote({
     super.key,
     required this.noteCategory,
+    this.errorInputField,
   });
   final NoteCategory noteCategory;
+  final String? errorInputField;
 
   @override
   Widget build(BuildContext context) {
@@ -26,12 +28,25 @@ class BottomSheetCreateNote extends StatelessWidget {
               noteCategory: noteCategory,
               noteTitleController: noteTitleController,
             ),
-            _NoteSettingsWidget(noteCategory, noteTitleController),
+            _NoteSettingsWidget(
+              noteCategory: noteCategory,
+              noteTitleController: noteTitleController,
+              errorInputField: errorInputField,
+            ),
           ],
         ),
       ),
     );
   }
+}
+
+// TODO: Валидация ошибки, как сделать?!
+void _onSubmittedTap(String text, ListNoteBloc bloc, NoteCategory noteCategory) {
+  bloc.add(
+    ListNoteEvent.createNote(
+      NoteEntity(title: text, noteCategory: noteCategory),
+    ),
+  );
 }
 
 class _NoteInputNameWidget extends StatelessWidget {
@@ -44,8 +59,11 @@ class _NoteInputNameWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final noteBloc = context.read<ListNoteBloc>();
+
     return TextField(
       autofocus: true,
+      maxLines: 1,
       decoration: InputDecoration(
         border: InputBorder.none,
         hintText: 'Новая задача',
@@ -63,15 +81,21 @@ class _NoteInputNameWidget extends StatelessWidget {
       ),
       style: const TextStyle(fontSize: 18),
       controller: noteTitleController,
+      onSubmitted: (text) => _onSubmittedTap(text, noteBloc, noteCategory),
     );
   }
 }
 
 class _NoteSettingsWidget extends StatelessWidget {
-  const _NoteSettingsWidget(this.noteCategory, this.noteTitleController);
+  const _NoteSettingsWidget({
+    required this.noteCategory,
+    required this.noteTitleController,
+    this.errorInputField,
+  });
 
   final NoteCategory noteCategory;
   final TextEditingController noteTitleController;
+  final String? errorInputField;
 
   @override
   Widget build(BuildContext context) {
@@ -137,13 +161,15 @@ class _SetTagButtonWidget extends StatelessWidget {
 }
 
 class _CreateNoteWidget extends StatelessWidget {
-  const _CreateNoteWidget({
+  _CreateNoteWidget({
     required this.noteCategory,
     required this.noteTitleController,
+    this.errorInputField,
   });
 
   final NoteCategory noteCategory;
   final TextEditingController noteTitleController;
+  String? errorInputField;
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +184,9 @@ class _CreateNoteWidget extends StatelessWidget {
             ),
           ),
         );
-      } else {}
+      } else {
+        errorInputField = 'Название заметки не должно быть пустым ';
+      }
     }
 
     return IconButton(

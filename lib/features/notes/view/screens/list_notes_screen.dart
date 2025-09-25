@@ -57,7 +57,7 @@ class _ListNotesScreenState extends State<ListNotesScreen> {
                   failure: (Object? error, StackTrace? st) => Center(
                     child: _FailureWidget(
                       noteBloc: noteBloc,
-                      error: error,
+                      error: 'Что-то пошло не так',
                       noteCategory: widget.noteCategory,
                     ),
                   ),
@@ -103,7 +103,7 @@ class _FailureWidget extends StatelessWidget {
         Text('$error'),
         TextButton(
           onPressed: () => noteBloc.add(ListNoteEvent.loadNotes(noteCategory)),
-          child: const Text('Попробовать снова'),
+          child: const Text('Обновить страницу'),
         ),
       ],
     );

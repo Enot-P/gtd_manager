@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:gtd_manager/domain/domain.dart';
 
@@ -12,12 +13,12 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
 
   ListNoteBloc(this.noteRepository) : super(const ListNotesState.loading()) {
     // on<ListNoteEvent>((event, emit) {
-    // event.map(
-    //   loadNotes: (_) => _load,
-    //   createNote: (_) => _createNote,
-    //   deleteNote: (_) => _deleteNote,
-    //   changeNotesKeyOrder: (_) => _changeNotesKeyOrder,
-    // );
+    //   event.map(
+    //     loadNotes: (_) => _load,
+    //     createNote: (_) => _createNote,
+    //     deleteNote: (_) => _deleteNote,
+    //     changeNotesKeyOrder: (_) => _changeNotesKeyOrder,
+    //   );
     // });
     on<_LoadNotes>(_load);
     on<_CreateNote>(_createNote);
@@ -40,7 +41,15 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
 
   Future<void> _createNote(_CreateNote event, Emitter<ListNotesState> emit) async {
     try {
-      await noteRepository.createNote(event.noteEntity);
+      final _controller = TextEditingController();
+      bool _validate = false;
+
+      final note = event.noteEntity;
+      if (note.title.trim().isNotEmpty) {
+        await noteRepository.createNote(event.noteEntity);
+      } else {
+        throw 'Название заметки не должено быть пустым';
+      }
       add(ListNoteEvent.loadNotes(event.noteEntity.noteCategory));
     } catch (e, st) {
       emit(ListNotesState.failure(error: e, st: st));
@@ -62,6 +71,8 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
       final temp = notes[event.oldIndex];
       notes[event.oldIndex] = notes[event.newIndex];
       notes[event.newIndex] = temp;
+
+      // WARNING: wtf?
 
       final firstId = notes[event.oldIndex].id;
       final secondId = notes[event.newIndex].id;
