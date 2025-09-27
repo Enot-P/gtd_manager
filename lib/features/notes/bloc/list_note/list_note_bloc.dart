@@ -9,7 +9,7 @@ part 'list_note_event.dart';
 part 'list_note_state.dart';
 
 class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
-  final ListNotesRepository noteRepository;
+  final NoteRepository noteRepository;
 
   ListNoteBloc(this.noteRepository) : super(const ListNotesState.loading()) {
     // on<ListNoteEvent>((event, emit) {

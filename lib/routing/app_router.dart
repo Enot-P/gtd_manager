@@ -22,7 +22,6 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: ProjectsRoute.page, path: 'project'),
       ],
     ),
-
     AutoRoute(page: DetailsNoteRoute.page, path: '/detailsNote'),
   ];
 }

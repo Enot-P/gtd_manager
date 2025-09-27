@@ -1,10 +1,10 @@
 import 'package:gtd_manager/app/database/database.dart';
 import 'package:gtd_manager/domain/entities/entities.dart';
 
-class ListNotesRepository {
+class NoteRepository {
   final GtdDatabase db;
   late final NoteDao noteDao;
-  ListNotesRepository(this.db) {
+  NoteRepository(this.db) {
     noteDao = db.noteDao;
   }
 

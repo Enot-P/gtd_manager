@@ -28,18 +28,49 @@ class CalendarRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [DetailsNoteScreen]
-class DetailsNoteRoute extends PageRouteInfo<void> {
-  const DetailsNoteRoute({List<PageRouteInfo>? children})
-    : super(DetailsNoteRoute.name, initialChildren: children);
+class DetailsNoteRoute extends PageRouteInfo<DetailsNoteRouteArgs> {
+  DetailsNoteRoute({
+    Key? key,
+    required int noteId,
+    List<PageRouteInfo>? children,
+  }) : super(
+         DetailsNoteRoute.name,
+         args: DetailsNoteRouteArgs(key: key, noteId: noteId),
+         initialChildren: children,
+       );
 
   static const String name = 'DetailsNoteRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const DetailsNoteScreen();
+      final args = data.argsAs<DetailsNoteRouteArgs>();
+      return DetailsNoteScreen(key: args.key, noteId: args.noteId);
     },
   );
+}
+
+class DetailsNoteRouteArgs {
+  const DetailsNoteRouteArgs({this.key, required this.noteId});
+
+  final Key? key;
+
+  final int noteId;
+
+  @override
+  String toString() {
+    return 'DetailsNoteRouteArgs{key: $key, noteId: $noteId}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! DetailsNoteRouteArgs) return false;
+    return key == other.key && noteId == other.noteId;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ noteId.hashCode;
 }
 
 /// generated route for

@@ -8,12 +8,12 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late GtdDatabase database;
-  late ListNotesRepository noteRepo;
+  late NoteRepository noteRepo;
 
   setUp(() async {
     // Создаем базу данных в памяти для тестов
     database = GtdDatabase(NativeDatabase.memory());
-    noteRepo = ListNotesRepository(database);
+    noteRepo = NoteRepository(database);
     // Ждем инициализации базы данных
     await database.customSelect('SELECT 1').get();
   });

@@ -11,11 +11,11 @@ class BottomSheetCreateNote extends StatelessWidget {
   });
   final NoteCategory noteCategory;
   final String? errorInputField;
-
   @override
   Widget build(BuildContext context) {
     // TODO: Как валидировать ошибку?
     final noteTitleController = TextEditingController(); // лучше не в билде
+    final FocusNode focus;
     return SizedBox(
       width: double.infinity,
       child: Padding(
@@ -42,14 +42,15 @@ class BottomSheetCreateNote extends StatelessWidget {
 }
 
 // TODO: Валидация ошибки, как сделать?!
-void _onSubmittedTap(String text, BuildContext context, NoteCategory noteCategory) {
+void _onSubmittedTap(TextEditingController noteTitleController, BuildContext context, NoteCategory noteCategory) {
   final bloc = context.read<ListNoteBloc>();
   bloc.add(
     ListNoteEvent.createNote(
-      NoteEntity(title: text, noteCategory: noteCategory),
+      NoteEntity(title: noteTitleController.text.trim(), noteCategory: noteCategory),
     ),
   );
-  Navigator.pop(context);
+  noteTitleController.clear();
+  // Navigator.pop(context);
 }
 
 class _NoteInputNameWidget extends StatelessWidget {
@@ -62,7 +63,10 @@ class _NoteInputNameWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Чтобы клавиатура не закрывалась после создание заметки
+    final focusNode = FocusNode();
     return TextField(
+      focusNode: focusNode,
       autofocus: true,
       maxLines: 1,
       decoration: InputDecoration(
@@ -82,7 +86,10 @@ class _NoteInputNameWidget extends StatelessWidget {
       ),
       style: const TextStyle(fontSize: 18),
       controller: noteTitleController,
-      onSubmitted: (text) => _onSubmittedTap(text, context, noteCategory),
+      onSubmitted: (text) {
+        // noteTitleController.text = text;
+        _onSubmittedTap(noteTitleController, context, noteCategory);
+      },
     );
   }
 }
@@ -106,10 +113,12 @@ class _NoteSettingsWidget extends StatelessWidget {
         const _SetDataTimeWidget(),
         const _SetTagButtonWidget(),
         const _SetProjectButtonWidget(),
+        const Expanded(child: SizedBox()),
         _CreateNoteWidget(
           noteCategory: noteCategory,
           noteTitleController: noteTitleController,
         ),
+        const SizedBox(width: 0),
       ],
     );
   }
@@ -161,34 +170,20 @@ class _SetTagButtonWidget extends StatelessWidget {
   }
 }
 
+// TODO: ДОДЕЛАТЬ
 class _CreateNoteWidget extends StatelessWidget {
   _CreateNoteWidget({
     required this.noteCategory,
     required this.noteTitleController,
-    this.errorInputField,
   });
 
   final NoteCategory noteCategory;
   final TextEditingController noteTitleController;
-  String? errorInputField;
+  late final String? errorInputField;
 
   @override
   Widget build(BuildContext context) {
     final listNoteBloc = context.read<ListNoteBloc>();
-    void createNote() {
-      if (noteTitleController.text.isNotEmpty) {
-        listNoteBloc.add(
-          ListNoteEvent.createNote(
-            NoteEntity(
-              title: noteTitleController.text,
-              noteCategory: noteCategory,
-            ),
-          ),
-        );
-      } else {
-        errorInputField = 'Название заметки не должно быть пустым ';
-      }
-    }
 
     return IconButton(
       padding: EdgeInsets.zero,
@@ -196,7 +191,7 @@ class _CreateNoteWidget extends StatelessWidget {
       style: const ButtonStyle(
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
-      onPressed: createNote,
+      onPressed: () => _onSubmittedTap(noteTitleController, context, noteCategory),
       icon: const Icon(Icons.send),
     );
   }
