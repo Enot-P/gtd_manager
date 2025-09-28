@@ -1,8 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:gtd_manager/domain/entities/entities.dart';
+import 'package:gtd_manager/domain/repositories/list_notes_repositories.dart';
+import 'package:gtd_manager/features/notes/bloc/bloc.dart';
 import 'package:gtd_manager/features/notes/bloc/note_details/note_details_cubit.dart';
+import 'package:select_dialog/select_dialog.dart';
 
 @RoutePage()
 class DetailsNoteScreen extends StatelessWidget {
@@ -11,18 +15,30 @@ class DetailsNoteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Изменить задачу'),
-      ),
-      body: BlocBuilder<NoteDetailsCubit, NoteDetailsState>(
-        builder: (context, state) {
-          return state.when(
-            loaded: (note) => _NoteDetailsWidget(note: note),
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (String message) => Center(child: Text(message)),
-          );
-        },
+    return BlocProvider(
+      create: (_) => NoteDetailsCubit(context.read<NoteRepository>(), noteId),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Изменить задачу'),
+        ),
+        body: BlocBuilder<NoteDetailsCubit, NoteDetailsState>(
+          builder: (context, state) {
+            return PopScope(
+              canPop: false,
+              onPopInvokedWithResult: (bool didPop, dynamic result) async {
+                if (didPop) {
+                  return;
+                }
+                await _updateNote(context);
+              },
+              child: state.when(
+                loaded: (note) => SingleChildScrollView(child: _NoteDetailsWidget(note: note)),
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (String message) => Center(child: Text(message)),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -37,43 +53,69 @@ class _NoteDetailsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final titleController = TextEditingController(text: note.title);
+    final titleController = context.read<NoteDetailsCubit>().titleController;
     return Padding(
       padding: const EdgeInsets.all(10),
       child: Column(
+        mainAxisSize: MainAxisSize.max,
         spacing: 10,
         children: [
           TextField(
             decoration: const InputDecoration.collapsed(hintText: 'Название'),
             controller: titleController,
           ),
-          _NoteProjectAndCategoryWidget(
-            noteCategory: note.noteCategory,
-            project: note.projectId,
-          ),
-
+          const _NoteProjectAndCategoryWidget(),
           const _NoteTagsWidget(),
+          const _NoteDescriptionWidget(),
         ],
       ),
     );
   }
 }
 
-class _NoteProjectAndCategoryWidget extends StatelessWidget {
-  const _NoteProjectAndCategoryWidget({
-    required this.noteCategory,
-    required this.project,
-  });
-  final NoteCategory noteCategory;
-  final int? project;
+class _NoteProjectAndCategoryWidget extends StatefulWidget {
+  const _NoteProjectAndCategoryWidget();
 
   @override
+  State<_NoteProjectAndCategoryWidget> createState() => _NoteProjectAndCategoryWidgetState();
+}
+
+class _NoteProjectAndCategoryWidgetState extends State<_NoteProjectAndCategoryWidget> {
+  List<String> selectedItems = [];
+  @override
   Widget build(BuildContext context) {
+    final noteCubit = context.read<NoteDetailsCubit>();
+    final noteCategory = noteCubit.note.noteCategory;
+    final project = noteCubit.note.projectId;
     return InkWell(
       // TODO: Должно открывать модальное окно для выбора категории
-      onTap: () => showMenu(
-        context: context,
-        items: [const PopupMenuItem(child: Text('taa'))],
+      onTap: () => SelectDialog.showModal<String>(
+        context,
+        items: ['Apple', 'Banana', 'Orange', 'Grape'],
+        multipleSelectedValues: selectedItems,
+        label: 'Выберите фрукты',
+
+        // Убираем кнопку OK
+        okButtonBuilder: (context, onPressed) => SizedBox.shrink(),
+
+        // Сохранение происходит при каждом изменении
+        onMultipleItemsChange: (selectedList) {
+          setState(() {
+            selectedItems = selectedList;
+          });
+          print('Автосохранение: $selectedList');
+        },
+
+        itemBuilder: (context, item, isSelected) {
+          return ListTile(
+            leading: Icon(
+              isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
+              color: isSelected ? Colors.green : Colors.grey,
+            ),
+            title: Text(item),
+            tileColor: isSelected ? Colors.green[50] : null,
+          );
+        },
       ),
       child: Row(
         children: [
@@ -98,9 +140,7 @@ class _NoteProjectAndCategoryWidget extends StatelessWidget {
 }
 
 class _NoteTagsWidget extends StatelessWidget {
-  const _NoteTagsWidget({
-    super.key,
-  });
+  const _NoteTagsWidget();
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +156,7 @@ class _NoteTagsWidget extends StatelessWidget {
 }
 
 class _NoteTagWidget extends StatelessWidget {
-  const _NoteTagWidget({super.key, required this.text});
+  const _NoteTagWidget({required this.text});
   final String text;
 
   @override
@@ -133,4 +173,37 @@ class _NoteTagWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+class _NoteDescriptionWidget extends StatelessWidget {
+  const _NoteDescriptionWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: Куда его сувать?
+    final controller = context.read<NoteDetailsCubit>().descriptionController;
+    return Column(
+      children: [
+        QuillSimpleToolbar(
+          controller: controller,
+          config: const QuillSimpleToolbarConfig(
+            multiRowsDisplay: true,
+          ),
+        ),
+        QuillEditor.basic(
+          controller: controller,
+          config: const QuillEditorConfig(),
+        ),
+      ],
+    );
+  }
+}
+
+Future<void> _updateNote(BuildContext context) async {
+  final noteCubit = context.read<NoteDetailsCubit>();
+  await noteCubit.saveNote();
+  // TODO: Норм ли так блок другой вызывать?
+  final noteBloc = context.read<ListNoteBloc>();
+  noteBloc.add(ListNoteEvent.loadNotes(noteCubit.note.noteCategory));
+  context.router.pop();
 }

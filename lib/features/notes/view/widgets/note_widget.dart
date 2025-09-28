@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gtd_manager/domain/entities/note_entity.dart';
 import 'package:gtd_manager/features/notes/bloc/list_note/list_note_bloc.dart';
-import 'package:gtd_manager/features/notes/bloc/note_details/note_details_cubit.dart';
 import 'package:gtd_manager/routing/app_router.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 

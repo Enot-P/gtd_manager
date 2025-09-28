@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:gtd_manager/app/app.dart';
 import 'package:gtd_manager/main.dart';
 import 'package:gtd_manager/routing/app_router.dart';
@@ -32,6 +33,9 @@ class _GtdManagerState extends State<GtdManager> {
           navigatorObservers: () => [TalkerRouteObserver(talker)],
         ),
         routeInformationParser: config.appRouter.defaultRouteParser(),
+        localizationsDelegates: const [
+          FlutterQuillLocalizations.delegate,
+        ],
       ),
     );
   }

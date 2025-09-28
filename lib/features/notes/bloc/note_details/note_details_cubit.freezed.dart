@@ -125,12 +125,12 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loading,TResult Function( NoteEntity note)?  loaded,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loading,TResult Function( NoteEntity note)?  loaded,TResult Function( String e)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _NoteDetailsLoading() when loading != null:
 return loading();case _NoteDetailsLoaded() when loaded != null:
 return loaded(_that.note);case _NoteDetailsError() when error != null:
-return error(_that.message);case _:
+return error(_that.e);case _:
   return orElse();
 
 }
@@ -148,12 +148,12 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loading,required TResult Function( NoteEntity note)  loaded,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loading,required TResult Function( NoteEntity note)  loaded,required TResult Function( String e)  error,}) {final _that = this;
 switch (_that) {
 case _NoteDetailsLoading():
 return loading();case _NoteDetailsLoaded():
 return loaded(_that.note);case _NoteDetailsError():
-return error(_that.message);case _:
+return error(_that.e);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -170,12 +170,12 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loading,TResult? Function( NoteEntity note)?  loaded,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loading,TResult? Function( NoteEntity note)?  loaded,TResult? Function( String e)?  error,}) {final _that = this;
 switch (_that) {
 case _NoteDetailsLoading() when loading != null:
 return loading();case _NoteDetailsLoaded() when loaded != null:
 return loaded(_that.note);case _NoteDetailsError() when error != null:
-return error(_that.message);case _:
+return error(_that.e);case _:
   return null;
 
 }
@@ -294,10 +294,10 @@ $NoteEntityCopyWith<$Res> get note {
 
 
 class _NoteDetailsError implements NoteDetailsState {
-  const _NoteDetailsError(this.message);
+  const _NoteDetailsError(this.e);
   
 
- final  String message;
+ final  String e;
 
 /// Create a copy of NoteDetailsState
 /// with the given fields replaced by the non-null parameter values.
@@ -309,16 +309,16 @@ _$NoteDetailsErrorCopyWith<_NoteDetailsError> get copyWith => __$NoteDetailsErro
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NoteDetailsError&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NoteDetailsError&&(identical(other.e, e) || other.e == e));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode => Object.hash(runtimeType,e);
 
 @override
 String toString() {
-  return 'NoteDetailsState.error(message: $message)';
+  return 'NoteDetailsState.error(e: $e)';
 }
 
 
@@ -329,7 +329,7 @@ abstract mixin class _$NoteDetailsErrorCopyWith<$Res> implements $NoteDetailsSta
   factory _$NoteDetailsErrorCopyWith(_NoteDetailsError value, $Res Function(_NoteDetailsError) _then) = __$NoteDetailsErrorCopyWithImpl;
 @useResult
 $Res call({
- String message
+ String e
 });
 
 
@@ -346,9 +346,9 @@ class __$NoteDetailsErrorCopyWithImpl<$Res>
 
 /// Create a copy of NoteDetailsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? e = null,}) {
   return _then(_NoteDetailsError(
-null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+null == e ? _self.e : e // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

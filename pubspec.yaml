@@ -29,6 +29,14 @@ dependencies:
   reorderables: ^0.6.0
   freezed_annotation: ^3.1.0
 
+  # RichText
+  flutter_quill: ^11.4.2
+  # markdown_widget: ^2.3.2+8
+  # flutter_markdown_editor: ^2.0.0
+  
+  #UI 
+  select_dialog: ^2.0.2 
+
 
 dev_dependencies:
   flutter_test:

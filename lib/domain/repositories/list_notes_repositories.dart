@@ -4,6 +4,7 @@ import 'package:gtd_manager/domain/entities/entities.dart';
 class NoteRepository {
   final GtdDatabase db;
   late final NoteDao noteDao;
+
   NoteRepository(this.db) {
     noteDao = db.noteDao;
   }
