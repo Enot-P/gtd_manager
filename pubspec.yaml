@@ -36,7 +36,7 @@ dependencies:
   
   #UI 
   select_dialog: ^2.0.2 
-
+  table_calendar: ^3.2.0
 
 dev_dependencies:
   flutter_test:

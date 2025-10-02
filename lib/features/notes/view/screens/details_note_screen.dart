@@ -175,12 +175,16 @@ class _NoteTagWidget extends StatelessWidget {
   }
 }
 
-class _NoteDescriptionWidget extends StatelessWidget {
+class _NoteDescriptionWidget extends StatefulWidget {
   const _NoteDescriptionWidget();
 
   @override
+  State<_NoteDescriptionWidget> createState() => _NoteDescriptionWidgetState();
+}
+
+class _NoteDescriptionWidgetState extends State<_NoteDescriptionWidget> {
+  @override
   Widget build(BuildContext context) {
-    // TODO: Куда его сувать?
     final controller = context.read<NoteDetailsCubit>().descriptionController;
     return Column(
       children: [
@@ -202,7 +206,6 @@ class _NoteDescriptionWidget extends StatelessWidget {
 Future<void> _updateNote(BuildContext context) async {
   final noteCubit = context.read<NoteDetailsCubit>();
   await noteCubit.saveNote();
-  // TODO: Норм ли так блок другой вызывать?
   final noteBloc = context.read<ListNoteBloc>();
   noteBloc.add(ListNoteEvent.loadNotes(noteCubit.note.noteCategory));
   context.router.pop();
