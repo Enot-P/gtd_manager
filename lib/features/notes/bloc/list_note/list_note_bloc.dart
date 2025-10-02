@@ -14,10 +14,11 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
   ListNoteBloc(this.noteRepository) : super(const ListNotesState.loading()) {
     // on<ListNoteEvent>((event, emit) {
     //   event.map(
-    //     loadNotes: (_) => _load,
-    //     createNote: (_) => _createNote,
-    //     deleteNote: (_) => _deleteNote,
-    //     changeNotesKeyOrder: (_) => _changeNotesKeyOrder,
+    //     loadNotes: (event) => _load(event, emit),
+    //     createNote: (event) => _createNote(event, emit),
+    //     deleteNote: (event) => _deleteNote(event, emit),
+    //     changeNotesKeyOrder: (event) => _changeNotesKeyOrder(event, emit),
+    //     updateNote: (_UpdateNote value) {},
     //   );
     // });
     on<_LoadNotes>(_load);
@@ -97,25 +98,6 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
       emit(ListNotesState.failure(error: e, st: st));
     }
   }
-
-  // Future<void> _markNoteDone(_MarkNoteDone event, Emitter<ListNotesState> emit) async {
-  //   try {
-  //     final note = event.note;
-  //     final noteId = note.id;
-  //     if (noteId == null) {
-  //       const String massage = 'Id заметки отстутвует при пометки задачу сделанной';
-  //       emit(const ListNotesState.failure(error: massage));
-  //       throw massage;
-  //     }
-  //     await noteRepository.updateNote(
-  //       noteId: noteId,
-  //       newNoteParams: NoteEntity(title: note.title, noteCategory: NoteCategory.done),
-  //     );
-  //     _updateNotesStateUI(emit, (notes) => notes.removeWhere((note) => note == event.note));
-  //   } catch (e, st) {
-  //     emit(ListNotesState.failure(error: e, st: st));
-  //   }
-  // }
 
   Future<void> _updateNote(_UpdateNote event, Emitter<ListNotesState> emit) async {
     try {

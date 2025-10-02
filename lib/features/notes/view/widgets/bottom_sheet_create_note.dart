@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gtd_manager/domain/domain.dart';
 import 'package:gtd_manager/features/notes/notes.dart';
 
-class BottomSheetCreateNote extends StatelessWidget {
+class BottomSheetCreateNote extends StatefulWidget {
   const BottomSheetCreateNote({
     super.key,
     required this.noteCategory,
@@ -11,46 +11,57 @@ class BottomSheetCreateNote extends StatelessWidget {
   });
   final NoteCategory noteCategory;
   final String? errorInputField;
+
+  @override
+  State<BottomSheetCreateNote> createState() => _BottomSheetCreateNoteState();
+}
+
+class _BottomSheetCreateNoteState extends State<BottomSheetCreateNote> {
+  final noteTitleController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+
+  void _onSubmittedTap(BuildContext context) {
+    if (formKey.currentState?.validate() ?? false) {
+      return;
+    }
+    final bloc = context.read<ListNoteBloc>();
+    bloc.add(
+      ListNoteEvent.createNote(
+        NoteEntity(title: noteTitleController.text.trim(), noteCategory: widget.noteCategory),
+      ),
+    );
+    noteTitleController.clear();
+    // Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
-    // TODO: Как валидировать ошибку?
-    final noteTitleController = TextEditingController(); // лучше не в билде
-    final FocusNode focus;
     return SizedBox(
       width: double.infinity,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-        child: Column(
-          spacing: 10,
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _NoteInputNameWidget(
-              noteCategory: noteCategory,
-              noteTitleController: noteTitleController,
-            ),
-            _NoteSettingsWidget(
-              noteCategory: noteCategory,
-              noteTitleController: noteTitleController,
-              errorInputField: errorInputField,
-            ),
-          ],
+        child: Form(
+          key: formKey,
+          child: Column(
+            spacing: 10,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _NoteInputNameWidget(
+                noteCategory: widget.noteCategory,
+                noteTitleController: noteTitleController,
+              ),
+              _NoteSettingsWidget(
+                noteCategory: widget.noteCategory,
+                noteTitleController: noteTitleController,
+                onSubmittedTap: () => _onSubmittedTap(context),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
-}
-
-// TODO: Валидация ошибки, как сделать?!
-void _onSubmittedTap(TextEditingController noteTitleController, BuildContext context, NoteCategory noteCategory) {
-  final bloc = context.read<ListNoteBloc>();
-  bloc.add(
-    ListNoteEvent.createNote(
-      NoteEntity(title: noteTitleController.text.trim(), noteCategory: noteCategory),
-    ),
-  );
-  noteTitleController.clear();
-  // Navigator.pop(context);
 }
 
 class _NoteInputNameWidget extends StatelessWidget {
@@ -65,10 +76,16 @@ class _NoteInputNameWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     // Чтобы клавиатура не закрывалась после создание заметки
     final focusNode = FocusNode();
-    return TextField(
+    return TextFormField(
       focusNode: focusNode,
       autofocus: true,
       maxLines: 1,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Поле не должно быть пустым';
+        }
+        return null;
+      },
       decoration: InputDecoration(
         border: InputBorder.none,
         hintText: 'Новая задача',
@@ -86,10 +103,10 @@ class _NoteInputNameWidget extends StatelessWidget {
       ),
       style: const TextStyle(fontSize: 18),
       controller: noteTitleController,
-      onSubmitted: (text) {
-        // noteTitleController.text = text;
-        _onSubmittedTap(noteTitleController, context, noteCategory);
-      },
+      // onSubmitted: (text) {
+      //   // noteTitleController.text = text;
+      //   _onSubmittedTap(noteTitleController, context, noteCategory);
+      // },
     );
   }
 }
@@ -98,12 +115,12 @@ class _NoteSettingsWidget extends StatelessWidget {
   const _NoteSettingsWidget({
     required this.noteCategory,
     required this.noteTitleController,
-    this.errorInputField,
+    required this.onSubmittedTap,
   });
 
   final NoteCategory noteCategory;
   final TextEditingController noteTitleController;
-  final String? errorInputField;
+  final VoidCallback onSubmittedTap;
 
   @override
   Widget build(BuildContext context) {
@@ -117,6 +134,7 @@ class _NoteSettingsWidget extends StatelessWidget {
         _CreateNoteWidget(
           noteCategory: noteCategory,
           noteTitleController: noteTitleController,
+          onSubmittedTap: onSubmittedTap,
         ),
         const SizedBox(width: 0),
       ],
@@ -172,18 +190,20 @@ class _SetTagButtonWidget extends StatelessWidget {
 
 // TODO: ДОДЕЛАТЬ
 class _CreateNoteWidget extends StatelessWidget {
-  _CreateNoteWidget({
+  const _CreateNoteWidget({
     required this.noteCategory,
     required this.noteTitleController,
+    required this.onSubmittedTap,
   });
 
   final NoteCategory noteCategory;
   final TextEditingController noteTitleController;
-  late final String? errorInputField;
+  final VoidCallback onSubmittedTap;
+  //late final String? errorInputField;
 
   @override
   Widget build(BuildContext context) {
-    final listNoteBloc = context.read<ListNoteBloc>();
+    //final listNoteBloc = context.read<ListNoteBloc>();
 
     return IconButton(
       padding: EdgeInsets.zero,
@@ -191,7 +211,7 @@ class _CreateNoteWidget extends StatelessWidget {
       style: const ButtonStyle(
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
-      onPressed: () => _onSubmittedTap(noteTitleController, context, noteCategory),
+      onPressed: () => onSubmittedTap(),
       icon: const Icon(Icons.send),
     );
   }

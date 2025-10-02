@@ -96,7 +96,7 @@ class _NoteProjectAndCategoryWidgetState extends State<_NoteProjectAndCategoryWi
         label: 'Выберите фрукты',
 
         // Убираем кнопку OK
-        okButtonBuilder: (context, onPressed) => SizedBox.shrink(),
+        okButtonBuilder: (context, onPressed) => const SizedBox.shrink(),
 
         // Сохранение происходит при каждом изменении
         onMultipleItemsChange: (selectedList) {

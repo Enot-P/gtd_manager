@@ -18,6 +18,7 @@ class NoteRepository {
 
   /// Возвращает idRows вставленной в бд
   Future<NoteEntity> createNote(NoteEntity note) async => noteDao.createNote(note: note);
+
   Future<NoteEntity> updateNote({required int noteId, required NoteEntity newNoteParams}) async => noteDao.updateNote(
     noteId: noteId,
     newNoteParams: newNoteParams,
