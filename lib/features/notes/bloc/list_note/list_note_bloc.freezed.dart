@@ -131,13 +131,13 @@ return changeNotesKeyOrder(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( NoteCategory noteCategory)?  loadNotes,TResult Function( NoteEntity noteEntity)?  createNote,TResult Function( int noteId,  NoteCategory noteCategory)?  deleteNote,TResult Function( int noteId,  NoteEntity updateParamsNote)?  updateNote,TResult Function( List<NoteEntity> notes,  int oldIndex,  int newIndex)?  changeNotesKeyOrder,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( NoteCategory noteCategory)?  loadNotes,TResult Function( NoteDtoCreate note)?  createNote,TResult Function( int noteId)?  deleteNote,TResult Function( NoteDtoUpdate updateParamsNote)?  updateNote,TResult Function( List<NoteEntity> notes,  int oldIndex,  int newIndex)?  changeNotesKeyOrder,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoadNotes() when loadNotes != null:
 return loadNotes(_that.noteCategory);case _CreateNote() when createNote != null:
-return createNote(_that.noteEntity);case _DeleteNote() when deleteNote != null:
-return deleteNote(_that.noteId,_that.noteCategory);case _UpdateNote() when updateNote != null:
-return updateNote(_that.noteId,_that.updateParamsNote);case _ChangeNotesKeyOrder() when changeNotesKeyOrder != null:
+return createNote(_that.note);case _DeleteNote() when deleteNote != null:
+return deleteNote(_that.noteId);case _UpdateNote() when updateNote != null:
+return updateNote(_that.updateParamsNote);case _ChangeNotesKeyOrder() when changeNotesKeyOrder != null:
 return changeNotesKeyOrder(_that.notes,_that.oldIndex,_that.newIndex);case _:
   return orElse();
 
@@ -156,13 +156,13 @@ return changeNotesKeyOrder(_that.notes,_that.oldIndex,_that.newIndex);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( NoteCategory noteCategory)  loadNotes,required TResult Function( NoteEntity noteEntity)  createNote,required TResult Function( int noteId,  NoteCategory noteCategory)  deleteNote,required TResult Function( int noteId,  NoteEntity updateParamsNote)  updateNote,required TResult Function( List<NoteEntity> notes,  int oldIndex,  int newIndex)  changeNotesKeyOrder,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( NoteCategory noteCategory)  loadNotes,required TResult Function( NoteDtoCreate note)  createNote,required TResult Function( int noteId)  deleteNote,required TResult Function( NoteDtoUpdate updateParamsNote)  updateNote,required TResult Function( List<NoteEntity> notes,  int oldIndex,  int newIndex)  changeNotesKeyOrder,}) {final _that = this;
 switch (_that) {
 case _LoadNotes():
 return loadNotes(_that.noteCategory);case _CreateNote():
-return createNote(_that.noteEntity);case _DeleteNote():
-return deleteNote(_that.noteId,_that.noteCategory);case _UpdateNote():
-return updateNote(_that.noteId,_that.updateParamsNote);case _ChangeNotesKeyOrder():
+return createNote(_that.note);case _DeleteNote():
+return deleteNote(_that.noteId);case _UpdateNote():
+return updateNote(_that.updateParamsNote);case _ChangeNotesKeyOrder():
 return changeNotesKeyOrder(_that.notes,_that.oldIndex,_that.newIndex);case _:
   throw StateError('Unexpected subclass');
 
@@ -180,13 +180,13 @@ return changeNotesKeyOrder(_that.notes,_that.oldIndex,_that.newIndex);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( NoteCategory noteCategory)?  loadNotes,TResult? Function( NoteEntity noteEntity)?  createNote,TResult? Function( int noteId,  NoteCategory noteCategory)?  deleteNote,TResult? Function( int noteId,  NoteEntity updateParamsNote)?  updateNote,TResult? Function( List<NoteEntity> notes,  int oldIndex,  int newIndex)?  changeNotesKeyOrder,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( NoteCategory noteCategory)?  loadNotes,TResult? Function( NoteDtoCreate note)?  createNote,TResult? Function( int noteId)?  deleteNote,TResult? Function( NoteDtoUpdate updateParamsNote)?  updateNote,TResult? Function( List<NoteEntity> notes,  int oldIndex,  int newIndex)?  changeNotesKeyOrder,}) {final _that = this;
 switch (_that) {
 case _LoadNotes() when loadNotes != null:
 return loadNotes(_that.noteCategory);case _CreateNote() when createNote != null:
-return createNote(_that.noteEntity);case _DeleteNote() when deleteNote != null:
-return deleteNote(_that.noteId,_that.noteCategory);case _UpdateNote() when updateNote != null:
-return updateNote(_that.noteId,_that.updateParamsNote);case _ChangeNotesKeyOrder() when changeNotesKeyOrder != null:
+return createNote(_that.note);case _DeleteNote() when deleteNote != null:
+return deleteNote(_that.noteId);case _UpdateNote() when updateNote != null:
+return updateNote(_that.updateParamsNote);case _ChangeNotesKeyOrder() when changeNotesKeyOrder != null:
 return changeNotesKeyOrder(_that.notes,_that.oldIndex,_that.newIndex);case _:
   return null;
 
@@ -265,10 +265,10 @@ as NoteCategory,
 
 
 class _CreateNote implements ListNoteEvent {
-  const _CreateNote(this.noteEntity);
+  const _CreateNote(this.note);
   
 
- final  NoteEntity noteEntity;
+ final  NoteDtoCreate note;
 
 /// Create a copy of ListNoteEvent
 /// with the given fields replaced by the non-null parameter values.
@@ -280,16 +280,16 @@ _$CreateNoteCopyWith<_CreateNote> get copyWith => __$CreateNoteCopyWithImpl<_Cre
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateNote&&(identical(other.noteEntity, noteEntity) || other.noteEntity == noteEntity));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateNote&&(identical(other.note, note) || other.note == note));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,noteEntity);
+int get hashCode => Object.hash(runtimeType,note);
 
 @override
 String toString() {
-  return 'ListNoteEvent.createNote(noteEntity: $noteEntity)';
+  return 'ListNoteEvent.createNote(note: $note)';
 }
 
 
@@ -300,11 +300,11 @@ abstract mixin class _$CreateNoteCopyWith<$Res> implements $ListNoteEventCopyWit
   factory _$CreateNoteCopyWith(_CreateNote value, $Res Function(_CreateNote) _then) = __$CreateNoteCopyWithImpl;
 @useResult
 $Res call({
- NoteEntity noteEntity
+ NoteDtoCreate note
 });
 
 
-$NoteEntityCopyWith<$Res> get noteEntity;
+
 
 }
 /// @nodoc
@@ -317,34 +317,24 @@ class __$CreateNoteCopyWithImpl<$Res>
 
 /// Create a copy of ListNoteEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? noteEntity = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? note = null,}) {
   return _then(_CreateNote(
-null == noteEntity ? _self.noteEntity : noteEntity // ignore: cast_nullable_to_non_nullable
-as NoteEntity,
+null == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
+as NoteDtoCreate,
   ));
 }
 
-/// Create a copy of ListNoteEvent
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$NoteEntityCopyWith<$Res> get noteEntity {
-  
-  return $NoteEntityCopyWith<$Res>(_self.noteEntity, (value) {
-    return _then(_self.copyWith(noteEntity: value));
-  });
-}
+
 }
 
 /// @nodoc
 
 
 class _DeleteNote implements ListNoteEvent {
-  const _DeleteNote({required this.noteId, required this.noteCategory});
+  const _DeleteNote(this.noteId);
   
 
  final  int noteId;
- final  NoteCategory noteCategory;
 
 /// Create a copy of ListNoteEvent
 /// with the given fields replaced by the non-null parameter values.
@@ -356,16 +346,16 @@ _$DeleteNoteCopyWith<_DeleteNote> get copyWith => __$DeleteNoteCopyWithImpl<_Del
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DeleteNote&&(identical(other.noteId, noteId) || other.noteId == noteId)&&(identical(other.noteCategory, noteCategory) || other.noteCategory == noteCategory));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DeleteNote&&(identical(other.noteId, noteId) || other.noteId == noteId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,noteId,noteCategory);
+int get hashCode => Object.hash(runtimeType,noteId);
 
 @override
 String toString() {
-  return 'ListNoteEvent.deleteNote(noteId: $noteId, noteCategory: $noteCategory)';
+  return 'ListNoteEvent.deleteNote(noteId: $noteId)';
 }
 
 
@@ -376,7 +366,7 @@ abstract mixin class _$DeleteNoteCopyWith<$Res> implements $ListNoteEventCopyWit
   factory _$DeleteNoteCopyWith(_DeleteNote value, $Res Function(_DeleteNote) _then) = __$DeleteNoteCopyWithImpl;
 @useResult
 $Res call({
- int noteId, NoteCategory noteCategory
+ int noteId
 });
 
 
@@ -393,11 +383,10 @@ class __$DeleteNoteCopyWithImpl<$Res>
 
 /// Create a copy of ListNoteEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? noteId = null,Object? noteCategory = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? noteId = null,}) {
   return _then(_DeleteNote(
-noteId: null == noteId ? _self.noteId : noteId // ignore: cast_nullable_to_non_nullable
-as int,noteCategory: null == noteCategory ? _self.noteCategory : noteCategory // ignore: cast_nullable_to_non_nullable
-as NoteCategory,
+null == noteId ? _self.noteId : noteId // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 
@@ -408,11 +397,10 @@ as NoteCategory,
 
 
 class _UpdateNote implements ListNoteEvent {
-  const _UpdateNote({required this.noteId, required this.updateParamsNote});
+  const _UpdateNote(this.updateParamsNote);
   
 
- final  int noteId;
- final  NoteEntity updateParamsNote;
+ final  NoteDtoUpdate updateParamsNote;
 
 /// Create a copy of ListNoteEvent
 /// with the given fields replaced by the non-null parameter values.
@@ -424,16 +412,16 @@ _$UpdateNoteCopyWith<_UpdateNote> get copyWith => __$UpdateNoteCopyWithImpl<_Upd
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateNote&&(identical(other.noteId, noteId) || other.noteId == noteId)&&(identical(other.updateParamsNote, updateParamsNote) || other.updateParamsNote == updateParamsNote));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateNote&&(identical(other.updateParamsNote, updateParamsNote) || other.updateParamsNote == updateParamsNote));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,noteId,updateParamsNote);
+int get hashCode => Object.hash(runtimeType,updateParamsNote);
 
 @override
 String toString() {
-  return 'ListNoteEvent.updateNote(noteId: $noteId, updateParamsNote: $updateParamsNote)';
+  return 'ListNoteEvent.updateNote(updateParamsNote: $updateParamsNote)';
 }
 
 
@@ -444,11 +432,11 @@ abstract mixin class _$UpdateNoteCopyWith<$Res> implements $ListNoteEventCopyWit
   factory _$UpdateNoteCopyWith(_UpdateNote value, $Res Function(_UpdateNote) _then) = __$UpdateNoteCopyWithImpl;
 @useResult
 $Res call({
- int noteId, NoteEntity updateParamsNote
+ NoteDtoUpdate updateParamsNote
 });
 
 
-$NoteEntityCopyWith<$Res> get updateParamsNote;
+
 
 }
 /// @nodoc
@@ -461,24 +449,14 @@ class __$UpdateNoteCopyWithImpl<$Res>
 
 /// Create a copy of ListNoteEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? noteId = null,Object? updateParamsNote = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? updateParamsNote = null,}) {
   return _then(_UpdateNote(
-noteId: null == noteId ? _self.noteId : noteId // ignore: cast_nullable_to_non_nullable
-as int,updateParamsNote: null == updateParamsNote ? _self.updateParamsNote : updateParamsNote // ignore: cast_nullable_to_non_nullable
-as NoteEntity,
+null == updateParamsNote ? _self.updateParamsNote : updateParamsNote // ignore: cast_nullable_to_non_nullable
+as NoteDtoUpdate,
   ));
 }
 
-/// Create a copy of ListNoteEvent
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$NoteEntityCopyWith<$Res> get updateParamsNote {
-  
-  return $NoteEntityCopyWith<$Res>(_self.updateParamsNote, (value) {
-    return _then(_self.copyWith(updateParamsNote: value));
-  });
-}
+
 }
 
 /// @nodoc

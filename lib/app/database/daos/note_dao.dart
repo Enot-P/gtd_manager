@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:drift/drift.dart';
 import 'package:gtd_manager/app/database/database.dart';
+import 'package:gtd_manager/domain/dtos/dtos.dart';
+import 'package:gtd_manager/domain/dtos/note_dto/note_update_dto.dart';
 import 'package:gtd_manager/domain/entities/entities.dart';
 
 part 'note_dao.g.dart';
@@ -10,17 +12,15 @@ part 'note_dao.g.dart';
 class NoteDao extends DatabaseAccessor<GtdDatabase> with _$NoteDaoMixin {
   NoteDao(super.db);
 
-  Future<NoteEntity> createNote({
-    required NoteEntity note,
-  }) async {
+  Future<NoteEntity> createNote(NoteDtoCreate note) async {
     return db
         .into(db.note)
         .insertReturning(
           NoteCompanion(
             title: Value(note.title),
             noteCategory: Value(note.noteCategory),
-            description: Value(note.description),
-            projectId: Value(note.projectId),
+            description: Value.absentIfNull(note.description),
+            projectId: Value.absentIfNull(note.projectId),
             createdAt: Value(DateTime.now()),
           ),
         );
@@ -42,18 +42,15 @@ class NoteDao extends DatabaseAccessor<GtdDatabase> with _$NoteDaoMixin {
   Future<void> deleteNoteById(int id) => (db.delete(db.note)..where((f) => f.id.equals(id))).go();
 
   /// Возвращает измененную NoteEntity
-  Future<NoteEntity> updateNote({
-    required NoteEntity newNoteParams,
-    required int noteId,
-  }) async {
-    return (db.update(db.note)..where((e) => e.id.equals(noteId)))
+  Future<NoteEntity> updateNote(NoteDtoUpdate newNoteParams) async {
+    return (db.update(db.note)..where((e) => e.id.equals(newNoteParams.id)))
         .writeReturning(
           NoteCompanion(
-            title: Value(newNoteParams.title),
-            noteCategory: Value(newNoteParams.noteCategory),
-            description: newNoteParams.description != null ? Value(newNoteParams.description) : const Value.absent(),
-            projectId: newNoteParams.projectId != null ? Value(newNoteParams.projectId) : const Value.absent(),
-            updatedAt: Value(DateTime.now()),
+            title: Value.absentIfNull(newNoteParams.title),
+            noteCategory: Value.absentIfNull(newNoteParams.noteCategory),
+            description: Value.absentIfNull(newNoteParams.description),
+            projectId: Value.absentIfNull(newNoteParams.projectId),
+            updatedAt: Value.absentIfNull(DateTime.now()),
           ),
         )
         .then((e) => e.first);

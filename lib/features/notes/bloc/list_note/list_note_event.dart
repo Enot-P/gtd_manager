@@ -4,23 +4,15 @@ part of 'list_note_bloc.dart';
 class ListNoteEvent with _$ListNoteEvent {
   const factory ListNoteEvent.loadNotes(NoteCategory noteCategory) = _LoadNotes;
 
-  const factory ListNoteEvent.createNote(NoteEntity noteEntity) = _CreateNote;
+  const factory ListNoteEvent.createNote(NoteDtoCreate note) = _CreateNote;
 
-  const factory ListNoteEvent.deleteNote({
-    required int noteId,
-    required NoteCategory noteCategory,
-  }) = _DeleteNote;
+  const factory ListNoteEvent.deleteNote(int noteId) = _DeleteNote;
 
-  const factory ListNoteEvent.updateNote({
-    required int noteId,
-    required NoteEntity updateParamsNote,
-  }) = _UpdateNote;
+  const factory ListNoteEvent.updateNote(NoteDtoUpdate updateParamsNote) = _UpdateNote;
 
   const factory ListNoteEvent.changeNotesKeyOrder({
     required List<NoteEntity> notes,
     required int oldIndex,
     required int newIndex,
   }) = _ChangeNotesKeyOrder;
-
-  // const factory ListNoteEvent.markNoteDone(NoteEntity note) = _MarkNoteDone;
 }

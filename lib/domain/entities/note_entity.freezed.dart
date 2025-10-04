@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$NoteEntity {
 
- int? get id; String get title; NoteCategory get noteCategory; String? get description; int? get projectId; int? get keyOrder;
+ int get id; String get title; NoteCategory get noteCategory; String? get description; int? get projectId; int get keyOrder;
 /// Create a copy of NoteEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -45,7 +45,7 @@ abstract mixin class $NoteEntityCopyWith<$Res>  {
   factory $NoteEntityCopyWith(NoteEntity value, $Res Function(NoteEntity) _then) = _$NoteEntityCopyWithImpl;
 @useResult
 $Res call({
- int? id, String title, NoteCategory noteCategory, String? description, int? projectId, int? keyOrder
+ int id, String title, NoteCategory noteCategory, String? description, int? projectId, int keyOrder
 });
 
 
@@ -62,15 +62,15 @@ class _$NoteEntityCopyWithImpl<$Res>
 
 /// Create a copy of NoteEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? title = null,Object? noteCategory = null,Object? description = freezed,Object? projectId = freezed,Object? keyOrder = freezed,}) {
-  return _then(NoteEntity(
-id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int?,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? noteCategory = null,Object? description = freezed,Object? projectId = freezed,Object? keyOrder = null,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,noteCategory: null == noteCategory ? _self.noteCategory : noteCategory // ignore: cast_nullable_to_non_nullable
 as NoteCategory,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,projectId: freezed == projectId ? _self.projectId : projectId // ignore: cast_nullable_to_non_nullable
-as int?,keyOrder: freezed == keyOrder ? _self.keyOrder : keyOrder // ignore: cast_nullable_to_non_nullable
-as int?,
+as int?,keyOrder: null == keyOrder ? _self.keyOrder : keyOrder // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 
@@ -91,10 +91,11 @@ extension NoteEntityPatterns on NoteEntity {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _NoteEntity value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _:
+case _NoteEntity() when $default != null:
+return $default(_that);case _:
   return orElse();
 
 }
@@ -112,10 +113,11 @@ case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _NoteEntity value)  $default,){
 final _that = this;
 switch (_that) {
-case _:
+case _NoteEntity():
+return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -132,10 +134,11 @@ case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _NoteEntity value)?  $default,){
 final _that = this;
 switch (_that) {
-case _:
+case _NoteEntity() when $default != null:
+return $default(_that);case _:
   return null;
 
 }
@@ -152,9 +155,10 @@ case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String title,  NoteCategory noteCategory,  String? description,  int? projectId,  int keyOrder)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _:
+case _NoteEntity() when $default != null:
+return $default(_that.id,_that.title,_that.noteCategory,_that.description,_that.projectId,_that.keyOrder);case _:
   return orElse();
 
 }
@@ -172,9 +176,10 @@ case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>() {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String title,  NoteCategory noteCategory,  String? description,  int? projectId,  int keyOrder)  $default,) {final _that = this;
 switch (_that) {
-case _:
+case _NoteEntity():
+return $default(_that.id,_that.title,_that.noteCategory,_that.description,_that.projectId,_that.keyOrder);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -191,13 +196,90 @@ case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>() {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String title,  NoteCategory noteCategory,  String? description,  int? projectId,  int keyOrder)?  $default,) {final _that = this;
 switch (_that) {
-case _:
+case _NoteEntity() when $default != null:
+return $default(_that.id,_that.title,_that.noteCategory,_that.description,_that.projectId,_that.keyOrder);case _:
   return null;
 
 }
 }
+
+}
+
+/// @nodoc
+
+
+class _NoteEntity implements NoteEntity {
+  const _NoteEntity({required this.id, required this.title, required this.noteCategory, this.description, this.projectId, required this.keyOrder});
+  
+
+@override final  int id;
+@override final  String title;
+@override final  NoteCategory noteCategory;
+@override final  String? description;
+@override final  int? projectId;
+@override final  int keyOrder;
+
+/// Create a copy of NoteEntity
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$NoteEntityCopyWith<_NoteEntity> get copyWith => __$NoteEntityCopyWithImpl<_NoteEntity>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NoteEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.noteCategory, noteCategory) || other.noteCategory == noteCategory)&&(identical(other.description, description) || other.description == description)&&(identical(other.projectId, projectId) || other.projectId == projectId)&&(identical(other.keyOrder, keyOrder) || other.keyOrder == keyOrder));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,id,title,noteCategory,description,projectId,keyOrder);
+
+@override
+String toString() {
+  return 'NoteEntity(id: $id, title: $title, noteCategory: $noteCategory, description: $description, projectId: $projectId, keyOrder: $keyOrder)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$NoteEntityCopyWith<$Res> implements $NoteEntityCopyWith<$Res> {
+  factory _$NoteEntityCopyWith(_NoteEntity value, $Res Function(_NoteEntity) _then) = __$NoteEntityCopyWithImpl;
+@override @useResult
+$Res call({
+ int id, String title, NoteCategory noteCategory, String? description, int? projectId, int keyOrder
+});
+
+
+
+
+}
+/// @nodoc
+class __$NoteEntityCopyWithImpl<$Res>
+    implements _$NoteEntityCopyWith<$Res> {
+  __$NoteEntityCopyWithImpl(this._self, this._then);
+
+  final _NoteEntity _self;
+  final $Res Function(_NoteEntity) _then;
+
+/// Create a copy of NoteEntity
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? noteCategory = null,Object? description = freezed,Object? projectId = freezed,Object? keyOrder = null,}) {
+  return _then(_NoteEntity(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,noteCategory: null == noteCategory ? _self.noteCategory : noteCategory // ignore: cast_nullable_to_non_nullable
+as NoteCategory,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,projectId: freezed == projectId ? _self.projectId : projectId // ignore: cast_nullable_to_non_nullable
+as int?,keyOrder: null == keyOrder ? _self.keyOrder : keyOrder // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
 
 }
 

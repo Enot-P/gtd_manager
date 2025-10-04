@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:gtd_manager/domain/dtos/note_dto/note_update_dto.dart';
 import 'package:gtd_manager/domain/entities/entities.dart';
 import 'package:gtd_manager/domain/repositories/repositories.dart';
 
@@ -23,13 +24,14 @@ class NoteDetailsCubit extends Cubit<NoteDetailsState> {
   Future<NoteEntity?> _loadNote(int noteId) async {
     try {
       note = await noteRepo.getNoteById(noteId);
+      final noteDescription = note.description;
       titleController.text = note.title;
-      if (note.description?.isNotEmpty == true) {
+      if (noteDescription != null && noteDescription.isNotEmpty) {
         try {
-          final deltaJson = jsonDecode(note.description!);
+          final deltaJson = jsonDecode(noteDescription);
           descriptionController.document = Document.fromJson(deltaJson);
         } catch (e) {
-          descriptionController.document.insert(0, note.description!);
+          descriptionController.document.insert(0, note.description);
         }
       }
       await Future.delayed(const Duration(seconds: 2));
@@ -43,20 +45,14 @@ class NoteDetailsCubit extends Cubit<NoteDetailsState> {
 
   Future<void> saveNote() async {
     try {
-      final noteId = note.id;
-      if (noteId == null) {
-        throw 'Id не должен быть равен null';
-      }
       final deltaJson = jsonEncode(descriptionController.document.toDelta().toJson());
-      final newNote = NoteEntity(
+      final updatedNoteParams = NoteDtoUpdate(
+        id: note.id,
         title: titleController.text,
         noteCategory: note.noteCategory,
         description: deltaJson,
       );
-      await noteRepo.updateNote(
-        noteId: noteId,
-        newNoteParams: newNote,
-      );
+      await noteRepo.updateNote(updatedNoteParams);
     } catch (e) {
       emit(const NoteDetailsState.error('При сохранении задачи произошла ошибка'));
     }

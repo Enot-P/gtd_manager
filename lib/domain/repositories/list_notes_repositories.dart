@@ -1,4 +1,6 @@
 import 'package:gtd_manager/app/database/database.dart';
+import 'package:gtd_manager/domain/dtos/note_dto/note_dto.dart';
+import 'package:gtd_manager/domain/dtos/note_dto/note_update_dto.dart';
 import 'package:gtd_manager/domain/entities/entities.dart';
 
 class NoteRepository {
@@ -17,12 +19,10 @@ class NoteRepository {
       noteDao.getNotesByCategory(noteCategory);
 
   /// Возвращает idRows вставленной в бд
-  Future<NoteEntity> createNote(NoteEntity note) async => noteDao.createNote(note: note);
+  Future<NoteEntity> createNote(NoteDtoCreate note) async => noteDao.createNote(note);
 
-  Future<NoteEntity> updateNote({required int noteId, required NoteEntity newNoteParams}) async => noteDao.updateNote(
-    noteId: noteId,
-    newNoteParams: newNoteParams,
-  );
+  /// Возвращает обновленую NoteEntity
+  Future<NoteEntity> updateNote(NoteDtoUpdate note) async => noteDao.updateNote(note);
 
   Future<void> deleteNote(int noteId) async => noteDao.deleteNoteById(noteId);
 
