@@ -1,4 +1,5 @@
 import 'package:gtd_manager/app/database/database.dart';
+import 'package:gtd_manager/domain/dtos/note_create_dto.dart';
 import 'package:gtd_manager/domain/entities/entities.dart';
 
 class NoteRepository {
@@ -17,7 +18,7 @@ class NoteRepository {
       noteDao.getNotesByCategory(noteCategory);
 
   /// Возвращает idRows вставленной в бд
-  Future<NoteEntity> createNote(NoteEntity note) async => noteDao.createNote(note: note);
+  Future<NoteEntity> createNote(NoteCreateDto note) async => noteDao.createNote(note: note);
 
   Future<NoteEntity> updateNote({required int noteId, required NoteEntity newNoteParams}) async => noteDao.updateNote(
     noteId: noteId,

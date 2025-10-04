@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:drift/drift.dart';
 import 'package:gtd_manager/app/database/database.dart';
+import 'package:gtd_manager/domain/dtos/note_create_dto.dart';
 import 'package:gtd_manager/domain/entities/entities.dart';
 
 part 'note_dao.g.dart';
@@ -11,7 +12,7 @@ class NoteDao extends DatabaseAccessor<GtdDatabase> with _$NoteDaoMixin {
   NoteDao(super.db);
 
   Future<NoteEntity> createNote({
-    required NoteEntity note,
+    required NoteCreateDto note,
   }) async {
     return db
         .into(db.note)
@@ -51,8 +52,8 @@ class NoteDao extends DatabaseAccessor<GtdDatabase> with _$NoteDaoMixin {
           NoteCompanion(
             title: Value(newNoteParams.title),
             noteCategory: Value(newNoteParams.noteCategory),
-            description: newNoteParams.description != null ? Value(newNoteParams.description) : const Value.absent(),
-            projectId: newNoteParams.projectId != null ? Value(newNoteParams.projectId) : const Value.absent(),
+            description: Value(newNoteParams.description),
+            projectId: Value(newNoteParams.projectId),
             updatedAt: Value(DateTime.now()),
           ),
         )

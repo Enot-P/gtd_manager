@@ -45,9 +45,11 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
   Future<void> _createNote(_CreateNote event, Emitter<ListNotesState> emit) async {
     try {
       final note = event.noteEntity;
+
       if (note.title.trim().isEmpty) {
         throw 'Название заметки не должено быть пустым';
       }
+
       final newNote = await noteRepository.createNote(event.noteEntity);
       _updateNotesStateUI(emit, (notes) {
         notes.add(newNote);
@@ -70,24 +72,11 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
     try {
       final notes = event.notes;
 
-      // INFO: Мейби стоит всетаки отдельную DTO сделать?
-
-      final firstId = notes[event.oldIndex].id;
-      final secondId = notes[event.newIndex].id;
-      final firstKeyOrder = notes[event.oldIndex].keyOrder;
-      final secondKeyOrder = notes[event.newIndex].keyOrder;
-
-      if (firstId == null || secondId == null || firstKeyOrder == null || secondKeyOrder == null) {
-        const errorMassage = 'Перестановка заметок произошла с ошибкой';
-        emit(const ListNotesState.failure(error: errorMassage));
-        throw errorMassage;
-      }
-
       await noteRepository.changeKeyOrderNotes(
-        firstId: firstId,
-        secondId: secondId,
-        firstKeyOrder: firstKeyOrder,
-        secondKeyOrder: secondKeyOrder,
+        firstId: notes.first.id,
+        secondId: notes.last.id,
+        firstKeyOrder: notes.first.keyOrder,
+        secondKeyOrder: notes.last.keyOrder,
       );
 
       _updateNotesStateUI(emit, (notes) {
@@ -101,13 +90,11 @@ class ListNoteBloc extends Bloc<ListNoteEvent, ListNotesState> {
 
   Future<void> _updateNote(_UpdateNote event, Emitter<ListNotesState> emit) async {
     try {
-      final updatedNote = await noteRepository.updateNote(noteId: event.noteId, newNoteParams: event.updateParamsNote);
+      final updatedNote = await noteRepository.updateNote(
+        noteId: event.noteId,
+        newNoteParams: event.updateParamsNote,
+      );
       final updatedNoteId = updatedNote.id;
-      if (updatedNoteId == null) {
-        const String massage = 'Id заметки отстутвует при пометки задачу сделанной';
-        emit(const ListNotesState.failure(error: massage));
-        throw massage;
-      }
       _updateNotesStateUI(emit, (notes) {
         notes.removeWhere((n) => n.id == updatedNoteId);
       });

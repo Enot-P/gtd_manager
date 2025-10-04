@@ -46,31 +46,13 @@ extension NoteCategoryExtension on NoteCategory {
 }
 
 @freezed
-class NoteEntity with _$NoteEntity {
-  const NoteEntity({
-    this.id,
-    required this.title,
-    required this.noteCategory,
-    this.description,
-    this.projectId,
-    this.keyOrder,
-  });
-
-  @override
-  final int? id;
-
-  @override
-  final String title;
-
-  @override
-  final NoteCategory noteCategory;
-
-  @override
-  final String? description;
-
-  @override
-  final int? projectId;
-
-  @override
-  final int? keyOrder;
+abstract class NoteEntity with _$NoteEntity {
+  factory NoteEntity({
+    required int id,
+    required String title,
+    required NoteCategory noteCategory,
+    required String? description,
+    required int? projectId,
+    required int keyOrder,
+  }) = _NoteEntity;
 }

@@ -24,12 +24,12 @@ class NoteDetailsCubit extends Cubit<NoteDetailsState> {
     try {
       note = await noteRepo.getNoteById(noteId);
       titleController.text = note.title;
-      if (note.description?.isNotEmpty == true) {
+      if (note.description.isNotEmpty == true) {
         try {
-          final deltaJson = jsonDecode(note.description!);
+          final deltaJson = jsonDecode(note.description);
           descriptionController.document = Document.fromJson(deltaJson);
         } catch (e) {
-          descriptionController.document.insert(0, note.description!);
+          descriptionController.document.insert(0, note.description);
         }
       }
       await Future.delayed(const Duration(seconds: 2));
@@ -44,9 +44,6 @@ class NoteDetailsCubit extends Cubit<NoteDetailsState> {
   Future<void> saveNote() async {
     try {
       final noteId = note.id;
-      if (noteId == null) {
-        throw 'Id не должен быть равен null';
-      }
       final deltaJson = jsonEncode(descriptionController.document.toDelta().toJson());
       final newNote = NoteEntity(
         title: titleController.text,
