@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:gtd_manager/app/app.dart';
@@ -23,19 +24,22 @@ class _GtdManagerState extends State<GtdManager> {
   Widget build(BuildContext context) {
     return AppInitializer(
       config: config,
-      child: MaterialApp.router(
-        title: 'GTD Manager',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.yellow),
+      child: CalendarControllerProvider(
+        controller: EventController(),
+        child: MaterialApp.router(
+          title: 'GTD Manager',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.yellow),
+          ),
+          routerDelegate: AutoRouterDelegate(
+            config.appRouter,
+            navigatorObservers: () => [TalkerRouteObserver(talker)],
+          ),
+          routeInformationParser: config.appRouter.defaultRouteParser(),
+          localizationsDelegates: const [
+            FlutterQuillLocalizations.delegate,
+          ],
         ),
-        routerDelegate: AutoRouterDelegate(
-          config.appRouter,
-          navigatorObservers: () => [TalkerRouteObserver(talker)],
-        ),
-        routeInformationParser: config.appRouter.defaultRouteParser(),
-        localizationsDelegates: const [
-          FlutterQuillLocalizations.delegate,
-        ],
       ),
     );
   }

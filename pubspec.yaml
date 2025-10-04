@@ -12,7 +12,7 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
-  
+
   auto_route: ^10.1.2
   flutter_bloc: ^9.1.1
   talker: ^5.0.1
@@ -26,17 +26,18 @@ dependencies:
   bloc: ^9.0.0
   equatable: ^2.0.7
   provider: ^6.1.5+1
-  reorderables: ^0.6.0
+  # reorderables: ^0.6.0
   freezed_annotation: ^3.1.0
 
   # RichText
   flutter_quill: ^11.4.2
   # markdown_widget: ^2.3.2+8
   # flutter_markdown_editor: ^2.0.0
-  
-  #UI 
-  select_dialog: ^2.0.2 
-  table_calendar: ^3.2.0
+
+  #UI
+  select_dialog: ^2.0.2
+  # table_calendar: ^3.2.0
+  calendar_view: ^1.4.0
 
 dev_dependencies:
   flutter_test:
