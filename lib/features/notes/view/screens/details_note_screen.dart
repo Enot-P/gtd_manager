@@ -6,6 +6,7 @@ import 'package:gtd_manager/domain/entities/entities.dart';
 import 'package:gtd_manager/domain/repositories/list_notes_repositories.dart';
 import 'package:gtd_manager/features/notes/bloc/bloc.dart';
 import 'package:gtd_manager/features/notes/bloc/note_details/note_details_cubit.dart';
+import 'package:gtd_manager/main.dart';
 import 'package:select_dialog/select_dialog.dart';
 
 @RoutePage()
@@ -103,7 +104,7 @@ class _NoteProjectAndCategoryWidgetState extends State<_NoteProjectAndCategoryWi
           setState(() {
             selectedItems = selectedList;
           });
-          print('Автосохранение: $selectedList');
+          talker.debug('Автосохранение: $selectedList');
         },
 
         itemBuilder: (context, item, isSelected) {

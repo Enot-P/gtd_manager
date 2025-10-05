@@ -4,15 +4,21 @@ part of 'list_note_bloc.dart';
 class ListNoteEvent with _$ListNoteEvent {
   const factory ListNoteEvent.loadNotes(NoteCategory noteCategory) = _LoadNotes;
 
+  // ? Можно ли использовать DTO в state-менеджере?
   const factory ListNoteEvent.createNote(NoteDtoCreate note) = _CreateNote;
 
   const factory ListNoteEvent.deleteNote(int noteId) = _DeleteNote;
 
-  const factory ListNoteEvent.updateNote(NoteDtoUpdate updateParamsNote) = _UpdateNote;
+  /// noteId заметки которой хотем изменить категорию
+  /// NoteCategory - категория на которую будем менять
+  const factory ListNoteEvent.changeCategory(
+    int noteId,
+    NoteCategory noteCategory,
+  ) = _ChangeNoteCategory;
 
+  /// Меняет местами заметки по их параметру keyOrder
   const factory ListNoteEvent.changeNotesKeyOrder({
-    required List<NoteEntity> notes,
-    required int oldIndex,
-    required int newIndex,
+    required int firstKeyOrder,
+    required int secondKeyOrder,
   }) = _ChangeNotesKeyOrder;
 }

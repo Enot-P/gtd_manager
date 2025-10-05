@@ -426,6 +426,7 @@ class $NoteTable extends Note with TableInfo<$NoteTable, NoteEntity> {
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
     defaultValue: const Constant(0),
   );
   @override

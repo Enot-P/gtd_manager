@@ -11,7 +11,7 @@ class Note extends Table with DataControl {
   IntColumn get noteCategory => intEnum<NoteCategory>()();
   TextColumn get description => text().nullable()();
   IntColumn get projectId => integer().nullable().references(Project, #id, onDelete: KeyAction.cascade)();
-  IntColumn get keyOrder => integer().withDefault(const Constant(0))();
+  IntColumn get keyOrder => integer().unique().withDefault(const Constant(0))();
 }
 
 @UseRowClass(ProjectEntity)

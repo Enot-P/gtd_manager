@@ -27,12 +27,9 @@ class NoteRepository {
   Future<void> deleteNote(int noteId) async => noteDao.deleteNoteById(noteId);
 
   Future<void> changeKeyOrderNotes({
-    required int firstId,
-    required int secondId,
     required int firstKeyOrder,
     required int secondKeyOrder,
   }) async {
-    await noteDao.changeKeyOrder(noteId: firstId, newKeyOrder: secondKeyOrder);
-    await noteDao.changeKeyOrder(noteId: secondId, newKeyOrder: firstKeyOrder);
+    await noteDao.swapKeyOrder(firstKeyOrder: firstKeyOrder, secondKeyOrder: secondKeyOrder);
   }
 }

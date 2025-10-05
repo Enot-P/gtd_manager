@@ -55,14 +55,14 @@ extension ListNoteEventPatterns on ListNoteEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _LoadNotes value)?  loadNotes,TResult Function( _CreateNote value)?  createNote,TResult Function( _DeleteNote value)?  deleteNote,TResult Function( _UpdateNote value)?  updateNote,TResult Function( _ChangeNotesKeyOrder value)?  changeNotesKeyOrder,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _LoadNotes value)?  loadNotes,TResult Function( _CreateNote value)?  createNote,TResult Function( _DeleteNote value)?  deleteNote,TResult Function( _ChangeNoteCategory value)?  changeCategory,TResult Function( _ChangeNotesKeyOrder value)?  changeNotesKeyOrder,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _LoadNotes() when loadNotes != null:
 return loadNotes(_that);case _CreateNote() when createNote != null:
 return createNote(_that);case _DeleteNote() when deleteNote != null:
-return deleteNote(_that);case _UpdateNote() when updateNote != null:
-return updateNote(_that);case _ChangeNotesKeyOrder() when changeNotesKeyOrder != null:
+return deleteNote(_that);case _ChangeNoteCategory() when changeCategory != null:
+return changeCategory(_that);case _ChangeNotesKeyOrder() when changeNotesKeyOrder != null:
 return changeNotesKeyOrder(_that);case _:
   return orElse();
 
@@ -81,14 +81,14 @@ return changeNotesKeyOrder(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _LoadNotes value)  loadNotes,required TResult Function( _CreateNote value)  createNote,required TResult Function( _DeleteNote value)  deleteNote,required TResult Function( _UpdateNote value)  updateNote,required TResult Function( _ChangeNotesKeyOrder value)  changeNotesKeyOrder,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _LoadNotes value)  loadNotes,required TResult Function( _CreateNote value)  createNote,required TResult Function( _DeleteNote value)  deleteNote,required TResult Function( _ChangeNoteCategory value)  changeCategory,required TResult Function( _ChangeNotesKeyOrder value)  changeNotesKeyOrder,}){
 final _that = this;
 switch (_that) {
 case _LoadNotes():
 return loadNotes(_that);case _CreateNote():
 return createNote(_that);case _DeleteNote():
-return deleteNote(_that);case _UpdateNote():
-return updateNote(_that);case _ChangeNotesKeyOrder():
+return deleteNote(_that);case _ChangeNoteCategory():
+return changeCategory(_that);case _ChangeNotesKeyOrder():
 return changeNotesKeyOrder(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -106,14 +106,14 @@ return changeNotesKeyOrder(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _LoadNotes value)?  loadNotes,TResult? Function( _CreateNote value)?  createNote,TResult? Function( _DeleteNote value)?  deleteNote,TResult? Function( _UpdateNote value)?  updateNote,TResult? Function( _ChangeNotesKeyOrder value)?  changeNotesKeyOrder,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _LoadNotes value)?  loadNotes,TResult? Function( _CreateNote value)?  createNote,TResult? Function( _DeleteNote value)?  deleteNote,TResult? Function( _ChangeNoteCategory value)?  changeCategory,TResult? Function( _ChangeNotesKeyOrder value)?  changeNotesKeyOrder,}){
 final _that = this;
 switch (_that) {
 case _LoadNotes() when loadNotes != null:
 return loadNotes(_that);case _CreateNote() when createNote != null:
 return createNote(_that);case _DeleteNote() when deleteNote != null:
-return deleteNote(_that);case _UpdateNote() when updateNote != null:
-return updateNote(_that);case _ChangeNotesKeyOrder() when changeNotesKeyOrder != null:
+return deleteNote(_that);case _ChangeNoteCategory() when changeCategory != null:
+return changeCategory(_that);case _ChangeNotesKeyOrder() when changeNotesKeyOrder != null:
 return changeNotesKeyOrder(_that);case _:
   return null;
 
@@ -131,14 +131,14 @@ return changeNotesKeyOrder(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( NoteCategory noteCategory)?  loadNotes,TResult Function( NoteDtoCreate note)?  createNote,TResult Function( int noteId)?  deleteNote,TResult Function( NoteDtoUpdate updateParamsNote)?  updateNote,TResult Function( List<NoteEntity> notes,  int oldIndex,  int newIndex)?  changeNotesKeyOrder,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( NoteCategory noteCategory)?  loadNotes,TResult Function( NoteDtoCreate note)?  createNote,TResult Function( int noteId)?  deleteNote,TResult Function( int noteId,  NoteCategory noteCategory)?  changeCategory,TResult Function( int firstKeyOrder,  int secondKeyOrder)?  changeNotesKeyOrder,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoadNotes() when loadNotes != null:
 return loadNotes(_that.noteCategory);case _CreateNote() when createNote != null:
 return createNote(_that.note);case _DeleteNote() when deleteNote != null:
-return deleteNote(_that.noteId);case _UpdateNote() when updateNote != null:
-return updateNote(_that.updateParamsNote);case _ChangeNotesKeyOrder() when changeNotesKeyOrder != null:
-return changeNotesKeyOrder(_that.notes,_that.oldIndex,_that.newIndex);case _:
+return deleteNote(_that.noteId);case _ChangeNoteCategory() when changeCategory != null:
+return changeCategory(_that.noteId,_that.noteCategory);case _ChangeNotesKeyOrder() when changeNotesKeyOrder != null:
+return changeNotesKeyOrder(_that.firstKeyOrder,_that.secondKeyOrder);case _:
   return orElse();
 
 }
@@ -156,14 +156,14 @@ return changeNotesKeyOrder(_that.notes,_that.oldIndex,_that.newIndex);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( NoteCategory noteCategory)  loadNotes,required TResult Function( NoteDtoCreate note)  createNote,required TResult Function( int noteId)  deleteNote,required TResult Function( NoteDtoUpdate updateParamsNote)  updateNote,required TResult Function( List<NoteEntity> notes,  int oldIndex,  int newIndex)  changeNotesKeyOrder,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( NoteCategory noteCategory)  loadNotes,required TResult Function( NoteDtoCreate note)  createNote,required TResult Function( int noteId)  deleteNote,required TResult Function( int noteId,  NoteCategory noteCategory)  changeCategory,required TResult Function( int firstKeyOrder,  int secondKeyOrder)  changeNotesKeyOrder,}) {final _that = this;
 switch (_that) {
 case _LoadNotes():
 return loadNotes(_that.noteCategory);case _CreateNote():
 return createNote(_that.note);case _DeleteNote():
-return deleteNote(_that.noteId);case _UpdateNote():
-return updateNote(_that.updateParamsNote);case _ChangeNotesKeyOrder():
-return changeNotesKeyOrder(_that.notes,_that.oldIndex,_that.newIndex);case _:
+return deleteNote(_that.noteId);case _ChangeNoteCategory():
+return changeCategory(_that.noteId,_that.noteCategory);case _ChangeNotesKeyOrder():
+return changeNotesKeyOrder(_that.firstKeyOrder,_that.secondKeyOrder);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -180,14 +180,14 @@ return changeNotesKeyOrder(_that.notes,_that.oldIndex,_that.newIndex);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( NoteCategory noteCategory)?  loadNotes,TResult? Function( NoteDtoCreate note)?  createNote,TResult? Function( int noteId)?  deleteNote,TResult? Function( NoteDtoUpdate updateParamsNote)?  updateNote,TResult? Function( List<NoteEntity> notes,  int oldIndex,  int newIndex)?  changeNotesKeyOrder,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( NoteCategory noteCategory)?  loadNotes,TResult? Function( NoteDtoCreate note)?  createNote,TResult? Function( int noteId)?  deleteNote,TResult? Function( int noteId,  NoteCategory noteCategory)?  changeCategory,TResult? Function( int firstKeyOrder,  int secondKeyOrder)?  changeNotesKeyOrder,}) {final _that = this;
 switch (_that) {
 case _LoadNotes() when loadNotes != null:
 return loadNotes(_that.noteCategory);case _CreateNote() when createNote != null:
 return createNote(_that.note);case _DeleteNote() when deleteNote != null:
-return deleteNote(_that.noteId);case _UpdateNote() when updateNote != null:
-return updateNote(_that.updateParamsNote);case _ChangeNotesKeyOrder() when changeNotesKeyOrder != null:
-return changeNotesKeyOrder(_that.notes,_that.oldIndex,_that.newIndex);case _:
+return deleteNote(_that.noteId);case _ChangeNoteCategory() when changeCategory != null:
+return changeCategory(_that.noteId,_that.noteCategory);case _ChangeNotesKeyOrder() when changeNotesKeyOrder != null:
+return changeNotesKeyOrder(_that.firstKeyOrder,_that.secondKeyOrder);case _:
   return null;
 
 }
@@ -396,43 +396,44 @@ as int,
 /// @nodoc
 
 
-class _UpdateNote implements ListNoteEvent {
-  const _UpdateNote(this.updateParamsNote);
+class _ChangeNoteCategory implements ListNoteEvent {
+  const _ChangeNoteCategory(this.noteId, this.noteCategory);
   
 
- final  NoteDtoUpdate updateParamsNote;
+ final  int noteId;
+ final  NoteCategory noteCategory;
 
 /// Create a copy of ListNoteEvent
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$UpdateNoteCopyWith<_UpdateNote> get copyWith => __$UpdateNoteCopyWithImpl<_UpdateNote>(this, _$identity);
+_$ChangeNoteCategoryCopyWith<_ChangeNoteCategory> get copyWith => __$ChangeNoteCategoryCopyWithImpl<_ChangeNoteCategory>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateNote&&(identical(other.updateParamsNote, updateParamsNote) || other.updateParamsNote == updateParamsNote));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChangeNoteCategory&&(identical(other.noteId, noteId) || other.noteId == noteId)&&(identical(other.noteCategory, noteCategory) || other.noteCategory == noteCategory));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,updateParamsNote);
+int get hashCode => Object.hash(runtimeType,noteId,noteCategory);
 
 @override
 String toString() {
-  return 'ListNoteEvent.updateNote(updateParamsNote: $updateParamsNote)';
+  return 'ListNoteEvent.changeCategory(noteId: $noteId, noteCategory: $noteCategory)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$UpdateNoteCopyWith<$Res> implements $ListNoteEventCopyWith<$Res> {
-  factory _$UpdateNoteCopyWith(_UpdateNote value, $Res Function(_UpdateNote) _then) = __$UpdateNoteCopyWithImpl;
+abstract mixin class _$ChangeNoteCategoryCopyWith<$Res> implements $ListNoteEventCopyWith<$Res> {
+  factory _$ChangeNoteCategoryCopyWith(_ChangeNoteCategory value, $Res Function(_ChangeNoteCategory) _then) = __$ChangeNoteCategoryCopyWithImpl;
 @useResult
 $Res call({
- NoteDtoUpdate updateParamsNote
+ int noteId, NoteCategory noteCategory
 });
 
 
@@ -440,19 +441,20 @@ $Res call({
 
 }
 /// @nodoc
-class __$UpdateNoteCopyWithImpl<$Res>
-    implements _$UpdateNoteCopyWith<$Res> {
-  __$UpdateNoteCopyWithImpl(this._self, this._then);
+class __$ChangeNoteCategoryCopyWithImpl<$Res>
+    implements _$ChangeNoteCategoryCopyWith<$Res> {
+  __$ChangeNoteCategoryCopyWithImpl(this._self, this._then);
 
-  final _UpdateNote _self;
-  final $Res Function(_UpdateNote) _then;
+  final _ChangeNoteCategory _self;
+  final $Res Function(_ChangeNoteCategory) _then;
 
 /// Create a copy of ListNoteEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? updateParamsNote = null,}) {
-  return _then(_UpdateNote(
-null == updateParamsNote ? _self.updateParamsNote : updateParamsNote // ignore: cast_nullable_to_non_nullable
-as NoteDtoUpdate,
+@pragma('vm:prefer-inline') $Res call({Object? noteId = null,Object? noteCategory = null,}) {
+  return _then(_ChangeNoteCategory(
+null == noteId ? _self.noteId : noteId // ignore: cast_nullable_to_non_nullable
+as int,null == noteCategory ? _self.noteCategory : noteCategory // ignore: cast_nullable_to_non_nullable
+as NoteCategory,
   ));
 }
 
@@ -463,18 +465,11 @@ as NoteDtoUpdate,
 
 
 class _ChangeNotesKeyOrder implements ListNoteEvent {
-  const _ChangeNotesKeyOrder({required final  List<NoteEntity> notes, required this.oldIndex, required this.newIndex}): _notes = notes;
+  const _ChangeNotesKeyOrder({required this.firstKeyOrder, required this.secondKeyOrder});
   
 
- final  List<NoteEntity> _notes;
- List<NoteEntity> get notes {
-  if (_notes is EqualUnmodifiableListView) return _notes;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_notes);
-}
-
- final  int oldIndex;
- final  int newIndex;
+ final  int firstKeyOrder;
+ final  int secondKeyOrder;
 
 /// Create a copy of ListNoteEvent
 /// with the given fields replaced by the non-null parameter values.
@@ -486,16 +481,16 @@ _$ChangeNotesKeyOrderCopyWith<_ChangeNotesKeyOrder> get copyWith => __$ChangeNot
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChangeNotesKeyOrder&&const DeepCollectionEquality().equals(other._notes, _notes)&&(identical(other.oldIndex, oldIndex) || other.oldIndex == oldIndex)&&(identical(other.newIndex, newIndex) || other.newIndex == newIndex));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChangeNotesKeyOrder&&(identical(other.firstKeyOrder, firstKeyOrder) || other.firstKeyOrder == firstKeyOrder)&&(identical(other.secondKeyOrder, secondKeyOrder) || other.secondKeyOrder == secondKeyOrder));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_notes),oldIndex,newIndex);
+int get hashCode => Object.hash(runtimeType,firstKeyOrder,secondKeyOrder);
 
 @override
 String toString() {
-  return 'ListNoteEvent.changeNotesKeyOrder(notes: $notes, oldIndex: $oldIndex, newIndex: $newIndex)';
+  return 'ListNoteEvent.changeNotesKeyOrder(firstKeyOrder: $firstKeyOrder, secondKeyOrder: $secondKeyOrder)';
 }
 
 
@@ -506,7 +501,7 @@ abstract mixin class _$ChangeNotesKeyOrderCopyWith<$Res> implements $ListNoteEve
   factory _$ChangeNotesKeyOrderCopyWith(_ChangeNotesKeyOrder value, $Res Function(_ChangeNotesKeyOrder) _then) = __$ChangeNotesKeyOrderCopyWithImpl;
 @useResult
 $Res call({
- List<NoteEntity> notes, int oldIndex, int newIndex
+ int firstKeyOrder, int secondKeyOrder
 });
 
 
@@ -523,11 +518,10 @@ class __$ChangeNotesKeyOrderCopyWithImpl<$Res>
 
 /// Create a copy of ListNoteEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? notes = null,Object? oldIndex = null,Object? newIndex = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? firstKeyOrder = null,Object? secondKeyOrder = null,}) {
   return _then(_ChangeNotesKeyOrder(
-notes: null == notes ? _self._notes : notes // ignore: cast_nullable_to_non_nullable
-as List<NoteEntity>,oldIndex: null == oldIndex ? _self.oldIndex : oldIndex // ignore: cast_nullable_to_non_nullable
-as int,newIndex: null == newIndex ? _self.newIndex : newIndex // ignore: cast_nullable_to_non_nullable
+firstKeyOrder: null == firstKeyOrder ? _self.firstKeyOrder : firstKeyOrder // ignore: cast_nullable_to_non_nullable
+as int,secondKeyOrder: null == secondKeyOrder ? _self.secondKeyOrder : secondKeyOrder // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }

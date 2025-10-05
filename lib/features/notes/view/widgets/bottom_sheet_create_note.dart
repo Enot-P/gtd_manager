@@ -22,16 +22,19 @@ class _BottomSheetCreateNoteState extends State<BottomSheetCreateNote> {
 
   void _onSubmittedTap(BuildContext context) {
     if (formKey.currentState?.validate() ?? false) {
-      return;
+      final bloc = context.read<ListNoteBloc>();
+      bloc.add(
+        ListNoteEvent.createNote(
+          // ? Должно ли быть тут DTO или передавать параметры по отдельности и создавать его уже в блоке?
+          NoteDtoCreate(
+            title: noteTitleController.text.trim(),
+            noteCategory: widget.noteCategory,
+          ),
+        ),
+      );
+      noteTitleController.clear();
+      // Navigator.pop(context);
     }
-    final bloc = context.read<ListNoteBloc>();
-    bloc.add(
-      ListNoteEvent.createNote(
-        NoteEntity(title: noteTitleController.text.trim(), noteCategory: widget.noteCategory),
-      ),
-    );
-    noteTitleController.clear();
-    // Navigator.pop(context);
   }
 
   @override
@@ -199,19 +202,16 @@ class _CreateNoteWidget extends StatelessWidget {
   final NoteCategory noteCategory;
   final TextEditingController noteTitleController;
   final VoidCallback onSubmittedTap;
-  //late final String? errorInputField;
 
   @override
   Widget build(BuildContext context) {
-    //final listNoteBloc = context.read<ListNoteBloc>();
-
     return IconButton(
       padding: EdgeInsets.zero,
       constraints: const BoxConstraints(),
       style: const ButtonStyle(
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
-      onPressed: () => onSubmittedTap(),
+      onPressed: onSubmittedTap,
       icon: const Icon(Icons.send),
     );
   }

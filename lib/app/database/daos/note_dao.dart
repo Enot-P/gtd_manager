@@ -57,13 +57,38 @@ class NoteDao extends DatabaseAccessor<GtdDatabase> with _$NoteDaoMixin {
   }
 
   // SQL иньекций лучше избежать и не передавать как строку
-  Future<void> changeKeyOrder({
-    required int noteId,
-    required int newKeyOrder,
+  // Используется транзакция, "Все или ничего"
+  Future<void> swapKeyOrder({
+    required int firstKeyOrder,
+    required int secondKeyOrder,
   }) async {
-    await db.customUpdate(
-      'UPDATE note SET key_order = ? WHERE id = ?',
-      variables: [Variable(newKeyOrder), Variable(noteId)],
-    );
+    await db.transaction(() async {
+      // Временное значение, которое не существует в таблице
+      int tempKey = -1;
+      // Обновляем первый ключ на временное значение
+      await db.customUpdate(
+        'UPDATE note SET key_order = ? WHERE key_order = ?',
+        variables: [
+          Variable<int>(tempKey),
+          Variable<int>(firstKeyOrder),
+        ],
+      );
+      // Обновляем второй ключ на значение первого
+      await db.customUpdate(
+        'UPDATE note SET key_order = ? WHERE key_order = ?',
+        variables: [
+          Variable<int>(firstKeyOrder),
+          Variable<int>(secondKeyOrder),
+        ],
+      );
+      // Обновляем временное значение на значение второго
+      await db.customUpdate(
+        'UPDATE note SET key_order = ? WHERE key_order = ?',
+        variables: [
+          Variable<int>(secondKeyOrder),
+          Variable<int>(tempKey),
+        ],
+      );
+    });
   }
 }

@@ -14,32 +14,18 @@ class NoteWidget extends StatelessWidget {
   final NoteEntity note;
 
   void _onTapDelete(NoteEntity note, ListNoteBloc bloc) {
-    final noteId = note.id;
-    if (noteId == null) throw 'id не должен быть null';
-
     note.noteCategory == NoteCategory.backlog
         ? bloc.add(
-            ListNoteEvent.deleteNote(
-              noteId: noteId,
-              noteCategory: note.noteCategory,
-            ),
+            ListNoteEvent.deleteNote(note.id),
           )
         : bloc.add(
-            ListNoteEvent.updateNote(
-              noteId: noteId,
-              updateParamsNote: note.copyWith(noteCategory: NoteCategory.backlog),
-            ),
+            ListNoteEvent.changeCategory(note.id, NoteCategory.backlog),
           );
   }
 
   void _onTapMarkDone(NoteEntity note, ListNoteBloc bloc) {
-    final noteId = note.id;
-    if (noteId == null) throw 'id не должен быть null';
     bloc.add(
-      ListNoteEvent.updateNote(
-        noteId: noteId,
-        updateParamsNote: note.copyWith(noteCategory: NoteCategory.done),
-      ),
+      ListNoteEvent.changeCategory(note.id, NoteCategory.done),
     );
   }
 
@@ -53,7 +39,6 @@ class NoteWidget extends StatelessWidget {
     final bloc = context.read<ListNoteBloc>();
     final startCheckBoxValue = note.noteCategory == NoteCategory.done ? true : false;
     final noteId = note.id;
-    if (noteId == null) throw 'Id не должен быть равен 0';
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => _onTapFreeSpace(context, noteId),
@@ -71,12 +56,10 @@ class NoteWidget extends StatelessWidget {
             onPressed: () => _onTapDelete(note, bloc),
             icon: const Icon(Icons.delete_outline),
           ),
-          note.id != null
-              ? ReorderableDragStartListener(
-                  index: note.id!,
-                  child: const Icon(Icons.drag_handle),
-                )
-              : const SizedBox.shrink(),
+          ReorderableDragStartListener(
+            index: note.id,
+            child: const Icon(Icons.drag_handle),
+          ),
         ],
       ),
     );

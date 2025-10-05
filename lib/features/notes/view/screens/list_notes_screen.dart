@@ -155,22 +155,11 @@ class _ListNotesWidget extends StatelessWidget {
         if (oldIndex < newIndex) {
           newIndex -= 1;
         }
-        final firstId = notes[oldIndex].id;
-        final secondId = notes[newIndex].id;
-        final firstKeyOrder = notes[oldIndex].keyOrder;
-        final secondKeyOrder = notes[newIndex].keyOrder;
-
-        if (firstId == null || secondId == null || firstKeyOrder == null || secondKeyOrder == null) {
-          final e =
-              'Перестановка заметок произошла с ошибкой {firstId = $firstId | secondId = $secondId | firstKeyOrder = $firstKeyOrder | secondKeyOrder = $secondKeyOrder}';
-          throw e;
-        }
         // Меняю в бд
         noteBloc.add(
           ListNoteEvent.changeNotesKeyOrder(
-            notes: notes,
-            oldIndex: oldIndex,
-            newIndex: newIndex,
+            firstKeyOrder: notes[oldIndex].keyOrder,
+            secondKeyOrder: notes[newIndex].keyOrder,
           ),
         );
       },

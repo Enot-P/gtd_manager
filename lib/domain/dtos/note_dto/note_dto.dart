@@ -3,3 +3,4 @@
 
 
 export 'note_create_dto.dart';
+export 'note_update_dto.dart';
