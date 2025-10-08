@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "653211714389",
+    "project_id": "gtd-manager-f0d26",
+    "storage_bucket": "gtd-manager-f0d26.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:653211714389:android:10d741d560080c84d165dc",
+        "android_client_info": {
+          "package_name": "com.example.gtd_manager"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiMUl-URD-pzHtjavAz2PkFugolYR_aFQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -46,6 +46,8 @@ class HomeScreen extends StatelessWidget {
         ),
         const ProjectsRoute(),
 
+        const SignInRoute(),
+
         ListNotesRoute(
           noteCategory: NoteCategory.done,
           name: 'Выполненные задачи',

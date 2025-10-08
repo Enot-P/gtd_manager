@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:gtd_manager/domain/entities/entities.dart';
-import 'package:gtd_manager/domain/repositories/list_notes_repositories.dart';
+import 'package:gtd_manager/domain/repositories/list_notes_repository.dart';
 import 'package:gtd_manager/features/notes/bloc/bloc.dart';
 import 'package:gtd_manager/features/notes/bloc/note_details/note_details_cubit.dart';
 import 'package:gtd_manager/main.dart';
