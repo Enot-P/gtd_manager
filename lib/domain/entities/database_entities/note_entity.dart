@@ -51,6 +51,7 @@ abstract class NoteEntity with _$NoteEntity {
     required int id,
     required String title,
     required NoteCategory noteCategory,
+    DateTime? scheduledFor,
     String? description,
     int? projectId,
     required int keyOrder,

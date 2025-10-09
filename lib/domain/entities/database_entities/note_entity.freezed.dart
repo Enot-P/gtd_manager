@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$NoteEntity {
 
- int get id; String get title; NoteCategory get noteCategory; String? get description; int? get projectId; int get keyOrder;
+ int get id; String get title; NoteCategory get noteCategory; DateTime? get scheduledFor; String? get description; int? get projectId; int get keyOrder;
 /// Create a copy of NoteEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $NoteEntityCopyWith<NoteEntity> get copyWith => _$NoteEntityCopyWithImpl<NoteEnt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NoteEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.noteCategory, noteCategory) || other.noteCategory == noteCategory)&&(identical(other.description, description) || other.description == description)&&(identical(other.projectId, projectId) || other.projectId == projectId)&&(identical(other.keyOrder, keyOrder) || other.keyOrder == keyOrder));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NoteEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.noteCategory, noteCategory) || other.noteCategory == noteCategory)&&(identical(other.scheduledFor, scheduledFor) || other.scheduledFor == scheduledFor)&&(identical(other.description, description) || other.description == description)&&(identical(other.projectId, projectId) || other.projectId == projectId)&&(identical(other.keyOrder, keyOrder) || other.keyOrder == keyOrder));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,noteCategory,description,projectId,keyOrder);
+int get hashCode => Object.hash(runtimeType,id,title,noteCategory,scheduledFor,description,projectId,keyOrder);
 
 @override
 String toString() {
-  return 'NoteEntity(id: $id, title: $title, noteCategory: $noteCategory, description: $description, projectId: $projectId, keyOrder: $keyOrder)';
+  return 'NoteEntity(id: $id, title: $title, noteCategory: $noteCategory, scheduledFor: $scheduledFor, description: $description, projectId: $projectId, keyOrder: $keyOrder)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $NoteEntityCopyWith<$Res>  {
   factory $NoteEntityCopyWith(NoteEntity value, $Res Function(NoteEntity) _then) = _$NoteEntityCopyWithImpl;
 @useResult
 $Res call({
- int id, String title, NoteCategory noteCategory, String? description, int? projectId, int keyOrder
+ int id, String title, NoteCategory noteCategory, DateTime? scheduledFor, String? description, int? projectId, int keyOrder
 });
 
 
@@ -62,12 +62,13 @@ class _$NoteEntityCopyWithImpl<$Res>
 
 /// Create a copy of NoteEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? noteCategory = null,Object? description = freezed,Object? projectId = freezed,Object? keyOrder = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? noteCategory = null,Object? scheduledFor = freezed,Object? description = freezed,Object? projectId = freezed,Object? keyOrder = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,noteCategory: null == noteCategory ? _self.noteCategory : noteCategory // ignore: cast_nullable_to_non_nullable
-as NoteCategory,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as NoteCategory,scheduledFor: freezed == scheduledFor ? _self.scheduledFor : scheduledFor // ignore: cast_nullable_to_non_nullable
+as DateTime?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,projectId: freezed == projectId ? _self.projectId : projectId // ignore: cast_nullable_to_non_nullable
 as int?,keyOrder: null == keyOrder ? _self.keyOrder : keyOrder // ignore: cast_nullable_to_non_nullable
 as int,
@@ -155,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String title,  NoteCategory noteCategory,  String? description,  int? projectId,  int keyOrder)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String title,  NoteCategory noteCategory,  DateTime? scheduledFor,  String? description,  int? projectId,  int keyOrder)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _NoteEntity() when $default != null:
-return $default(_that.id,_that.title,_that.noteCategory,_that.description,_that.projectId,_that.keyOrder);case _:
+return $default(_that.id,_that.title,_that.noteCategory,_that.scheduledFor,_that.description,_that.projectId,_that.keyOrder);case _:
   return orElse();
 
 }
@@ -176,10 +177,10 @@ return $default(_that.id,_that.title,_that.noteCategory,_that.description,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String title,  NoteCategory noteCategory,  String? description,  int? projectId,  int keyOrder)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String title,  NoteCategory noteCategory,  DateTime? scheduledFor,  String? description,  int? projectId,  int keyOrder)  $default,) {final _that = this;
 switch (_that) {
 case _NoteEntity():
-return $default(_that.id,_that.title,_that.noteCategory,_that.description,_that.projectId,_that.keyOrder);case _:
+return $default(_that.id,_that.title,_that.noteCategory,_that.scheduledFor,_that.description,_that.projectId,_that.keyOrder);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +197,10 @@ return $default(_that.id,_that.title,_that.noteCategory,_that.description,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String title,  NoteCategory noteCategory,  String? description,  int? projectId,  int keyOrder)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String title,  NoteCategory noteCategory,  DateTime? scheduledFor,  String? description,  int? projectId,  int keyOrder)?  $default,) {final _that = this;
 switch (_that) {
 case _NoteEntity() when $default != null:
-return $default(_that.id,_that.title,_that.noteCategory,_that.description,_that.projectId,_that.keyOrder);case _:
+return $default(_that.id,_that.title,_that.noteCategory,_that.scheduledFor,_that.description,_that.projectId,_that.keyOrder);case _:
   return null;
 
 }
@@ -211,12 +212,13 @@ return $default(_that.id,_that.title,_that.noteCategory,_that.description,_that.
 
 
 class _NoteEntity implements NoteEntity {
-  const _NoteEntity({required this.id, required this.title, required this.noteCategory, this.description, this.projectId, required this.keyOrder});
+  const _NoteEntity({required this.id, required this.title, required this.noteCategory, this.scheduledFor, this.description, this.projectId, required this.keyOrder});
   
 
 @override final  int id;
 @override final  String title;
 @override final  NoteCategory noteCategory;
+@override final  DateTime? scheduledFor;
 @override final  String? description;
 @override final  int? projectId;
 @override final  int keyOrder;
@@ -231,16 +233,16 @@ _$NoteEntityCopyWith<_NoteEntity> get copyWith => __$NoteEntityCopyWithImpl<_Not
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NoteEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.noteCategory, noteCategory) || other.noteCategory == noteCategory)&&(identical(other.description, description) || other.description == description)&&(identical(other.projectId, projectId) || other.projectId == projectId)&&(identical(other.keyOrder, keyOrder) || other.keyOrder == keyOrder));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NoteEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.noteCategory, noteCategory) || other.noteCategory == noteCategory)&&(identical(other.scheduledFor, scheduledFor) || other.scheduledFor == scheduledFor)&&(identical(other.description, description) || other.description == description)&&(identical(other.projectId, projectId) || other.projectId == projectId)&&(identical(other.keyOrder, keyOrder) || other.keyOrder == keyOrder));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,noteCategory,description,projectId,keyOrder);
+int get hashCode => Object.hash(runtimeType,id,title,noteCategory,scheduledFor,description,projectId,keyOrder);
 
 @override
 String toString() {
-  return 'NoteEntity(id: $id, title: $title, noteCategory: $noteCategory, description: $description, projectId: $projectId, keyOrder: $keyOrder)';
+  return 'NoteEntity(id: $id, title: $title, noteCategory: $noteCategory, scheduledFor: $scheduledFor, description: $description, projectId: $projectId, keyOrder: $keyOrder)';
 }
 
 
@@ -251,7 +253,7 @@ abstract mixin class _$NoteEntityCopyWith<$Res> implements $NoteEntityCopyWith<$
   factory _$NoteEntityCopyWith(_NoteEntity value, $Res Function(_NoteEntity) _then) = __$NoteEntityCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String title, NoteCategory noteCategory, String? description, int? projectId, int keyOrder
+ int id, String title, NoteCategory noteCategory, DateTime? scheduledFor, String? description, int? projectId, int keyOrder
 });
 
 
@@ -268,12 +270,13 @@ class __$NoteEntityCopyWithImpl<$Res>
 
 /// Create a copy of NoteEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? noteCategory = null,Object? description = freezed,Object? projectId = freezed,Object? keyOrder = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? noteCategory = null,Object? scheduledFor = freezed,Object? description = freezed,Object? projectId = freezed,Object? keyOrder = null,}) {
   return _then(_NoteEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,noteCategory: null == noteCategory ? _self.noteCategory : noteCategory // ignore: cast_nullable_to_non_nullable
-as NoteCategory,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as NoteCategory,scheduledFor: freezed == scheduledFor ? _self.scheduledFor : scheduledFor // ignore: cast_nullable_to_non_nullable
+as DateTime?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,projectId: freezed == projectId ? _self.projectId : projectId // ignore: cast_nullable_to_non_nullable
 as int?,keyOrder: null == keyOrder ? _self.keyOrder : keyOrder // ignore: cast_nullable_to_non_nullable
 as int,

@@ -369,6 +369,15 @@ class $NoteTable extends Note with TableInfo<$NoteTable, NoteEntity> {
       'PRIMARY KEY AUTOINCREMENT',
     ),
   );
+  @override
+  late final GeneratedColumnWithTypeConverter<NoteCategory, int> noteCategory =
+      GeneratedColumn<int>(
+        'note_category',
+        aliasedName,
+        false,
+        type: DriftSqlType.int,
+        requiredDuringInsert: true,
+      ).withConverter<NoteCategory>($NoteTable.$converternoteCategory);
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
   late final GeneratedColumn<String> title = GeneratedColumn<String>(
@@ -382,15 +391,6 @@ class $NoteTable extends Note with TableInfo<$NoteTable, NoteEntity> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  @override
-  late final GeneratedColumnWithTypeConverter<NoteCategory, int> noteCategory =
-      GeneratedColumn<int>(
-        'note_category',
-        aliasedName,
-        false,
-        type: DriftSqlType.int,
-        requiredDuringInsert: true,
-      ).withConverter<NoteCategory>($NoteTable.$converternoteCategory);
   static const VerificationMeta _descriptionMeta = const VerificationMeta(
     'description',
   );
@@ -400,6 +400,17 @@ class $NoteTable extends Note with TableInfo<$NoteTable, NoteEntity> {
     aliasedName,
     true,
     type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _scheduledForMeta = const VerificationMeta(
+    'scheduledFor',
+  );
+  @override
+  late final GeneratedColumn<DateTime> scheduledFor = GeneratedColumn<DateTime>(
+    'scheduled_for',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
   static const VerificationMeta _projectIdMeta = const VerificationMeta(
@@ -434,9 +445,10 @@ class $NoteTable extends Note with TableInfo<$NoteTable, NoteEntity> {
     createdAt,
     updatedAt,
     id,
-    title,
     noteCategory,
+    title,
     description,
+    scheduledFor,
     projectId,
     keyOrder,
   ];
@@ -484,6 +496,15 @@ class $NoteTable extends Note with TableInfo<$NoteTable, NoteEntity> {
         ),
       );
     }
+    if (data.containsKey('scheduled_for')) {
+      context.handle(
+        _scheduledForMeta,
+        scheduledFor.isAcceptableOrUnknown(
+          data['scheduled_for']!,
+          _scheduledForMeta,
+        ),
+      );
+    }
     if (data.containsKey('project_id')) {
       context.handle(
         _projectIdMeta,
@@ -519,6 +540,10 @@ class $NoteTable extends Note with TableInfo<$NoteTable, NoteEntity> {
           data['${effectivePrefix}note_category'],
         )!,
       ),
+      scheduledFor: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}scheduled_for'],
+      ),
       description: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}description'],
@@ -547,18 +572,20 @@ class NoteCompanion extends UpdateCompanion<NoteEntity> {
   final Value<DateTime> createdAt;
   final Value<DateTime?> updatedAt;
   final Value<int> id;
-  final Value<String> title;
   final Value<NoteCategory> noteCategory;
+  final Value<String> title;
   final Value<String?> description;
+  final Value<DateTime?> scheduledFor;
   final Value<int?> projectId;
   final Value<int> keyOrder;
   const NoteCompanion({
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.id = const Value.absent(),
-    this.title = const Value.absent(),
     this.noteCategory = const Value.absent(),
+    this.title = const Value.absent(),
     this.description = const Value.absent(),
+    this.scheduledFor = const Value.absent(),
     this.projectId = const Value.absent(),
     this.keyOrder = const Value.absent(),
   });
@@ -566,20 +593,22 @@ class NoteCompanion extends UpdateCompanion<NoteEntity> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.id = const Value.absent(),
-    required String title,
     required NoteCategory noteCategory,
+    required String title,
     this.description = const Value.absent(),
+    this.scheduledFor = const Value.absent(),
     this.projectId = const Value.absent(),
     this.keyOrder = const Value.absent(),
-  }) : title = Value(title),
-       noteCategory = Value(noteCategory);
+  }) : noteCategory = Value(noteCategory),
+       title = Value(title);
   static Insertable<NoteEntity> custom({
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? id,
-    Expression<String>? title,
     Expression<int>? noteCategory,
+    Expression<String>? title,
     Expression<String>? description,
+    Expression<DateTime>? scheduledFor,
     Expression<int>? projectId,
     Expression<int>? keyOrder,
   }) {
@@ -587,9 +616,10 @@ class NoteCompanion extends UpdateCompanion<NoteEntity> {
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (id != null) 'id': id,
-      if (title != null) 'title': title,
       if (noteCategory != null) 'note_category': noteCategory,
+      if (title != null) 'title': title,
       if (description != null) 'description': description,
+      if (scheduledFor != null) 'scheduled_for': scheduledFor,
       if (projectId != null) 'project_id': projectId,
       if (keyOrder != null) 'key_order': keyOrder,
     });
@@ -599,9 +629,10 @@ class NoteCompanion extends UpdateCompanion<NoteEntity> {
     Value<DateTime>? createdAt,
     Value<DateTime?>? updatedAt,
     Value<int>? id,
-    Value<String>? title,
     Value<NoteCategory>? noteCategory,
+    Value<String>? title,
     Value<String?>? description,
+    Value<DateTime?>? scheduledFor,
     Value<int?>? projectId,
     Value<int>? keyOrder,
   }) {
@@ -609,9 +640,10 @@ class NoteCompanion extends UpdateCompanion<NoteEntity> {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       id: id ?? this.id,
-      title: title ?? this.title,
       noteCategory: noteCategory ?? this.noteCategory,
+      title: title ?? this.title,
       description: description ?? this.description,
+      scheduledFor: scheduledFor ?? this.scheduledFor,
       projectId: projectId ?? this.projectId,
       keyOrder: keyOrder ?? this.keyOrder,
     );
@@ -629,16 +661,19 @@ class NoteCompanion extends UpdateCompanion<NoteEntity> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (title.present) {
-      map['title'] = Variable<String>(title.value);
-    }
     if (noteCategory.present) {
       map['note_category'] = Variable<int>(
         $NoteTable.$converternoteCategory.toSql(noteCategory.value),
       );
     }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
     if (description.present) {
       map['description'] = Variable<String>(description.value);
+    }
+    if (scheduledFor.present) {
+      map['scheduled_for'] = Variable<DateTime>(scheduledFor.value);
     }
     if (projectId.present) {
       map['project_id'] = Variable<int>(projectId.value);
@@ -655,9 +690,10 @@ class NoteCompanion extends UpdateCompanion<NoteEntity> {
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('id: $id, ')
-          ..write('title: $title, ')
           ..write('noteCategory: $noteCategory, ')
+          ..write('title: $title, ')
           ..write('description: $description, ')
+          ..write('scheduledFor: $scheduledFor, ')
           ..write('projectId: $projectId, ')
           ..write('keyOrder: $keyOrder')
           ..write(')'))
@@ -1771,9 +1807,10 @@ typedef $$NoteTableCreateCompanionBuilder =
       Value<DateTime> createdAt,
       Value<DateTime?> updatedAt,
       Value<int> id,
-      required String title,
       required NoteCategory noteCategory,
+      required String title,
       Value<String?> description,
+      Value<DateTime?> scheduledFor,
       Value<int?> projectId,
       Value<int> keyOrder,
     });
@@ -1782,9 +1819,10 @@ typedef $$NoteTableUpdateCompanionBuilder =
       Value<DateTime> createdAt,
       Value<DateTime?> updatedAt,
       Value<int> id,
-      Value<String> title,
       Value<NoteCategory> noteCategory,
+      Value<String> title,
       Value<String?> description,
+      Value<DateTime?> scheduledFor,
       Value<int?> projectId,
       Value<int> keyOrder,
     });
@@ -1852,19 +1890,24 @@ class $$NoteTableFilterComposer extends Composer<_$GtdDatabase, $NoteTable> {
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get title => $composableBuilder(
-    column: $table.title,
-    builder: (column) => ColumnFilters(column),
-  );
-
   ColumnWithTypeConverterFilters<NoteCategory, NoteCategory, int>
   get noteCategory => $composableBuilder(
     column: $table.noteCategory,
     builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get description => $composableBuilder(
     column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get scheduledFor => $composableBuilder(
+    column: $table.scheduledFor,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1945,18 +1988,23 @@ class $$NoteTableOrderingComposer extends Composer<_$GtdDatabase, $NoteTable> {
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get title => $composableBuilder(
-    column: $table.title,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<int> get noteCategory => $composableBuilder(
     column: $table.noteCategory,
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get description => $composableBuilder(
     column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get scheduledFor => $composableBuilder(
+    column: $table.scheduledFor,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -2007,17 +2055,22 @@ class $$NoteTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<String> get title =>
-      $composableBuilder(column: $table.title, builder: (column) => column);
-
   GeneratedColumnWithTypeConverter<NoteCategory, int> get noteCategory =>
       $composableBuilder(
         column: $table.noteCategory,
         builder: (column) => column,
       );
 
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
   GeneratedColumn<String> get description => $composableBuilder(
     column: $table.description,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get scheduledFor => $composableBuilder(
+    column: $table.scheduledFor,
     builder: (column) => column,
   );
 
@@ -2104,18 +2157,20 @@ class $$NoteTableTableManager
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime?> updatedAt = const Value.absent(),
                 Value<int> id = const Value.absent(),
-                Value<String> title = const Value.absent(),
                 Value<NoteCategory> noteCategory = const Value.absent(),
+                Value<String> title = const Value.absent(),
                 Value<String?> description = const Value.absent(),
+                Value<DateTime?> scheduledFor = const Value.absent(),
                 Value<int?> projectId = const Value.absent(),
                 Value<int> keyOrder = const Value.absent(),
               }) => NoteCompanion(
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 id: id,
-                title: title,
                 noteCategory: noteCategory,
+                title: title,
                 description: description,
+                scheduledFor: scheduledFor,
                 projectId: projectId,
                 keyOrder: keyOrder,
               ),
@@ -2124,18 +2179,20 @@ class $$NoteTableTableManager
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime?> updatedAt = const Value.absent(),
                 Value<int> id = const Value.absent(),
-                required String title,
                 required NoteCategory noteCategory,
+                required String title,
                 Value<String?> description = const Value.absent(),
+                Value<DateTime?> scheduledFor = const Value.absent(),
                 Value<int?> projectId = const Value.absent(),
                 Value<int> keyOrder = const Value.absent(),
               }) => NoteCompanion.insert(
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 id: id,
-                title: title,
                 noteCategory: noteCategory,
+                title: title,
                 description: description,
+                scheduledFor: scheduledFor,
                 projectId: projectId,
                 keyOrder: keyOrder,
               ),

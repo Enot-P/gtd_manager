@@ -7,9 +7,10 @@ import 'package:gtd_manager/domain/domain.dart';
 @UseRowClass(NoteEntity)
 class Note extends Table with DataControl {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get title => text().withLength(min: 1, max: 100)();
   IntColumn get noteCategory => intEnum<NoteCategory>()();
+  TextColumn get title => text().withLength(min: 1, max: 100)();
   TextColumn get description => text().nullable()();
+  DateTimeColumn get scheduledFor => dateTime().nullable()();
   IntColumn get projectId => integer().nullable().references(Project, #id, onDelete: KeyAction.cascade)();
   IntColumn get keyOrder => integer().unique().withDefault(const Constant(0))();
 }

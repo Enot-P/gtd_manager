@@ -1,4 +1,4 @@
-import 'package:gtd_manager/domain/entities/note_entity.dart';
+import 'package:gtd_manager/domain/entities/entities.dart';
 
 /// DTO для создания новой заметки.
 /// Используется при отправке данных в репозиторий или базу.

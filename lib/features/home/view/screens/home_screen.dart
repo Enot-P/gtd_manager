@@ -45,15 +45,11 @@ class HomeScreen extends StatelessWidget {
           description: 'Тут дела, которые ты вечно откладываешь',
         ),
         const ProjectsRoute(),
-
-        const SignInRoute(),
-
         ListNotesRoute(
           noteCategory: NoteCategory.done,
           name: 'Выполненные задачи',
           description: '',
         ),
-
         ListNotesRoute(
           noteCategory: NoteCategory.backlog,
           name: 'Удаленные задачи',
@@ -65,7 +61,13 @@ class HomeScreen extends StatelessWidget {
         return AppBar(
           actions: [
             const Icon(Icons.search),
+            const SizedBox(width: 10),
             IconButton(
+              padding: const EdgeInsets.all(0.0),
+              constraints: const BoxConstraints(),
+              style: const ButtonStyle(
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => TalkerScreen(talker: talker),
@@ -73,7 +75,18 @@ class HomeScreen extends StatelessWidget {
               ),
               icon: const Icon(Icons.bug_report),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 15),
+            IconButton(
+              icon: const Icon(Icons.settings),
+              padding: const EdgeInsets.all(0.0),
+              constraints: const BoxConstraints(),
+              style: const ButtonStyle(
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              onPressed: () => context.router.push(const SettingsRoute()),
+            ),
+
+            const SizedBox(width: 15),
           ],
           backgroundColor: Colors.blue,
         );

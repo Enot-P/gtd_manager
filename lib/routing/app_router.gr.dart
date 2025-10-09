@@ -181,17 +181,17 @@ class ProjectsRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [SignInScreen]
-class SignInRoute extends PageRouteInfo<void> {
-  const SignInRoute({List<PageRouteInfo>? children})
-    : super(SignInRoute.name, initialChildren: children);
+/// [SettingsScreen]
+class SettingsRoute extends PageRouteInfo<void> {
+  const SettingsRoute({List<PageRouteInfo>? children})
+    : super(SettingsRoute.name, initialChildren: children);
 
-  static const String name = 'SignInRoute';
+  static const String name = 'SettingsRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const SignInScreen();
+      return const SettingsScreen();
     },
   );
 }

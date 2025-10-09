@@ -1,5 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:gtd_manager/domain/entities/note_entity.dart';
+import 'package:gtd_manager/domain/entities/entities.dart';
 
 /// DTO для обновления новой заметки.
 /// Используется при отправке данных в репозиторий или базу.
